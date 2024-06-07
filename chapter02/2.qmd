@@ -1,0 +1,352 @@
+---
+title: "Problem Sets"
+format: html
+editor: visual
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+## Problem 2.1 The deterministic nature of random coin throwing
+
+```{r}
+#| echo: false
+
+df.coins <- data.frame(
+  angle = seq(0, 315, by=45),
+  height_0.2 = c("T", "H", "H", "H", "H", "H", "H", "T"),
+  height_0.4 = c("H", "T", "H", "H", "H", "T", "T", "H"),
+  height_0.6 = c("T", "T", "T", "T", "T", "H", "T", "H"),
+  height_0.8 = c("T", "T", "T", "H", "H", "T", "T", "T"),
+  height_1.0 = c("H", "T", "H", "T", "H", "T", "H", "T")
+)
+
+df.coins.probs <- data.frame(
+  angle = seq(0, 315, by=45),
+  height_0.2 = c(0.05, 0.03, 0.05, 0.02, 0.03, 0.00, 0.03, 0.02),
+  height_0.4 = c(0.03, 0.02, 0.03, 0.03, 0.02, 0.01, 0.00, 0.03),
+  height_0.6 = c(0.02, 0.01, 0.01, 0.04, 0.02, 0.04, 0.03, 0.03),
+  height_0.8 = c(0.04, 0.05, 0.03, 0.00, 0.00, 0.03, 0.01, 0.02),
+  height_1.0 = c(0.04, 0.02, 0.02, 0.04, 0.03, 0.02, 0.04, 0.01)
+)
+
+gt_fmt <- function(data) {
+  data |> gt() |>
+  tab_spanner(label = "Height adove table (m)", starts_with("height_"), level = 1, id = "height") |>
+  cols_label(angle = "Angle (degrees)") |>
+  cols_label_with(starts_with("height_"), fn= ~ gsub("height_", "", .)) |>
+  cols_align(
+    align = "left",
+    columns = "angle"
+  ) |>
+  cols_align(
+    align = "center",
+    columns = starts_with("height_")
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#FFDFD4")
+    ),
+    locations = cells_body(
+      rows = seq(1, nrow(data), 2)
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F8E8E4")
+    ),
+    locations = cells_body(
+      rows = seq(2, nrow(data), 2)
+    )
+  ) |>
+  tab_options(
+    table.border.top.color = "white",
+    table.border.bottom.color = "white",
+    table_body.hlines.color = "white",
+    table_body.vlines.color = "white",
+    table_body.border.bottom.color = "white",
+    heading.border.bottom.color = "white",
+    column_labels.border.top.color = "white",
+    column_labels.border.bottom.color = "white",
+    row_group.border.top.color = "white",
+    row_group.border.bottom.color = "white"
+  )
+}
+```
+
+Suppose that, in an idealised world, the ultimate fate of a thrown coin – heads or tails – is deter- ministically given by the angle at which you throw the coin and its height above a table. Also in this ideal world, the heights and angles are discrete. However, the system is chaotic 2 (highly sensitive to initial conditions), and the results of throwing a coin at a given angle and height are shown in @tbl-coin.
+
+```{r}
+#| label: tbl-coin
+#| tbl-cap: "The results of a coin throw from a given angle and height above a table."
+#| echo: false
+
+df.coins |> gt_fmt()
+```
+
+### Problem 2.1.1
+
+Suppose that all combinations of angles and heights are equally likely to be chosen. What is the probability that the coin lands heads up?
+
+```{r}
+#| echo: false
+
+flat.coins <- df.coins |> dplyr::select(starts_with("height_")) |> flatten() |> unlist()
+coin.freqs <- flat.coins  |> table()
+```
+
+<div style="color:blue">
+
+To do this we count the occurrence of heads and tails in @tbl-coin, and find that `r paste0("$P(H) = \\frac{", coin.freqs["H"], "}{", sum(coin.freqs), "}$")`.
+
+</div>
+
+### Problem 2.1.2
+
+Now suppose that
+some combinations of angles and
+heights are more likely to be chosen
+than others, with the probabilities shown in @tbl-coin-probs. What are
+the new probabilities that the coin
+lands heads up?
+
+```{r}
+#| label: tbl-coin-probs
+#| tbl-cap: "The probability that a given person throws a coin at a particular angle and at a certain height above a table."
+#| echo: false
+
+df.coins.probs |> gt_fmt()
+```
+```{r}
+#| echo: false
+
+flat.probs <- df.coins.probs |> dplyr::select(starts_with("height_")) |> flatten() |> unlist()
+prob <- sum(flat.probs[which(flat.coins == "H")])
+```
+<div style="color:blue">
+
+We must now find a weighted average of the coin flip outcomes where the weights are provided by
+the values in @tbl-coin-probs. If we do so we find that `r paste0("$P(H) =", prob,  "$")`.
+
+</div>
+
+### Problem 2.1.3
+
+We force the coin-thrower to throw the coin at an
+angle of 45 degrees. What is the
+probability that the coin lands
+heads up?
+
+```{r}
+#| echo: false
+
+df.coins.45 <- df.coins |> filter(angle == 45) |> select(-angle) |> as.vector() |> unlist()
+df.coins.probs.45 <- df.coins.probs |> filter(angle == 45) |> select(-angle) |> as.vector() |> unlist()
+prob <- sum(df.coins.probs.45[which(df.coins.45 == "H")])/sum(df.coins.probs.45)
+```
+
+
+<div style="color:blue">
+
+We must now find a weighted average of the coin flip outcomes given that we are constrained to be in the row corresponding to 45 degrees. If we do so we find that the `r paste0("$P(H) ≈", round(prob, 2),  "$")`.
+
+</div>
+
+### Problem 2.1.4
+
+We force the coin-thrower to throw the coin at a
+height of 0.2m. What is the prob-
+ability that the coin lands heads up?
+
+```{r}
+#| echo: false
+
+df.coins.0.2 <- df.coins |> select(height_0.2) |> as.vector() |> unlist()
+df.coins.probs.0.2 <- df.coins.probs |> select(height_0.2) |> as.vector() |> unlist()
+prob <- sum(df.coins.probs.0.2[which(df.coins.0.2 == "H")])/sum(df.coins.probs.0.2)
+```
+
+<div style="color:blue">
+
+Similarly to the previous question we now constrain ourselves to be in the relevant column. Now
+we obtain `r paste0("$P(H) ≈", sprintf("%.2f", prob),  "$")`.
+
+</div>
+
+### Problem 2.1.5
+
+If we constrained
+the angle and height to be fixed,
+what would happen in repetitions
+of the same experiment?
+
+<div style="color:blue">
+The coin would always land the same way up.
+</div>
+
+### Problem 2.1.6
+
+In light of the previous question, comment on the
+Frequentist assumption of exact
+repetitions of a given experiment.
+
+<div style="color:blue">
+We cannot have exact repetition because if we did so we would always get the same result! We need
+enough variation in the throwing method to allow different outcomes but not too much variation.
+Where do we draw the line?
+</div>
+
+## Problem 2.2 Objections to Bayesianism
+
+The following criticisms of Bayesian statistics are raised in an article by Gelman [4]. Provide a
+response to each of these.
+
+### Problem 2.2.1
+
+‘As scientists we should be concerned with objective knowledge rather than
+subjective belief.’
+
+<div style="color:blue">
+As we argue in this chapter all analyses are associated with a degree of subjective knowledge.
+At least with Bayesian inference we are required to explicitly state one aspect of the analysis -
+the priors - that represent our pre-data experimental beliefs in a particular parameter set. This
+transparency is desirable and it is the job of the analyst to report if inferences are sensitive to a
+particular choice of prior. Also, (as Gelman himself indicates) priors can be highly informed from
+previous data not only from inherent subjective beliefs.
+</div>
+
+### Problem 2.2.2
+
+‘Subjective prior distributions don’t transfer well from person to person.’
+
+<div style="color:blue">
+This depends on two things: the degree to which priors are informed by previous data; and the
+variation in beliefs between people. If there is a paucity of data and little consensus over the state of
+nature then, yes, there will be significant variation in priors between people. However even though
+there may be variance in priors this does not necessarily imply variation in the posteriors. In fact,
+the more data we collect (in general) the less sensitive our inferences become to prior choices.
+</div>
+
+### Problem 2.2.3
+
+‘There’s no good objective principle for choosing a noninformative prior ...
+Where do prior distributions come from, anyway?’
+
+<div style="color:blue">
+I like Gelman’s response here: there is no objective method for choosing a likelihood!
+</div>
+
+### Problem 2.2.4
+
+A student in a class of mine: ‘If we have prior expectations of a donkey and our
+dataset is a horse then Bayesians estimate a mule.’
+
+<div style="color:blue">
+This presupposes that a mule is undesirable because of our lack of belief in it. If we were that
+certain that a mule was impossible then we could address this by setting it a zero prior beforehand.
+Also this is really a question about the validity of point estimates versus those that contain a
+measure of uncertainty. If we simply give a point estimate (perhaps the posterior mean) then it
+may be the case that we get a mule. However our uncertainty interval will no doubt contain both
+a horse and a donkey. If we were predisposed to want a horse or a donkey then we could choose an
+estimator (or likelihood) that reflects this predisposition.
+</div>
+
+### Problem 2.2.5
+
+‘Bayesian methods seem to quickly move to elaborate computation.’
+
+<div style="color:blue">
+All modern statistical methods make extensive use of computation. Perhaps peoples’ complaint
+with this method is that the time required for an applied analysis with Bayesian statistics is nondeterministic.
+</div>
+
+## Problem 2.3 Model choice
+
+
+Suppose that you have been given the data contained in `subjective_overfitShort.csv` and
+are asked to find a ‘good’ statistical model to fit the $(x , y)$ data.
+
+```{r}
+#| echo: false
+
+df <- read_csv('../data/subjective_overfitShort.csv', show_col_types = FALSE)
+df2 <- read_csv('../data/subjective_overfitLong.csv', show_col_types = FALSE, col_names = FALSE) |>
+  pivot_longer(cols=everything(), names_to = "x", values_to = "y") |> mutate(x=as.double(gsub("X", "", x)))
+```
+
+
+### Problem 2.3.1
+
+
+<div style="color:blue">
+See @fig-2.3.1. Not a great fit but given the paucity of data we probably can’t do much better.
+</div>
+
+```{r}
+#| label: fig-2.3.1
+#| fig-cap: " The data (blue) versus a linear regression line (orange) and a quintic regression line (red)."
+#| echo: false
+
+df |> ggplot(aes(x=x, y=y)) +
+  geom_point(color="blue") +
+  geom_smooth(method = "lm", se=FALSE, formula = y ~ x, color = "orange") +
+  geom_smooth(method = "lm", se=FALSE, formula = y ~ poly(x, 5), color = "red") +
+  scale_x_continuous(breaks = seq(0,10,2), limits=c(0,10)) +
+  scale_y_continuous(breaks = seq(0,25,5), minor_breaks = seq(0,25,1)) +
+  theme_classic() +
+  guides(
+    x = guide_axis(minor.ticks = TRUE),
+    y = guide_axis(minor.ticks = TRUE)
+  )
+
+```
+
+
+### Problem 2.3.2
+
+Fit a quintic (powers up to the fifth) model to the data. How does its fit compare
+to that of the linear model?
+
+<div style="color:blue">
+See @fig-2.3.1. Fitting the data more closely, but is almost certainly overfitting (see next parts of
+the question).
+</div>
+
+
+### Problem 2.3.3
+
+You are now given new data contained within `subjective_overfitLong.csv`. This contains data on 1000 replications of the same experiment, where the x values are held
+fixed. Using the least squares fits from the first part of this question, compare the performance of
+the linear regression model with that of the quintic model.
+
+```{r}
+#| echo: false
+fit <- lm(y ~ x, data = df)
+fit2 <- lm(y ~ x, data = df2)
+
+rmse <- sqrt(mean(fit$residuals^2))
+rmse2 <- sqrt(mean(fit2$residuals^2))
+```
+
+
+<div style="color:blue">
+Computing the mean squared residual for each case we have that for each of the fits,
+
+1. Simple: $\overline{RMSE} ≈$ `r round(rmse, 2)`.
+2. Complex: $\overline{RMSE} ≈$ `r round(rmse2, 2)`.
+
+And so the simple model has a greater predictive accuracy for out of sample data.
+</div>
+
+### Problem 2.3.4
+
+Which of the two models do you prefer, and why?
+
+<div style="color:blue">
+The simple one! The complex model fits the noise not the signal. It is overfit.
+</div>
