@@ -1,0 +1,572 @@
+---
+title: "Chapter 03 Problem Sets"
+format: html
+editor: visual
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+## Problem 3.1 Messy probability density
+
+Suppose that a probability density is given by the following function:
+
+$$
+f(X) =
+\begin{cases} 
+1, & \text{if } 0 \leq X < 0.5, \\
+0.2, & \text{if } 0.5 \leq X < 1, \\
+0.8(X - 1), & \text{if } 1 \leq X < 2, \\
+0, & \text{otherwise.}
+\end{cases}
+$$
+
+### Problem 3.1.1
+
+Demonstrate that the above density is a valid probability distribution.
+
+::: {style="color:blue"}
+$$
+\begin{aligned}
+\int_{-\infty}^{\infty} f(x) \, dx &= \int_{0}^{0.5} 1 \, dx + \int_{0.5}^{1} 0.2 \, dx + \int_{1}^{2} 0.8(x-1) \, dx + \int_{2}^{\infty} 0 \, dx \\
+&= [x]_{0}^{0.5} + [0.2x]_{0.5}^{1} + [0.4x^2 - 0.8x]_{1}^{2} + 0 \\
+&= (0.5 - 0) + (0.2 - 0.1) + (1.6 - 1.6 - 0.4 + 0.8) + 0 \\
+&= 0.5 + 0.1 + 0.4 \\
+&= 1.
+\end{aligned}
+$$
+:::
+
+### Problem 3.1.2
+
+What is the probability that 0.2 ≤ X ≤ 0.5?
+
+::: {style="color:blue"}
+$$
+\begin{aligned}
+P(0.2 \leq X \leq 0.5) &= \int_{0.2}^{0.5} f(x) \, dx \\
+&= \int_{0.2}^{0.5} 1 \, dx \\
+&= [x]_{0.2}^{0.5} \\
+&= 0.5 - 0.2 \\
+&= 0.3
+\end{aligned}
+$$
+:::
+
+### Problem 3.1.3
+
+Find the mean of the distribution.
+
+::: {style="color:blue"}
+$$
+\begin{aligned}
+\mathbb{E}[X] &= \int_{0}^{0.5} x \cdot 1 \, dx + \int_{0.5}^{1} x \cdot 0.2 \, dx + \int_{1}^{2} x \cdot 0.8(x-1) \, dx + \int_{2}^{\infty} x \cdot 0 \, dx \\
+&= \int_{0}^{0.5} x \, dx + 0.2 \int_{0.5}^{1} x \, dx + 0.8 \int_{1}^{2} (x^2 - x) \, dx  \\
+&= \left[\frac{x^2}{2}\right]_0^{0.5} + 0.2 \left[\frac{x^2}{2}\right]_{0.5}^{1} + 0.8 \left[\frac{x^3}{3} - \frac{x^2}{2}\right]_1^2 \\
+&= (0.125 - 0) + 0.2(0.5 - 0.125) + 0.8 (\frac{8}{3} - 2 - \frac{1}{3} + \frac{1}{2}) \\
+&= 0.125 + 0.075 + 0.\overline{6} \\
+&= 0.8\overline{6}
+\end{aligned}
+$$
+:::
+
+### Problem 3.1.4
+
+What is the median of the distribution?
+
+::: {style="color:blue"}
+This is the point at which $Pr(X < \alpha) = 0.5$, which happens to occur at $\alpha = 0.5$
+:::
+
+## Problem 3.2 Keeping it discrete
+
+Suppose that the number of heads obtained, X, in a series of N coin flips is described by a binomial distribution:
+
+$$
+Pr(X = K | \theta) = \binom{N}{K} \theta^K (1 - \theta)^{N - K},
+$$ where $\binom{N}{K} = \frac{N!}{K!(N-K)!}$ is the binomial coefficient and $\theta$ is the probability of obtaining a heads on any particular throw.
+
+## Problem 3.2.1
+
+Suppose that $\theta = 0.5$ (that is, the coin is fair). Calculate the probability of obtaining 5 heads in 10 throws.
+
+```{r}
+#| echo: false
+p <- dbinom(5,10,.5)
+```
+
+::: {style="color:blue"}
+$Pr(X = 5 \mid \theta = 0.5, N = 10) = \binom{10}{5} 0.5^5 0.5^5 \approx$ `r round(p,3)`
+:::
+
+### Problem 3.2.2
+
+Calculate the probability of obtaining fewer than 3 heads.
+
+::: {style="color:blue"}
+$Pr(X < 3 \mid \theta = 0.5, N = 10) \approx$ `r round(pbinom(2,10,.5),3)`
+:::
+
+### Problem 3.2.3
+
+Find the mean of this distribution. (You can either derive the mean of this distribution or take it as given that $\mathbb{E}(X) = N\theta$).
+
+::: {style="color:blue"}
+The mean here is given by $\mathbb{E}(X) = N\theta$ = `r 10*0.5`.
+:::
+
+### Problem 3.2.4
+
+Suppose I flip another coin $\theta = 0.2$. What is the probability that I get more than 8 heads?
+
+::: {style="color:blue"}
+$Pr(X > 8 \mid \theta = 0.2, N = 10) \approx$ `r sprintf("%.1e", 1-pbinom(8,10,.2))`
+:::
+
+### Problem 3.2.5
+
+What is the probability that I obtain fewer than 3 heads in 10 flips of the first coin, and more than 8 heads with the second?
+
+::: {style="color:blue"}
+$Pr(X_1 < 3, X_2 > 8 \mid \theta_1 = 0.5, N_1 = 10, \theta_2 = 0.2, N_2 = 10) \approx$ `r sprintf("%.1e", pbinom(2,10,.5) * (1-pbinom(8,10,.2)))`
+:::
+
+## Problem 3.3 Continuously confusing
+
+Suppose that the time that elapses before a particular component on the Space Shuttle fails can be modelled as being exponentially distributed:
+
+$$
+p(t |\lambda) = \lambda e^{− \lambda t}
+$$
+
+where $λ > 0$ is a rate parameter.
+
+### Problem 3.3.1
+
+Show that the above distribution is a valid probability density.
+
+::: {style="color:blue"}
+$$
+\int_{0}^{\infty} f(t) \, dt = \int_{0}^{\infty} \lambda e^{− \lambda t} \, dt = \left. -e^{-\lambda t} \right|_{0}^{\infty} = -(0-1) = 1 
+$$
+:::
+
+### Problem 3.3.2
+
+Find the mean of this distribution.
+
+::: {style="color:blue"}
+$$
+\mathbb{E}[T] = \int_{0}^{\infty} tf(t) \, dt = \int_{0}^{\infty} t \lambda e^{− \lambda t} \, dt 
+$$
+
+$$
+\int udv = uv - \int vdu,
+$$ where,
+
+$$
+\begin{aligned}
+u &= t \\
+dv &= \lambda e^{− \lambda t}dt
+\end{aligned}
+$$ then,
+
+$$
+\begin{aligned}
+du &= dt \\
+v &= -e^{− \lambda t}
+\end{aligned} 
+$$ so,
+
+$$
+\mathbb{E}[T] = \left. -\lambda e^{-\lambda t} \right|_{0}^{\infty} + \int_{0}^{\infty} e^{− \lambda t} \, dt =
+\left. -\lambda e^{-\lambda t} \right|_{0}^{\infty} - \left. \frac{1}{\lambda} e^{-\lambda t} \right|_{0}^{\infty} = 0 - 0 - (0-\frac{1}{\lambda}) = \frac{1}{\lambda}
+$$
+:::
+
+### Problem 3.3.3
+
+Suppose that $λ = 0.2$ per hour. Find the probability that the component fails in the first hour of flight.
+
+::: {style="color:blue"}
+$Pr(0 \le t \le 1 \mid \lambda = 0.2) \approx$ `r sprintf("%.2f", pexp(1,.2))`
+:::
+
+### Problem 3.3.4
+
+What is the probability that the component survives for the first hour but fails during the second?
+
+::: {style="color:blue"}
+$Pr(1 \le t \le 2 \mid \lambda = 0.2) \approx$ `r sprintf("%.3f", pexp(2,.2)-pexp(1,.2))`
+:::
+
+### Problem 3.3.5
+
+What is the probability that the component fails during the second hour given that it has survived the first?
+
+::: {style="color:blue"}
+$Pr(1 \le t \le 2 \mid t \ge 1, \lambda = 0.2) \approx$ `r sprintf("%.2f", (pexp(2,.2)-pexp(1,.2)) / (1-pexp(1,.2)))`
+:::
+
+### Problem 3.3.6
+
+Show that the probability of the component failing during the ( n + 1) th hour given that it has survived n hours is always 0.18.
+
+::: {style="color:blue"}
+$$
+\begin{aligned}
+Pr(t \le T) &= \int_{0}^{T} \lambda e^{− \lambda t} \, dt = \left. -e^{-\lambda t} \right|_{0}^{T} = -(e^{-\lambda t}-1) = 1 - e^{-\lambda T} \\
+Pr(T \le t \le T + 1 | t \ge T) &= \frac{\int_{T}^{T+1} \lambda e^{− \lambda t} \, dt}{1-\int_{0}^{T} \lambda e^{− \lambda t} \, dt} = \frac{\left. -e^{-\lambda t} \right|_{T}^{T+1}}{e^{-\lambda T}} =
+\frac{-e^{-\lambda (T+1)} + e^{-\lambda T}}{e^{-\lambda T}} = 1 - e^{-\lambda} = Pr(t \le 1)
+\end{aligned}
+$$
+:::
+
+## Problem 3.4 The boy or girl paradox
+
+The boy or girl paradox was first introduced by Martin Gardner in 1959. Suppose we are told the following information:
+
+### Problem 3.4.1
+
+Mr Bayes has two children. The older child is a girl. What is the probability that both children are girls?
+
+::: {style="color:blue"}
+$$
+Pr(Child_1 = G, Child_2 = G | Child_2 = G) = \frac{\frac{1}{2}\frac{1}{2}}{\frac{1}{2}} = \frac{1}{2}
+$$
+:::
+
+### Problem 3.4.2
+
+Mr Laplace has two children. At least one of the children is a girl. What is the probability that both children are girls?
+
+::: {style="color:blue"}
+$$
+Pr(Child_1 = G, Child_2 = G \mid Child_1 = G\ or\ Child_2 = G) = \frac{\frac{1}{2}\frac{1}{2}}{1-\frac{1}{2}\frac{1}{2}} = \frac{1}{3}
+$$
+:::
+
+## Problem 3.5 Planet Scrabble
+
+On a far-away planet suppose that people’s names are always two letters long, with each of these letters coming from the 26 letters of the Latin alphabet. Suppose that there are no constraints on individuals’ names, so they can be composed of two identical letters, and there is no need to include a consonant or a vowel.
+
+### Problem 3.5.1
+
+How many people would need to be gathered in one place for there to be a 50% probability that at least two of them share the same name?
+
+```{r}
+names <- 26*26
+
+no_repeat_names <- function (people) {
+  prod(names:(names-people+1))/names^people
+}
+
+p <- 1
+people <- 0
+
+while (p > 0.5) {
+  people <- people + 1
+  p <- no_repeat_names(people)
+}
+
+people
+```
+
+::: {style="color:blue"}
+people
+:::
+
+### Problem 3.5.2
+
+Suppose instead that the names are composed of three letters. Now how many people would need to be gathered in one place for there to be a 50% probability that at least two of them share the same name?
+
+```{r}
+names <- 26*26*26
+
+p <- 1
+people <- 0
+
+no_repeat_names <- function (people) {
+  exp(sum(log(names:(names-people+1))) - people*log(names))
+}
+
+while (p > 0.5) {
+  people <- people + 1
+  p <- no_repeat_names(people)
+}
+
+people
+```
+
+## Problem 3.6 Game theory
+
+A game show presents contestants with four doors: behind one of the doors is a car worth \$1000; behind another is a forfeit whereby the contestant must pay \$1000 out of their winnings thus far on the show. Behind the other two doors there is nothing. The game is played as follows:
+
+1.- The contestant chooses one of four doors. 2.- The game show host opens another door, always to reveal that there is nothing behind it. 3.- The contestant is given the option of changing their choice to one of the two remaining unopened doors. 4.- The contestant’s final choice of door is opened, to their delight (a car!), dismay (a penalty), or indifference (nothing).
+
+Assuming that:
+
+-   the contestant wants to maximise their expected wealth, and
+-   the contestant is risk-averse,
+
+what is the optimal strategy for the contestant?
+
+Initially: $p(car) = \frac{1}{4}$ $p(null) = \frac{1}{2}$ $p(penalty) = \frac{1}{4}$
+
+Stay (less varianze): $\mathbb{E}[return | stay] = \frac{1}{4}\times\$1,000 + \frac{1}{2}\times\$0 + \frac{1}{4}\times-\$1,000 = \$0$ $\mathbb{Var}[return | stay] = \mathbb{E}[(return | stay - \mathbb{E}[return | stay])^2] = \mathbb{E}[(return | stay)^2] - (\mathbb{E}[return | stay])^2 = \frac{1}{4}\times(\$1,000)^2+\frac{1}{4}\times(-\$1,000^2) = \$^2500,000$
+
+```{r}
+door <- c("car","penalty", "null", "null")
+win <- c(1000,-1000,0,0)
+
+sims <- tibble(door, win) |> slice_sample(n=100000, replace=T)
+sims |> summarize(mean = mean(win), var = var(win))
+```
+
+Change:
+
+$P(car) = \frac{1}{4}\times 0 + \frac{1}{2}\times\frac{1}{2} + \frac{1}{4}\times\frac{1}{2} = \frac{3}{8}$ $P(null) = \frac{1}{4}\times\frac{1}{2} + \frac{1}{2}\times0 + \frac{1}{4}\times\frac{1}{2} = \frac{2}{8}$ $P(penalty) = \frac{1}{4}\times\frac{1}{2} + \frac{1}{2}\times\frac{1}{2} + \frac{1}{4}\times 0 = \frac{3}{8}$
+
+$\mathbb{E}[return | change] = \frac{3}{8}\times\$1,000 + \frac{2}{8}\times\$0 + \frac{3}{8}\times-\$1,000 = \$0$ $\mathbb{Var}[return | stay] = \frac{3}{8}\times\$(1,000)^2 + \frac{2}{8}\times\$0 + \frac{3}{8}\times(-\$1,000)^2 = \$^2750,000$
+
+```{r}
+door <- c("car","penalty", "null")
+win <- c(1000,-1000,0)
+prob <- c(1/4,1/4,1/2)
+
+doors <- tibble(door, win, prob)
+
+doors |> select(first=door) |> slice_sample(n=10000, replace=T, weight_by = prob) |> rowwise() |>
+  mutate(second=case_when(
+    first == "car" ~ sample(c("penalty", "null"),1),
+    first == "penalty" ~ sample(c("car", "null"),1),
+    .default = sample(c("car","penalty"),1)
+  )) |> ungroup() |> left_join(doors, by=c(second = "door")) |>
+summarize(mean = mean(win), var = var(win))
+```
+
+
+## Problem 3.7 Blood doping in cyclists
+
+Suppose, as a benign omniscient observer, we tally up the historical cases where professional
+cyclists either used or did not use blood doping, and either won or lost a particular race. This
+results in the probability distribution shown in @tbl-coin-cyclists.
+
+```{r}
+#| label: tbl-coin-cyclists
+#| tbl-cap: "The historical probabilities of behaviour and outcome for professional cyclists."
+#| echo: false
+
+
+cyclists <- expand.grid(case = c("Clean", "Doping"), race=c("Lost", "Won")) |> mutate(prob=c(.7, .15, .05, .1))
+
+cyclists |> pivot_wider(id_cols=case, names_from = race, values_from=prob) |> gt() |>
+  cols_label(case = "")
+```
+
+### Problem 3.7.1
+
+What is the probability that a professional cyclist wins a race?
+
+```{r}
+cyclists |> filter(race == "Won") |>  summarize(p=sum(prob)) |> pluck("p")
+```
+### Problem 3.7.2
+
+What is the probability that a cyclist wins a race, given that they have cheated?
+
+```{r}
+cyclists |> filter(case == "Doping") |>  mutate(p=prob/sum(prob)) |> filter(race == "Won") |> pluck("p")
+```
+
+### Problem 3.7.3
+
+What is the probability that a cyclist is cheating, given that they win?
+
+```{r}
+cyclists |> filter(race == "Won") |>  mutate(p=prob/sum(prob)) |> filter(case == "Doping") |> pluck("p")
+```
+
+Now suppose that drug testing officials
+have a test that can accurately identify a
+blood-doper 90% of the time. However, it
+incorrectly indicates a positive for clean athletes 5% of the time.
+
+### Problem 3.7.4
+
+If the officials care only
+about the proportion of people correctly
+identified as dopers, should they test all the
+athletes or only the winners?
+
+```{r}
+p_positive_given_doping = .9
+p_positive_given_clean = .05
+
+p_doping <- cyclists |> filter(case == "Doping") |>  summarize(p=sum(prob)) |> pluck("p")
+p_positive <- p_positive_given_doping * p_doping + p_positive_given_clean * (1 - p_doping)
+(p_doping_given_positive = p_positive_given_doping * p_doping / p_positive)
+```
+```{r}
+p_positive_given_doping = .9
+p_positive_given_clean = .05
+
+p_winner_given_doping <- cyclists |> filter(case == "Doping") |>  mutate(p=prob/sum(prob)) |> filter(race == "Won") |> pluck("p")
+p_positive_doping <- p_positive_given_doping * p_doping
+p_winner <- cyclists |> filter(race == "Won") |>  summarize(p=sum(prob)) |> pluck("p")
+(p_positive_doping_given_winner <- p_winner_given_doping * p_positive_doping / p_winner)
+```
+```{r}
+p_doping_given_winner <- cyclists |> filter(race == "Won") |>  mutate(p=prob/sum(prob)) |> filter(case == "Doping") |> pluck("p")
+p_positive_doping_given_winner <- p_positive_given_doping * p_doping_given_winner
+
+p_clean_given_winner <- 1 -p_doping_given_winner 
+
+p_positive_clean_given_winner <- p_positive_given_clean * p_clean_given_winner
+
+(p_positive_given_winner <- p_positive_doping_given_winner + p_positive_clean_given_winner  )
+```
+
+```{r}
+(p_doping_given_positive_winner <- p_positive_doping_given_winner /  p_positive_given_winner)
+```
+
+### Problem 3.7.5
+
+If the officials care five times as much about the number of people who are
+falsely identified as they do about the number of people who are correctly identified as dopers,
+should they test all the athletes or only the winners?
+
+TODO
+
+### Problem 3.7.6
+
+What factor would make the officials choose the other group? (By factor, we
+mean the number 5 in the previous problem.)
+
+TODO
+
+## Problem 3.8 Breast cancer revisited
+
+Suppose that the prevalence of breast cancer for a randomly chosen 40-year-old woman in the
+UK population is about 1%. Further suppose that mammography has a relatively high sensitivity
+to breast cancer, where in 90% of cases the test shows a positive result if the individual has the
+disease. However, the test also has a rate of false positives of 8%.
+
+Problem 3.8.1
+
+Show that the probability that a woman tests positive is about 9%.
+
+```{r}
+p_cancer = .01
+p_positive_given_cancer = .9
+p_positive_given_healthy = .08
+
+(p_positive <- p_positive_given_cancer * p_cancer + p_positive_given_healthy * (1 - p_cancer))
+```
+
+# Problem 3.8.2
+
+A woman tests positive for breast cancer. What is the probability she has the disease?
+
+```{r}
+(p_cancer_given_positive <- p_positive_given_cancer * p_cancer / p_positive)
+```
+
+### Problem 3.8.3
+
+Draw a graph of the probability of having a disease, given a positive test, as a
+function of (a) the test sensitivity (true positive rate) (b) the false positive rate, and (c) the disease
+prevalence. Draw graphs (a) and (b) for a rare (1% prevalence) and a common (10% prevalence)
+disease. What do these graphs imply about the relative importance of the various characteristics
+of medical tests?
+
+```{r}
+#| label: fig-cancer
+#| fig-cap: "A plot of the probability of disease given a positive test result as a function of a. test sensitivity, b. the false positive rate for rare (blue) and common (orange) diseases, and c. the disease prevalence. For rare diseases we assume prevalence is 1%, and for common ones we assume 10% prevalence. For the right hand plot we assume a sensitivity of 90% and a specificity of 92%"
+#| echo: false
+
+cancer.df <- expand_grid(type=factor(c("sensitivity", "1 - specificity", "prevalence"), levels=c("sensitivity", "1 - specificity", "prevalence")), prevalence=c(.01,.1), p=seq(0,1,0.01)) |>
+  mutate(
+    p_positive = case_when(
+        type == "sensitivity" ~ p*prevalence + p_positive_given_healthy*(1-prevalence),
+        type == "1 - specificity" ~ p_positive_given_cancer*prevalence + p*(1-prevalence),
+        type == "prevalence" ~ p_positive_given_cancer*p + p_positive_given_healthy*(1-p)
+    ),
+    p_cancer_given_positive = case_when(
+        type == "sensitivity" ~ p*prevalence / p_positive,
+        type == "1 - specificity" ~ p_positive_given_cancer*prevalence / p_positive, 
+        type == "prevalence" ~ p_positive_given_cancer*p / p_positive
+    )
+)
+
+cancer.df |> ggplot() +
+  facet_grid(cols=vars(type)) +
+  geom_line(aes(x=p, y=p_cancer_given_positive, color=factor(prevalence))) + 
+  labs(y = "probability of cancer given positive") + 
+  theme_classic() +
+  theme(legend.position = "none")
+```
+### Problem 3.8.4
+
+Assume the result of a mammography is independent when retesting an individual (probably a terrible assumption!). How many tests (assume a positive result in each) would
+need to be undertaken to ensure that the individual has a 99% probability that they have cancer?
+
+```{r}
+#| label: fig-cancer2
+#| fig-cap: "A plot of the probability of cancer as a function of the number of positive tests."
+#| echo: false
+
+p_positive_and_positive <- p_positive_given_cancer * p_positive_given_cancer  * p_cancer + p_positive_given_healthy * p_positive_given_healthy * (1 - p_cancer)
+
+p_cancer_given_positive_and_positive <- p_positive_given_cancer * p_positive_given_cancer  * p_cancer / p_positive_and_positive
+
+
+p_cancer_given_multiple_positives <- function (times) {
+  p_positive_given_cancer ^ times * p_cancer / (p_positive_given_cancer ^ times * p_cancer + p_positive_given_healthy ^ times * (1 - p_cancer))
+}
+
+tibble(x=0:10, p = p_cancer_given_multiple_positives(x)) |> ggplot() +
+  geom_point(aes(x=x, y=p), color = "blue") +
+  geom_hline(aes(yintercept=.99), color="red", linetype = "dashed") +
+  scale_x_continuous(breaks = 0:10, limits=c(0,10)) +
+  labs(y = "probability of cancer", x = "number of tests") +
+  theme_classic()
+```
+### Problem 3.8.5
+
+Now we make the more realistic assumption that the probability of testing positive in the $nth$ trial depends on whether positive tests were achieved in the $( n − 1) th$status $κ ∈ \{ C , NC \}$ :
+
+$$
+p ( n + | ( n − 1) + , κ ) = 1 − (1 − p ( + | κ )) e ^{− ( n − 1)\epsilon} ,
+$$
+
+where $n +$ denotes testing positive in the nth trial, $p( + | κ )$ and $\epsilon ≥ 0$ determine the persistence
+in test results. Assume that $p( + | C ) = 0.9$ and $p( + | NC ) = 0.08$ . For $\epsilon = 0.15$ show that we now
+need at least $17$ positive test results to conclude with $99%$ probability that a patient has cancer.
+
+```{r}
+#| label: fig-cancer3
+#| fig-cap:  A plot of the probability of cancer as a function of the number of tests when we allow for persistence in the test results.
+#| echo: false
+
+p_cancer_given_multiple_positives <- Vectorize(function (times, epsilon=.15) {
+  prod(1 - (1-p_positive_given_cancer)*exp(-(1:times-1)*epsilon))*p_cancer /(
+    prod(1 - (1-p_positive_given_cancer)*exp(-(1:times-1)*epsilon))*p_cancer +
+    prod(1 - (1-p_positive_given_healthy)*exp(-(1:times-1)*epsilon))*(1-p_cancer)
+  )
+})
+
+tibble(x=1:20, p = p_cancer_given_multiple_positives(x)) |> ggplot() +
+  geom_point(aes(x=x, y=p), color = "blue") +
+  geom_hline(aes(yintercept=.99), color="red", linetype = "dashed") +
+  scale_x_continuous(breaks = 1:20, limits=c(0,20)) +
+  labs(y = "probability of cancer", x = "number of tests") +
+  theme_classic()
+```
+
