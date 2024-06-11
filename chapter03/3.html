@@ -313,6 +313,7 @@ Pr(Child_1 = G, Child_2 = G \mid Child_1 = G\ or\ Child_2 = G) = \frac{\frac{1}{
 <section id="problem-3.5.1" class="level3">
 <h3 class="anchored" data-anchor-id="problem-3.5.1">Problem 3.5.1</h3>
 <p>How many people would need to be gathered in one place for there to be a 50% probability that at least two of them share the same name?</p>
+<div style="color:blue">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>names <span class="ot">&lt;-</span> <span class="dv">26</span><span class="sc">*</span><span class="dv">26</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -333,13 +334,12 @@ Pr(Child_1 = G, Child_2 = G \mid Child_1 = G\ or\ Child_2 = G) = \frac{\frac{1}{
 <pre><code>[1] 31</code></pre>
 </div>
 </div>
-<div style="color:blue">
-<p>people</p>
 </div>
 </section>
 <section id="problem-3.5.2" class="level3">
 <h3 class="anchored" data-anchor-id="problem-3.5.2">Problem 3.5.2</h3>
 <p>Suppose instead that the names are composed of three letters. Now how many people would need to be gathered in one place for there to be a 50% probability that at least two of them share the same name?</p>
+<div style="color:blue">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>names <span class="ot">&lt;-</span> <span class="dv">26</span><span class="sc">*</span><span class="dv">26</span><span class="sc">*</span><span class="dv">26</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -360,6 +360,7 @@ Pr(Child_1 = G, Child_2 = G \mid Child_1 = G\ or\ Child_2 = G) = \frac{\frac{1}{
 <pre><code>[1] 157</code></pre>
 </div>
 </div>
+</div>
 </section>
 </section>
 <section id="problem-3.6-game-theory" class="level2">
@@ -372,6 +373,7 @@ Pr(Child_1 = G, Child_2 = G \mid Child_1 = G\ or\ Child_2 = G) = \frac{\frac{1}{
 <li>the contestant is risk-averse,</li>
 </ul>
 <p>what is the optimal strategy for the contestant?</p>
+<div style="color:blue">
 <p>Initially: <span class="math inline">\(p(car) = \frac{1}{4}\)</span> <span class="math inline">\(p(null) = \frac{1}{2}\)</span> <span class="math inline">\(p(penalty) = \frac{1}{4}\)</span></p>
 <p>Stay (less varianze): <span class="math inline">\(\mathbb{E}[return | stay] = \frac{1}{4}\times\$1,000 + \frac{1}{2}\times\$0 + \frac{1}{4}\times-\$1,000 = \$0\)</span> <span class="math inline">\(\mathbb{Var}[return | stay] = \mathbb{E}[(return | stay - \mathbb{E}[return | stay])^2] = \mathbb{E}[(return | stay)^2] - (\mathbb{E}[return | stay])^2 = \frac{1}{4}\times(\$1,000)^2+\frac{1}{4}\times(-\$1,000^2) = \$^2500,000\)</span></p>
 <div class="cell">
@@ -384,7 +386,7 @@ Pr(Child_1 = G, Child_2 = G \mid Child_1 = G\ or\ Child_2 = G) = \frac{\frac{1}{
 <pre><code># A tibble: 1 × 2
    mean     var
   &lt;dbl&gt;   &lt;dbl&gt;
-1  4.75 502592.</code></pre>
+1  1.48 499603.</code></pre>
 </div>
 </div>
 <p>Change:</p>
@@ -408,7 +410,8 @@ Pr(Child_1 = G, Child_2 = G \mid Child_1 = G\ or\ Child_2 = G) = \frac{\frac{1}{
 <pre><code># A tibble: 1 × 2
    mean     var
   &lt;dbl&gt;   &lt;dbl&gt;
-1  13.8 746284.</code></pre>
+1  -4.2 750857.</code></pre>
+</div>
 </div>
 </div>
 </section>
@@ -423,23 +426,23 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
 </figcaption>
 <div aria-describedby="tbl-coin-cyclists-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="vylytvirof" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vylytvirof table {
+<div id="iuzccsldde" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#iuzccsldde table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vylytvirof thead, #vylytvirof tbody, #vylytvirof tfoot, #vylytvirof tr, #vylytvirof td, #vylytvirof th {
+#iuzccsldde thead, #iuzccsldde tbody, #iuzccsldde tfoot, #iuzccsldde tr, #iuzccsldde td, #iuzccsldde th {
   border-style: none;
 }
 
-#vylytvirof p {
+#iuzccsldde p {
   margin: 0;
   padding: 0;
 }
 
-#vylytvirof .gt_table {
+#iuzccsldde .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -465,12 +468,12 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-left-color: #D3D3D3;
 }
 
-#vylytvirof .gt_caption {
+#iuzccsldde .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vylytvirof .gt_title {
+#iuzccsldde .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -482,7 +485,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-bottom-width: 0;
 }
 
-#vylytvirof .gt_subtitle {
+#iuzccsldde .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -494,7 +497,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-top-width: 0;
 }
 
-#vylytvirof .gt_heading {
+#iuzccsldde .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -506,13 +509,13 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-right-color: #D3D3D3;
 }
 
-#vylytvirof .gt_bottom_border {
+#iuzccsldde .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vylytvirof .gt_col_headings {
+#iuzccsldde .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -527,7 +530,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-right-color: #D3D3D3;
 }
 
-#vylytvirof .gt_col_heading {
+#iuzccsldde .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -547,7 +550,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   overflow-x: hidden;
 }
 
-#vylytvirof .gt_column_spanner_outer {
+#iuzccsldde .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -559,15 +562,15 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   padding-right: 4px;
 }
 
-#vylytvirof .gt_column_spanner_outer:first-child {
+#iuzccsldde .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vylytvirof .gt_column_spanner_outer:last-child {
+#iuzccsldde .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vylytvirof .gt_column_spanner {
+#iuzccsldde .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -579,11 +582,11 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   width: 100%;
 }
 
-#vylytvirof .gt_spanner_row {
+#iuzccsldde .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vylytvirof .gt_group_heading {
+#iuzccsldde .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -609,7 +612,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   text-align: left;
 }
 
-#vylytvirof .gt_empty_group_heading {
+#iuzccsldde .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -624,15 +627,15 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   vertical-align: middle;
 }
 
-#vylytvirof .gt_from_md > :first-child {
+#iuzccsldde .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vylytvirof .gt_from_md > :last-child {
+#iuzccsldde .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vylytvirof .gt_row {
+#iuzccsldde .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -651,7 +654,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   overflow-x: hidden;
 }
 
-#vylytvirof .gt_stub {
+#iuzccsldde .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -664,7 +667,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   padding-right: 5px;
 }
 
-#vylytvirof .gt_stub_row_group {
+#iuzccsldde .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -678,15 +681,15 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   vertical-align: top;
 }
 
-#vylytvirof .gt_row_group_first td {
+#iuzccsldde .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vylytvirof .gt_row_group_first th {
+#iuzccsldde .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vylytvirof .gt_summary_row {
+#iuzccsldde .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -696,16 +699,16 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   padding-right: 5px;
 }
 
-#vylytvirof .gt_first_summary_row {
+#iuzccsldde .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vylytvirof .gt_first_summary_row.thick {
+#iuzccsldde .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vylytvirof .gt_last_summary_row {
+#iuzccsldde .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -715,7 +718,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-bottom-color: #D3D3D3;
 }
 
-#vylytvirof .gt_grand_summary_row {
+#iuzccsldde .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -725,7 +728,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   padding-right: 5px;
 }
 
-#vylytvirof .gt_first_grand_summary_row {
+#iuzccsldde .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -735,7 +738,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-top-color: #D3D3D3;
 }
 
-#vylytvirof .gt_last_grand_summary_row_top {
+#iuzccsldde .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -745,11 +748,11 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-bottom-color: #D3D3D3;
 }
 
-#vylytvirof .gt_striped {
+#iuzccsldde .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vylytvirof .gt_table_body {
+#iuzccsldde .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -758,7 +761,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-bottom-color: #D3D3D3;
 }
 
-#vylytvirof .gt_footnotes {
+#iuzccsldde .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -772,7 +775,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-right-color: #D3D3D3;
 }
 
-#vylytvirof .gt_footnote {
+#iuzccsldde .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -781,7 +784,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   padding-right: 5px;
 }
 
-#vylytvirof .gt_sourcenotes {
+#iuzccsldde .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -795,7 +798,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   border-right-color: #D3D3D3;
 }
 
-#vylytvirof .gt_sourcenote {
+#iuzccsldde .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -803,63 +806,63 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
   padding-right: 5px;
 }
 
-#vylytvirof .gt_left {
+#iuzccsldde .gt_left {
   text-align: left;
 }
 
-#vylytvirof .gt_center {
+#iuzccsldde .gt_center {
   text-align: center;
 }
 
-#vylytvirof .gt_right {
+#iuzccsldde .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vylytvirof .gt_font_normal {
+#iuzccsldde .gt_font_normal {
   font-weight: normal;
 }
 
-#vylytvirof .gt_font_bold {
+#iuzccsldde .gt_font_bold {
   font-weight: bold;
 }
 
-#vylytvirof .gt_font_italic {
+#iuzccsldde .gt_font_italic {
   font-style: italic;
 }
 
-#vylytvirof .gt_super {
+#iuzccsldde .gt_super {
   font-size: 65%;
 }
 
-#vylytvirof .gt_footnote_marks {
+#iuzccsldde .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vylytvirof .gt_asterisk {
+#iuzccsldde .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vylytvirof .gt_indent_1 {
+#iuzccsldde .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vylytvirof .gt_indent_2 {
+#iuzccsldde .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vylytvirof .gt_indent_3 {
+#iuzccsldde .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vylytvirof .gt_indent_4 {
+#iuzccsldde .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vylytvirof .gt_indent_5 {
+#iuzccsldde .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -895,30 +898,36 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
 <section id="problem-3.7.1" class="level3">
 <h3 class="anchored" data-anchor-id="problem-3.7.1">Problem 3.7.1</h3>
 <p>What is the probability that a professional cyclist wins a race?</p>
+<div style="color:blue">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cyclists <span class="sc">|&gt;</span> <span class="fu">filter</span>(race <span class="sc">==</span> <span class="st">"Won"</span>) <span class="sc">|&gt;</span>  <span class="fu">summarize</span>(<span class="at">p=</span><span class="fu">sum</span>(prob)) <span class="sc">|&gt;</span> <span class="fu">pluck</span>(<span class="st">"p"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.15</code></pre>
 </div>
 </div>
+</div>
 </section>
 <section id="problem-3.7.2" class="level3">
 <h3 class="anchored" data-anchor-id="problem-3.7.2">Problem 3.7.2</h3>
 <p>What is the probability that a cyclist wins a race, given that they have cheated?</p>
+<div style="color:blue">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cyclists <span class="sc">|&gt;</span> <span class="fu">filter</span>(case <span class="sc">==</span> <span class="st">"Doping"</span>) <span class="sc">|&gt;</span>  <span class="fu">mutate</span>(<span class="at">p=</span>prob<span class="sc">/</span><span class="fu">sum</span>(prob)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(race <span class="sc">==</span> <span class="st">"Won"</span>) <span class="sc">|&gt;</span> <span class="fu">pluck</span>(<span class="st">"p"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.4</code></pre>
 </div>
 </div>
+</div>
 </section>
 <section id="problem-3.7.3" class="level3">
 <h3 class="anchored" data-anchor-id="problem-3.7.3">Problem 3.7.3</h3>
 <p>What is the probability that a cyclist is cheating, given that they win?</p>
+<div style="color:blue">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cyclists <span class="sc">|&gt;</span> <span class="fu">filter</span>(race <span class="sc">==</span> <span class="st">"Won"</span>) <span class="sc">|&gt;</span>  <span class="fu">mutate</span>(<span class="at">p=</span>prob<span class="sc">/</span><span class="fu">sum</span>(prob)) <span class="sc">|&gt;</span> <span class="fu">filter</span>(case <span class="sc">==</span> <span class="st">"Doping"</span>) <span class="sc">|&gt;</span> <span class="fu">pluck</span>(<span class="st">"p"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6666667</code></pre>
+</div>
 </div>
 </div>
 <p>Now suppose that drug testing officials have a test that can accurately identify a blood-doper 90% of the time. However, it incorrectly indicates a positive for clean athletes 5% of the time.</p>
@@ -926,6 +935,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
 <section id="problem-3.7.4" class="level3">
 <h3 class="anchored" data-anchor-id="problem-3.7.4">Problem 3.7.4</h3>
 <p>If the officials care only about the proportion of people correctly identified as dopers, should they test all the athletes or only the winners?</p>
+<div style="color:blue">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p_positive_given_doping <span class="ot">=</span> .<span class="dv">9</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>p_positive_given_clean <span class="ot">=</span> .<span class="dv">05</span></span>
@@ -968,16 +978,21 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
 <pre><code>[1] 0.972973</code></pre>
 </div>
 </div>
+</div>
 </section>
 <section id="problem-3.7.5" class="level3">
 <h3 class="anchored" data-anchor-id="problem-3.7.5">Problem 3.7.5</h3>
 <p>If the officials care five times as much about the number of people who are falsely identified as they do about the number of people who are correctly identified as dopers, should they test all the athletes or only the winners?</p>
+<div style="color:blue">
 <p>TODO</p>
+</div>
 </section>
 <section id="problem-3.7.6" class="level3">
 <h3 class="anchored" data-anchor-id="problem-3.7.6">Problem 3.7.6</h3>
 <p>What factor would make the officials choose the other group? (By factor, we mean the number 5 in the previous problem.)</p>
+<div style="color:blue">
 <p>TODO</p>
+</div>
 </section>
 </section>
 <section id="problem-3.8-breast-cancer-revisited" class="level2">
@@ -985,6 +1000,7 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
 <p>Suppose that the prevalence of breast cancer for a randomly chosen 40-year-old woman in the UK population is about 1%. Further suppose that mammography has a relatively high sensitivity to breast cancer, where in 90% of cases the test shows a positive result if the individual has the disease. However, the test also has a rate of false positives of 8%.</p>
 <p>Problem 3.8.1</p>
 <p>Show that the probability that a woman tests positive is about 9%.</p>
+<div style="color:blue">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p_cancer <span class="ot">=</span> .<span class="dv">01</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>p_positive_given_cancer <span class="ot">=</span> .<span class="dv">9</span></span>
@@ -995,14 +1011,17 @@ Table&nbsp;1: The historical probabilities of behaviour and outcome for professi
 <pre><code>[1] 0.0882</code></pre>
 </div>
 </div>
+</div>
 </section>
 <section id="problem-3.8.2" class="level1">
 <h1>Problem 3.8.2</h1>
 <p>A woman tests positive for breast cancer. What is the probability she has the disease?</p>
+<div style="color:blue">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(p_cancer_given_positive <span class="ot">&lt;-</span> p_positive_given_cancer <span class="sc">*</span> p_cancer <span class="sc">/</span> p_positive)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.1020408</code></pre>
+</div>
 </div>
 </div>
 <section id="problem-3.8.3" class="level3">

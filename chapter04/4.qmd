@@ -1,0 +1,367 @@
+---
+title: "Problem sets"
+format: html
+editor: visual
+warning: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+## Problem 4.1 Blog blues
+
+Suppose that visits to your newly launched blog occur sporadically. Imagine you are interested in
+the length of time between consecutive first-time visits to your homepage. You collect the time
+data for a random sample of 50 visits to your blog for a particular time period and day, and you
+decide to build a statistical model to fit the data.
+
+## Problem 4.1.1
+
+What assumptions might you make about the first-time visits?
+
+::: {style="color:blue"}
+Assume visits occur continuously at a constant rate and independently of one another.
+:::
+
+### Problem 4.1.2
+
+What might be an appropriate probability model for the time between visits?
+
+::: {style="color:blue"}
+If the number of visits is Poisson distributed (which it is if we have the above assumptions) then the time between the events is exponentially distributed.
+:::
+
+### Problem 4.1.3
+
+Using your chosen probability distribution from the previous part, algebraically derive the maximum likelihood estimate (MLE) of the mean.
+
+::: {style="color:blue"}
+Exponential:
+
+$$
+p(X = t) = \lambda e^{-\lambda t}
+$$
+where:
+
+$\lambda >0$, $t >=0$
+
+so:
+
+$$
+\begin{aligned}
+\mathcal{L}(t_1, t_2, \ldots, t_T | \lambda) &= \prod_{i=1}^{T} \lambda e^{-\lambda t_i} \\
+\log \mathcal{L}(t_1, t_2, \ldots, t_T | \lambda) &= \sum_{i=1}^{T} \left( \log \lambda - \lambda t_i \right) = T\log\lambda - \lambda T \bar{t}\\
+\frac{\partial}{\partial\lambda} \log \mathcal{L}(t_1, t_2, \ldots, t_T | \lambda) &= \frac{\partial}{\partial\lambda} T \log \lambda - \lambda T \bar{t} = \frac{T}{\lambda}-T\bar{t}  \\
+\hat\lambda & = \max \mathcal{L}(t_1, t_2, \ldots, t_T | \lambda) = \frac{1}{\bar t}
+\end{aligned}
+$$
+:::
+
+### Problem 4.1.4
+
+You collect data from Google Analytics that contains the time (in minutes)
+between each visit for a sample of 50 randomly chosen visits to your blog. The data set is
+called `likelihood_blogVisits.csv`. Derive an estimate for the mean number of visits
+per minute.
+
+::: {style="color:blue"}
+```{r}
+df <- read_csv('../data/likelihood_blogVisits.csv', col_names = c("times")) 
+
+(lambda_hat <-1 / mean(df$times))
+```
+
+:::
+
+Problem 4.1.5
+
+Graph the log-likelihood near the MLE. Why do we not plot the likelihood?
+
+::: {style="color:blue"}
+
+@fig-visits shows this plot. We don’t plot the likelihood as it is far too small for moderately-sized
+datasets.
+
+```{r}
+#| label: fig-visits
+#| fig-cap: "A plot of the log likelihood for the exponential model for blog visits. The maximum likelihood estimate is shown in red."
+#| echo: false
+#| 
+logLik <- function(lambda) {
+  length(df$times)*log(lambda)-lambda*sum(df$times)
+}
+
+logLiks.df <- tibble(lambda = seq(0.01,10,0.01), logLik = logLik(lambda))
+
+logLiks.df |> ggplot() +
+  geom_line(aes(x = lambda, y = logLik), color = "blue") +
+  annotate(x=lambda_hat, y=logLik(lambda_hat), color="red", geom="point") +
+  labs(x = "mean number of visits per minute", y="log-likelihood") +
+  scale_x_continuous(breaks = seq(0,10,2), limits=c(0,10), minor_breaks = seq(0,10,.25)) +
+  theme_classic() +
+  guides(
+    x = guide_axis(minor.ticks = TRUE),
+    y = guide_axis(minor.ticks = TRUE)
+  )
+```
+:::
+
+### Problem 4.1.6
+
+Estimate 95% confidence intervals around your estimate of the mean visit rate.
+
+::: {style="color:blue"}
+```{r}
+quantile(replicate(100, df |> slice_sample(n = nrow(df), replace = TRUE) |> summarise(lambda_hat = 1/mean(times)) |> pluck("lambda_hat")), probs=c(0.25, 0.975))
+```
+:::
+
+### Problem 4.1.7
+
+What does this interval mean?
+
+::: {style="color:blue"}
+If we repeatedly sampled from the population (an infinite number of times) and for each sample
+constructed the 95% confidence interval, then 95% of those hypothetical samples would contain the
+true parameter value.
+:::
+
+### Problem 4.1.8
+
+Using your maximum likelihood estimate, what is the probability you will wait:
+(a) 1 minute or more,
+(b) 5 minutes or more,
+(c) half an hour or more
+before your next visit?
+
+::: {style="color:blue"}
+```{r}
+c( 
+  "(a) 1 minute or more" = 1 - pexp(1, lambda_hat),
+  "(b) 5 minutes or more" = 1 - pexp(5, lambda_hat),
+  "(c) half an hour or more" = 1 - pexp(30, lambda_hat)
+)
+```
+:::
+
+### Problem 4.1.9
+
+Evaluate your model.
+
+::: {style="color:blue"}
+One way to evaluate your model is to compare real data with that which you simulate from the
+exponential model at the maximum likelihood estimate of the rate parameter (see @fig-visits-hist). When
+we do this we see that the exponential model is clearly unable to generate the upper extremes that
+we see in the real data.
+```{r}
+#| label: fig-visits-hist
+#| fig-cap: "Real and fake data simulated from the exponential model using the maximum likelihood estimates of the parameter."
+#| echo: false
+ggplot() +
+  geom_histogram(data=data.frame(times=rexp(50,rate=lambda_hat)), aes(x=times, fill="generated"), breaks = seq(0,5, by = .5), color="black") +
+  geom_histogram(data=df, aes(x=times, fill="real"), color="black", breaks = seq(0,5, by = .5), group ="real", alpha=0.4) +
+  scale_x_continuous(breaks = seq(0,5,1), limits=c(0,5), minor_breaks = seq(0,5,.25)) +
+  scale_y_continuous(minor_breaks = seq(0,30,1)) +
+  scale_fill_manual(name = "", 
+                    values = c("real" = "blue", "generated" = "orange"),
+                    labels = c("real" = "Real", "generated" = "Exponential model generated")) +
+  labs(x="time interval between visits, minutes", y="frequency") +
+  theme_classic() +
+  guides(
+    x = guide_axis(minor.ticks = TRUE),
+    y = guide_axis(minor.ticks = TRUE)
+  )
+```
+
+:::
+
+### Problem 4.1.10
+
+Can you think of a better model to use? What assumptions are relaxed in this
+model?
+
+::: {style="color:blue"}
+The Poisson is to the exponential what the negative binomial is to the generalised Pareto type 2
+distribution ([see](https://stats.stackexchange.com/questions/37814/poisson-is-to-exponential-as-gamma-poisson-is-to-what))
+
+The events for the negative binomial distribution are no longer constrained to be independent.
+:::
+
+### Problem 4.1.11
+
+Estimate the parameters of your new model, and hence estimate the mean
+number of website visits per minute.
+
+::: {style="color:blue"}
+PDF Pareto
+
+$$
+p(t|\alpha,beta) = \frac{\alpha \left( \frac{\beta + t}{\beta} \right)^{-\alpha-1} }{\beta}
+$$
+TODO
+:::
+
+### Problem 4.1.12
+
+Use your new model to estimate the probability that you will wait:
+(a) 1 minute or more,
+(b) 5 minutes or more,
+(c) half an hour or more
+before your next visit.
+
+::: {style="color:blue"}
+TODO
+:::
+
+
+### Problem 4.2 Violent crime counts in New York counties
+
+In data file `likelihood_NewYorkCrimeUnemployment.csv` is a data set of the population,
+violent crime count and unemployment across New York counties in 2014 (openly available from
+the New York Criminal Justice website).
+
+### Problem 4.2.1
+
+Graph the violent crime count against population size across all the counties.
+What type of relationship does this suggest?
+
+::: {style="color:blue"}
+
+A strong linear relationship (see @fig-crime).
+```{r}
+#| label: fig-crime
+#| fig-cap: "Population versus violent crime counts for New York counties in 2014."
+#| echo: false
+
+df <- read_csv('../data/likelihood_NewYorkCrimeUnemployment.csv') 
+
+df |> ggplot() +
+  geom_point(aes(x=Population, y=Violent_crime_count), color="blue") +
+  labs(y="Violent crime count in 2014") +
+  theme_classic()
+```
+
+:::
+
+### Problem 4.2.2
+
+A simple model here might be to assume that the crime count in a particular
+county is related to the population size by a Poisson model:
+$$
+crime_i \sim  Poisson ( n_i θ ),
+$$
+where $crime_i$ and $n_i$ are the crime count and population in $county_i$. Write down an expression
+for the likelihood.
+
+
+::: {style="color:blue"}
+Assuming conditional independence between the pairs of observations ($crime_i$, $n_i$),
+
+$$
+p(\{ \text{crime}_1, n_1 \}, \ldots, \{ \text{crime}_N, n_N \} | \theta) = \prod_{i=1}^{N} \frac{(n_i \theta)^{\text{crime}_i} e^{-n_i \theta}}{\text{crime}_i!}
+$$
+:::
+
+### Problem 4.2.3
+
+Find the maximum likelihood estimators of the parameters.
+
+
+::: {style="color:blue"}
+It's easiest to start by working with the log-likelihood,
+
+$$
+\begin{aligned}
+\log p &= \sum_{i=1}^{N} \left[ \text{crime}_i \log (n_i \theta) - n_i \theta - \log \text{crime}_i! \right] \\
+&= -N \bar{n} \theta + \sum_{i=1}^{N} \text{crime}_i \log (n_i \theta) + \text{const}.
+\end{aligned}
+$$
+We then differentiate this expression,
+
+$$
+\frac{\partial \log p}{\partial \theta} = -N \bar{n} + \frac{1}{\theta} N \overline{\text{crime}} = 0,
+
+$$
+$$
+\bar{\theta} = \frac{\overline{crime}}{\bar{n}},
+$$
+
+which is the sample average violent crime count per capita.
+
+```{r}
+(theta_hat <- df |> summarize(theta_hat = mean(Violent_crime_count)/mean(Population)) |> pluck("theta_hat"))
+```
+:::
+
+### Problem 4.2.4
+
+By generating fake data, assess this model.
+
+::: {style="color:blue"}
+
+One way to compare the real and fake data across all counties is to look at the per capita crime
+rates (see @fig-crime-hist). We see that the variation in the real data is much greater than that we have
+in the fake, and hence our model is quite weak.
+
+```{r}
+#| label: fig-crime-hist
+#| fig-cap: "The per capita violent crime rate for New York counties in 2014 for the real and Poisson model generated datasets."
+#| echo: false
+
+
+df <- df |> mutate(per_capita_crime_rate = Violent_crime_count / Population * 100)
+df$generated_per_capita_crime_rate <- sapply(df$Population, function(population) {rpois(1, theta_hat * population)/population*100}) 
+
+
+df |> ggplot() +
+ geom_histogram(aes(x=generated_per_capita_crime_rate, fill="generated"), breaks = seq(0,1, by = .1), color="black") +
+  geom_histogram(aes(x=per_capita_crime_rate, fill="real"), color="black", breaks = seq(0,1, by = .1), group ="real", alpha=0.4) +
+  scale_x_continuous(breaks = seq(0,1,.2), limits=c(0,1), minor_breaks = seq(0,1,.05)) +
+  scale_y_continuous(minor_breaks = seq(0,55,1)) +
+  scale_fill_manual(name = "", 
+                    values = c("real" = "blue", "generated" = "orange"),
+                    labels = c("real" = "Real", "generated" = "Possion model generated")) +
+  labs(x="per capita crime rate, %", y="frequency") +
+  theme_classic() +
+  guides(
+    x = guide_axis(minor.ticks = TRUE),
+    y = guide_axis(minor.ticks = TRUE)
+  )
+```
+
+:::
+
+
+### Problem 4.2.5
+
+What are the assumptions of this model? And do you think that these hold in
+this case?
+
+::: {style="color:blue"}
+This model assumes that one instance of violent crime occurs independently of another, and that
+the underlying rate of violent crime is the same across all counties. Given that we found our model
+is deficient we suspect that one or both of the above are probably violated. This makes intuitive
+sense since violent crimes may often be linked to one another (violating independence) and the
+counties probably differ in societal ways meaning that some are more/less predisposed to crime.
+:::
+
+### Problem 4.2.6
+
+Suggest an alternative model and estimate its parameters by maximum likelihood.
+
+::: {style="color:blue"}
+TODO
+:::
+
+### Problem 4.2.7
+
+Evaluate this new model.
+
+::: {style="color:blue"}
+TODO
+:::

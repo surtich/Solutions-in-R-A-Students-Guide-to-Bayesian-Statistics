@@ -259,6 +259,7 @@ On a far-away planet suppose that people’s names are always two letters long, 
 
 How many people would need to be gathered in one place for there to be a 50% probability that at least two of them share the same name?
 
+::: {style="color:blue"}
 ```{r}
 names <- 26*26
 
@@ -276,15 +277,13 @@ while (p > 0.5) {
 
 people
 ```
-
-::: {style="color:blue"}
-people
 :::
 
 ### Problem 3.5.2
 
 Suppose instead that the names are composed of three letters. Now how many people would need to be gathered in one place for there to be a 50% probability that at least two of them share the same name?
 
+::: {style="color:blue"}
 ```{r}
 names <- 26*26*26
 
@@ -302,6 +301,7 @@ while (p > 0.5) {
 
 people
 ```
+:::
 
 ## Problem 3.6 Game theory
 
@@ -316,6 +316,7 @@ Assuming that:
 
 what is the optimal strategy for the contestant?
 
+::: {style="color:blue"}
 Initially: $p(car) = \frac{1}{4}$ $p(null) = \frac{1}{2}$ $p(penalty) = \frac{1}{4}$
 
 Stay (less varianze): $\mathbb{E}[return | stay] = \frac{1}{4}\times\$1,000 + \frac{1}{2}\times\$0 + \frac{1}{4}\times-\$1,000 = \$0$ $\mathbb{Var}[return | stay] = \mathbb{E}[(return | stay - \mathbb{E}[return | stay])^2] = \mathbb{E}[(return | stay)^2] - (\mathbb{E}[return | stay])^2 = \frac{1}{4}\times(\$1,000)^2+\frac{1}{4}\times(-\$1,000^2) = \$^2500,000$
@@ -349,7 +350,7 @@ doors |> select(first=door) |> slice_sample(n=10000, replace=T, weight_by = prob
   )) |> ungroup() |> left_join(doors, by=c(second = "door")) |>
 summarize(mean = mean(win), var = var(win))
 ```
-
+:::
 
 ## Problem 3.7 Blood doping in cyclists
 
@@ -373,24 +374,31 @@ cyclists |> pivot_wider(id_cols=case, names_from = race, values_from=prob) |> gt
 
 What is the probability that a professional cyclist wins a race?
 
+::: {style="color:blue"}
 ```{r}
 cyclists |> filter(race == "Won") |>  summarize(p=sum(prob)) |> pluck("p")
 ```
+::: 
+
 ### Problem 3.7.2
 
 What is the probability that a cyclist wins a race, given that they have cheated?
 
+::: {style="color:blue"}
 ```{r}
 cyclists |> filter(case == "Doping") |>  mutate(p=prob/sum(prob)) |> filter(race == "Won") |> pluck("p")
 ```
+:::
 
 ### Problem 3.7.3
 
 What is the probability that a cyclist is cheating, given that they win?
 
+::: {style="color:blue"}
 ```{r}
 cyclists |> filter(race == "Won") |>  mutate(p=prob/sum(prob)) |> filter(case == "Doping") |> pluck("p")
 ```
+:::
 
 Now suppose that drug testing officials
 have a test that can accurately identify a
@@ -404,6 +412,7 @@ about the proportion of people correctly
 identified as dopers, should they test all the
 athletes or only the winners?
 
+::: {style="color:blue"}
 ```{r}
 p_positive_given_doping = .9
 p_positive_given_clean = .05
@@ -435,6 +444,7 @@ p_positive_clean_given_winner <- p_positive_given_clean * p_clean_given_winner
 ```{r}
 (p_doping_given_positive_winner <- p_positive_doping_given_winner /  p_positive_given_winner)
 ```
+:::
 
 ### Problem 3.7.5
 
@@ -442,14 +452,18 @@ If the officials care five times as much about the number of people who are
 falsely identified as they do about the number of people who are correctly identified as dopers,
 should they test all the athletes or only the winners?
 
+::: {style="color:blue"}
 TODO
+:::
 
 ### Problem 3.7.6
 
 What factor would make the officials choose the other group? (By factor, we
 mean the number 5 in the previous problem.)
 
+::: {style="color:blue"}
 TODO
+:::
 
 ## Problem 3.8 Breast cancer revisited
 
@@ -462,6 +476,7 @@ Problem 3.8.1
 
 Show that the probability that a woman tests positive is about 9%.
 
+::: {style="color:blue"}
 ```{r}
 p_cancer = .01
 p_positive_given_cancer = .9
@@ -469,14 +484,17 @@ p_positive_given_healthy = .08
 
 (p_positive <- p_positive_given_cancer * p_cancer + p_positive_given_healthy * (1 - p_cancer))
 ```
+:::
 
 # Problem 3.8.2
 
 A woman tests positive for breast cancer. What is the probability she has the disease?
 
+::: {style="color:blue"}
 ```{r}
 (p_cancer_given_positive <- p_positive_given_cancer * p_cancer / p_positive)
 ```
+:::
 
 ### Problem 3.8.3
 
@@ -485,6 +503,7 @@ function of (a) the test sensitivity (true positive rate) (b) the false positive
 prevalence. Draw graphs (a) and (b) for a rare (1% prevalence) and a common (10% prevalence)
 disease. What do these graphs imply about the relative importance of the various characteristics
 of medical tests?
+
 
 ```{r}
 #| label: fig-cancer
