@@ -1,0 +1,371 @@
+---
+title: "Problem sets"
+format: html
+editor: visual
+warning: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+## Problem 5.1 Dodgy coins
+
+Suppose there are three coins in a bag. The first coin is biased towards heads, with a 75% probability of a heads occurring if the coin is flipped. The second is fair, so a 50% chance of heads
+occurring. The third coin is biased towards tails, and has a 25% probability of coming up heads.
+Assume that it is impossible to identify which coin is which from looking at or touching them.
+
+### Problem 5.1.1
+
+Suppose we put our hand into the bag and pull out a coin. We then flip the
+coin and find it comes up heads. Let the random variable $C = \{1,2,3\}$ denote the identity of the
+coin, where the probability of heads is $(0.75,0.50,0.25)$ , respectively. Obtain the likelihood by
+using the equivalence relation (that a likelihood of a parameter value given data is equal to the
+probability of data given a parameter value), and show that the sum of the likelihood over all
+parameter values is 1.5.
+
+```{r}
+coins <- c(1,2,3)
+thetas <- c(.75,.5,.25)
+likelihood <- 1*thetas
+
+sum(likelihood)
+```
+
+### Problem 5.1.2
+
+What is the maximum likelihood estimate of the coin’s identity?
+
+```{r}
+coins[which.max(likelihood)]
+```
+
+### Problem 5.1.3
+
+Use Bayes’ rule to prove that:
+
+$Pr ( C = c | X = H ) ∝ Pr ( X = H | C = c ) × Pr ( C = c )$,
+
+where $c = \{1,2,3\}$
+
+
+### Problem 5.1.4.
+
+Assume that since we cannot visually detect the coin’s identity we use a uniform
+prior $P r(C = c) = 1$ for $c = \{1, 2, 3\}$. Use this to complete @tbl-5.1.4 (known as a Bayes’ box) and
+determine the (marginal) probability of the data.
+
+```{r}
+#| label: tbl-5.1.4
+#| tbl-cap: "A Bayes box for the coins example."
+#| echo: false
+
+df <- tibble(coins = coins, likelihood = "", prior = "", likelihood_times_prior = "", posterior = "")
+df |> gt() |>
+  cols_label(
+    coins = html("parameter<br>C"),
+    likelihood = md("likelihood<br> $P(X=H|C=c)$"),
+    prior = md("prior<br> $P(C=c)$"),
+    likelihood_times_prior = md("$likelihood \\times prior$ <br> $P(X=H|C=c) \\times P(C=c)$"),
+    posterior = md("posterior<br> $P(C=c|X=H)$")
+  ) |>
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#FFDFD4")
+    ),
+    locations = cells_body(
+      rows = seq(1, nrow(df), 2)
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F8E8E4")
+    ),
+    locations = cells_body(
+      rows = seq(2, nrow(df), 2)
+    )
+  ) |>
+  tab_options(
+    table.border.top.color = "white",
+    table.border.bottom.color = "white",
+    table_body.hlines.color = "white",
+    table_body.vlines.color = "white",
+    table_body.border.bottom.color = "white",
+    heading.border.bottom.color = "white",
+    column_labels.border.top.color = "white",
+    column_labels.border.bottom.color = "white",
+    row_group.border.top.color = "white",
+    row_group.border.bottom.color = "white"
+  )
+```
+
+::: {style="color:blue"}
+The completed Bayes box is shown in @tbl-5.1.4-sol, where since the posterior probabilities are nonnegative and their sum is 1, we can conclude that we have a valid probability distribution. The
+probability of the data is 0.5.
+:::
+```{r}
+#| label: tbl-5.1.4-sol
+#| tbl-cap: "A Bayes box for the coins example."
+#| echo: false
+
+df <- tibble(coins = coins, likelihood = likelihood, prior = 1/length(coins), likelihood_times_prior = likelihood * prior, posterior = likelihood * prior / sum(likelihood * prior))
+df |> gt() |>
+  grand_summary_rows(
+    columns = likelihood_times_prior,
+    fns = list("sum"=~sum(.)),
+    fmt = ~fmt_fraction(., 
+      simplify = FALSE,
+      pattern = "Pr(X = H) = {x}"
+    ),
+    missing_text = ""
+  ) |>
+  grand_summary_rows(
+    columns = c(prior, posterior),
+    fns = list("sum"=~sum(.)),
+    missing_text = ""
+  ) |>
+  cols_label(
+    coins = html("parameter<br>C"),
+    likelihood = md("likelihood<br> $P(X=H|C=c)$"),
+    prior = md("prior<br> $P(C=c)$"),
+    likelihood_times_prior = md("$likelihood \\times prior$ <br> $P(X=H|C=c) \\times P(C=c)$"),
+    posterior = md("posterior<br> $P(C=c|X=H)$")
+  ) |>
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |> fmt_fraction(
+    columns = everything()
+  )
+```
+
+### Problem 5.1.5
+
+Confirm that the posterior is a valid probability distribution.
+
+::: {style="color:blue"}
+Since the individual probabilities are non-negative and their sum is 1, this is a valid probability
+distribution (see @tbl-5.1.4-sol).
+:::
+
+### Problem 5.1.6
+
+Now assume that we flip the same coin twice, and find that it lands heads up on
+both occasions. By using a table similar in form to @tbl-5.1.4, or otherwise, determine the new
+posterior distribution.
+
+::: {style="color:blue"}
+@tbl-5.1.6-sol shows how we calculate the new posterior distribution. There is now an increased weighting towards C = 1, reflecting the increased chance of observing two heads given this state of the
+world.
+:::
+```{r}
+#| label: tbl-5.1.6-sol
+#| tbl-cap: "A Bayes box for the coins example where the coin is flipped twice, landing heads up both times."
+#| echo: false
+
+df <- tibble(coins = coins, likelihood = thetas*thetas, prior = 1/length(coins), likelihood_times_prior = likelihood * prior, posterior = likelihood * prior / sum(likelihood * prior))
+df |> gt() |>
+  grand_summary_rows(
+    columns = likelihood_times_prior,
+    fns = list("sum"=~sum(.)),
+    fmt = ~fmt_number(.,
+      pattern = "Pr(X = H) = {x}"
+    ),
+    missing_text = ""
+  ) |>
+  grand_summary_rows(
+    columns = c(prior, posterior),
+    fns = list("sum"=~sum(.)),
+    missing_text = ""
+  ) |>
+  cols_label(
+    coins = html("parameter<br>C"),
+    likelihood = md("likelihood<br> $P(X=H|C=c)$"),
+    prior = md("prior<br> $P(C=c)$"),
+    likelihood_times_prior = md("$likelihood \\times prior$ <br> $P(X=H|C=c) \\times P(C=c)$"),
+    posterior = md("posterior<br> $P(C=c|X=H)$")
+  ) |>
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |> fmt_number(
+    columns = -coins,
+    decimals = 2
+  )
+```
+
+
+### Problem 5.1.7
+
+Now assume that you believe that the tails-biased coin is much more likely
+to be drawn from the bag, and thus specify a prior: $Pr ( C = 1) = 1 / 20,\ Pr ( C = 2) = 5 / 20\ and\ Pr ( C = 3) = 14 / 20$. What is the posterior probability that $C = 1$ now?
+
+::: {style="color:blue"}
+The Bayes box for this example is shown in @tbl-5.1.7-sol.
+:::
+```{r}
+#| label: tbl-5.1.7-sol
+#| tbl-cap: "A Bayes box for the coins example where the coin is flipped twice, landing heads up both times."
+#| echo: false
+
+df <- tibble(coins = coins, likelihood = thetas*thetas, prior = c(1/20,5/20,14/20), likelihood_times_prior = likelihood * prior, posterior = likelihood * prior / sum(likelihood * prior))
+df |> gt() |>
+  grand_summary_rows(
+    columns = likelihood_times_prior,
+    fns = list("sum"=~sum(.)),
+    fmt = ~fmt_number(.,
+      pattern = "Pr(X = H) = {x}"
+    ),
+    missing_text = ""
+  ) |>
+  grand_summary_rows(
+    columns = c(prior, posterior),
+    fns = list("sum"=~sum(.)),
+    missing_text = ""
+  ) |>
+  cols_label(
+    coins = html("parameter<br>C"),
+    likelihood = md("likelihood<br> $P(X=H|C=c)$"),
+    prior = md("prior<br> $P(C=c)$"),
+    likelihood_times_prior = md("$likelihood \\times prior$ <br> $P(X=H|C=c) \\times P(C=c)$"),
+    posterior = md("posterior<br> $P(C=c|X=H)$")
+  ) |>
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |> fmt_number(
+    columns = -coins,
+    decimals = 2
+  )
+```
+
+
+### Problem 5.1.8
+
+Continuing on from the previous example, calculate the posterior mean, maximum a posteriori (MAP) and maximum likelihood estimates. Does the posterior mean indicate
+much here?
+
+```{r}
+df |> summarize(
+  `posterior mean` = sum(coins * posterior),
+  `maximun a posteriori` = paste0("C = ", df$coins[which.max(posterior)]),
+  `maximun likelihood` = paste0("C = ", df$coins[which.max(likelihood)]),
+) |> gt()
+```
+
+### Problem 5.1.9 
+
+For the case when we flip the coin once and obtain $X = H$ , using the uniform prior on $C$, determine the posterior predictive distribution for a new coin flip with result $X$, using the expression:
+
+
+$$
+Pr(\tilde{X} \mid X = H) = \sum_{c=1}^{3} Pr(\tilde{X} \mid C) \times Pr(C \mid X = H)
+$$
+::: {style="color:blue"}
+Using tbl-5.1.4-sol we first determine the probability of a heads,
+
+$$
+Pr(\tilde{X} = H \mid X = H) = 3/4 × 1/2 + 2/4 × 1/3 + 1/4 × 1/6 = 7/12
+$$
+Then we calculate the probability of a tails,
+
+$$
+Pr(\tilde{X} = T \mid X = H) = 1/4 × 1/2 + 2/4 × 1/3 + 3/4 × 1/6 = 5/12
+$$
+
+These two results taken together form a valid probability distribution since the probabilities sum to $1$.
+:::
+
+### Problem 5.1.10 (Optional)
+
+Justify the use of the expression in the previous question.
+
+::: {style="color:blue"}
+
+To do this we marginalise out C from the joint probability $Pr(\tilde{X},C \mid X = H)$,
+$$
+\begin{align*}
+Pr(\tilde{X} \mid X = H) &= \sum_{C=1}^{3} Pr(\tilde{X}, C \mid X = H) \\
+&= \sum_{C=1}^{3} Pr(\tilde{X} \mid C, X = H) \times Pr(C \mid X = H) \\
+&= \sum_{C=1}^{3} \underbrace{Pr(\tilde{X} \mid C)}_{\text{likelihood}} \times \underbrace{Pr(C \mid X = H)}_{\text{posterior}}
+\end{align*}
+$$
+where we got from the first line to the second using the law of conditional probability, and from
+the second to the third by realising that once we know $C$ the result $\tilde{X}$ is independent of $X = H$.
+:::
+
+## Problem 5.2 Left-handedness
+
+Suppose that we are interested in the prevalence of left-handedness in a particular population.
+
+### Problem 5.2.1
+
+We begin with a sample of one individual whose dexterity we record as $X = 1$
+for left-handed, $X = 0$ otherwise. Explain why the following probability distribution makes
+sense here:
+
+$$
+Pr(X=1 | \theta) = \theta^X(1-\theta)^{1-X}
+$$
+where $\theta$ is the probability that a randomly chosen individual is left-handed.
+
+::: {style="color:blue"}
+Under the two circumstances it yields the relevant probabilities, $Pr(X = 1|θ) = θ\text{ and }P r(X = 0|θ) = 1 − θ$.
+:::
+
+### Problem 5.2.2
+
+Suppose we hold $θ$ constant. Demonstrate that under these circumstances the
+above distribution is a valid probability distribution. What sort of distribution is this?
+
+::: {style="color:blue"}
+Summing together the two possibilities here,
+
+$$
+P (X = 1|θ) + Pr(X = 0|θ) = θ + 1 − θ = 1
+$$
+
+In this case we are dealing with a discrete distribution (a Bernoulli).
+:::
+
+### Problem 5.2.3
+
+Now suppose we randomly sample a person who happens to be left-handed.
+Using the above function calculate the probability of this occurring.
+
+::: {style="color:blue"}
+
+$$
+Pr(X = 1|θ) = θ
+$$
+
+:::
+### Problem 5.2.4
+
+Show that when we vary $θ$ the above distribution does not behave as a valid
+probability distribution. Also, what sort of distribution is this?
+
+::: {style="color:blue"}
+The way to demonstrate this is by integrating the above over a range of $θ$,
+
+$$
+\int^{1}_{0}\theta d\theta = \frac{1}{2}
+$$
+So it is not a valid continuous probability distribution and hence we call it a "likelihood".
+:::
+
+### Problem 5.2.5
+
+What is the maximum likelihood estimator for $θ$?
+
+::: {style="color:blue"}
+$\hat\theta = 1$ maximises the probability of obtaining one individual who is left-handed.
+:::
