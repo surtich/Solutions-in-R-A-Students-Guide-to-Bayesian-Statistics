@@ -1,0 +1,346 @@
+---
+title: "Chapter 06 Problem Sets"
+format: html
+editor: visual
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+library(latex2exp)
+```
+
+## Problem 6.1 Too many coin flips
+
+Suppose we flip two coins. Each coin $i$ is either fair ($Pr ( H ) = θ_i = 0.5$ ) or biased towards heads
+($Pr ( H ) = θ_i = 0.9$ ); however, we cannot visibly detect the coin’s nature. Suppose we flip both coins
+twice and record each result.
+
+## Problem 6.1.1
+
+Suppose that we specify a discrete uniform prior on both $θ_1$ and $θ_2$ . Find the
+joint distribution of the data and the coins’ identity.
+
+::: {style="color:blue"}
+Denote the result of coin 1’s flips by $X_1$ and $X_2$, where $X_i = 1$ is heads. Similarly for coin 2 except
+we use $Y_i$ to denote the result on the ith flip. We can then write down the joint distribution as
+follows,
+
+$$
+\begin{aligned}
+Pr(X_1,X_2,Y_1,Y_2,\theta_1,\theta_2) &= Pr(X_1,X_2|\theta_1)Pr(Y_1,Y_2,|\theta_2)Pr(\theta_1)Pr(\theta_2) \\
+                                      &= \theta_1^{X_1+X_2}(1-\theta_1)^{2-X_1-X_2}\theta_2^{Y_1+Y_2}(1-\theta_2)^{2-Y_1-Y_2}0.5^2
+\end{aligned}
+$$
+
+:::
+
+### Problem 6.1.2
+
+Show that the above distribution is a valid probability distribution.
+
+```{r}
+coin <- c("x", "y")
+throws <- c(1,2)
+results <- c(0, 1)
+thetas <- c(0.5, 0.9)
+
+
+sum_pr <- 0
+
+for (theta1 in thetas) {
+  for (theta2 in thetas) {
+    for (result1 in results) {
+      for (result2 in results) {
+        for (result3 in results) {
+          for (result4 in results) {
+            pr = theta1^(result1+result2)*(1-theta1)^(2-result1-result2) * 
+                 theta2^(result3+result4)*(1-theta2)^(2-result3-result4) *
+                  0.5^2
+            
+            print(
+              paste0("Pr(X_1", "=", result1, ", X_2=", result2,
+                      ", Y_1", "=", result3, ", Y_2=", result4,
+                      ", theta_1=", theta1, ", theta_2=", theta2, ") = ", pr)
+            )
+            sum_pr = sum_pr + pr
+          }
+        }
+      }
+    }
+  }
+}
+sum_pr
+```
+
+### Problem 6.1.3
+
+We flip each coin twice and obtain for coin 1 $\{ H , H \}$ and coin 2 \${ H , T \}$ . Assuming
+that the result of each coin flip is independent of the previous result, write down a likelihood
+function.
+
+::: {style="color:blue"}
+$$
+Pr(X_1=H,X_2=H,Y_1=H,Y_2=T | \theta_1,\theta_2) = \theta_1^2\theta_2(1-\theta_2)
+$$
+:::
+
+### Problem 6.1.4
+
+What are the maximum likelihood estimators of each parameter?
+
+
+::: {style="color:blue"}
+```{r}
+df <- expand_grid(theta1 = thetas,theta2 = thetas) |> mutate(likelihood = theta1^2*theta2*(1-theta2)) 
+
+df |> filter (likelihood >= max(likelihood)) |> select(-likelihood) |> gt()
+```
+:::
+
+## Problem 6.1.5 
+
+Calculate the marginal likelihood of the data (that is, the denominator of Bayes’ rule).
+
+::: {style="color:blue"}
+```{r}
+df <- df |> mutate(prior = 1/nrow(df), likelihood_times_prior = likelihood * prior)
+
+(pr_data_model1 <- df |> summarize(pr_data = sum(likelihood_times_prior)) |> pluck("pr_data"))
+```
+:::
+
+### Problem 6.1.6
+
+Hence calculate the posterior distribution, and demonstrate that this is a valid probability distribution.
+
+::: {style="color:blue"}
+```{r}
+df <- df |> mutate(posterior = likelihood_times_prior / sum(likelihood_times_prior)) 
+
+df |> select(theta1, theta2, posterior) |> gt() |>
+  grand_summary_rows(
+    columns = posterior,
+    fns = list("sum"=~sum(.)),
+    missing_text = ""
+  )
+```
+:::
+
+### Problem 6.1.7
+
+Find the posterior mean of $θ_1$ . What does this signify?
+
+```{r}
+df |> group_by(theta1) |> summarize(posterior = sum(posterior)) |> gt() |>
+  grand_summary_rows(
+    columns = posterior,
+    fns = list("sum"=~sum(.)),
+    missing_text = ""
+  )
+```
+
+### Problem 6.1.8
+
+Now suppose that away from our view a third coin is flipped, and denote $Z = 1$
+for a heads. The result of this coin affects the bias of the other two coins that are flipped subsequently, so that:
+
+$$
+Pr( θ_i = 0.5 | Z ) = 0.8^Z0.1^{1 − Z}
+$$
+Suppose we again obtain for coin 1 $\{ H , H \}$ and for coin 2 $\{ H , T \}$ . Find the maximum likelihood
+estimators ( $θ_1$ , $θ_2$ , $Z$ ). How do the inferred biases of coin 1 and coin 2 compare to the previous
+estimates?
+
+::: {style="color:blue"}
+```{r}
+likelihood_z <- Vectorize(function(theta, z) {
+  if (theta == .5) {
+    .8^z*.1^(1-z)
+  } else {
+    1-.8^z*.1^(1-z)
+  }
+})
+
+df <- expand_grid(theta1 = thetas,theta2 = thetas, z =c(0,1)) |> 
+  mutate(
+    likelihood = theta1^2*theta2*(1-theta2)*
+                    likelihood_z(theta1,z)*likelihood_z(theta2,z)
+  ) 
+
+df |> filter(likelihood >= max(likelihood)) |> gt()
+```
+
+:::
+
+### Problem 6.1.9
+
+Calculate the marginal likelihood for the coin if we suppose that we specify a
+discrete uniform prior on $Z$, that is $Pr ( Z = 1) = 0.5$.
+
+::: {style="color:blue"}
+```{r}
+df <- df |> mutate(likelihood_times_prior = likelihood*.5) 
+
+(pr_data_model2 <- sum(df$likelihood_times_prior))
+```
+:::
+
+
+### Problem 6.1.10
+
+Suppose we believe that the independent coin flip model (where there is no
+third coin) and the dependent coin flip model (where the outcome of the third coin affects the
+biases of the two coins) are equally likely a priori. Which of the two models do we prefer?
+
+::: {style="color:blue"}
+```{r}
+pr_data_model1 / pr_data_model2
+```
+
+We prefer the independent flips model.
+:::
+
+## Problem 6.2 Coins combined
+Suppose that we flip two coins, each of which has $Pr ( H ) = θ_i$ where $i ∈ \{1,2\}$, which is unknown.
+If their outcomes are both the same then we regard this as a success; otherwise a failure. We
+repeatedly flip both coins (a single trial) and record whether the outcome is a success or failure.
+We do not record the result of flipping each coin. Suppose we model the number of failures, $X$,
+we have to undergo to attain $n$ successes.
+
+### Problem 6.2.1
+
+Stating any assumptions that you make, specify a suitable probability model
+here.
+
+::: {style="color:blue"}
+
+The negative binomial fits this description perfectly. However we need to modify it to allow the
+probability of success to be a function of both coins’ biases $p = θ_1θ_2 + (1 − θ_1)(1 − θ_2)$. This means
+we can write down the pmf,
+
+$$
+\begin{equation*}
+Pr(X \mid n, \theta_1, \theta_2) = 
+\begin{cases} 
+\binom{n+X-1}{X} \left( (1-\theta_1)(1-\theta_2) + \theta_1 \theta_2 \right)^n \left( 1 - (1-\theta_1)(1-\theta_2) - \theta_1\theta_2 \right)^X & X \geq 0 \\
+0 & \text{True}
+\end{cases}
+\end{equation*}
+$$
+
+This assumes that the flips of each coin are independent.
+:::
+
+## Problem 6.2.2
+
+We obtain the data in `denominator_NBCoins.csv` for the number of failures
+to wait before five successes occur. Suppose that we specify the priors $θ_1  \sim U( 0 , 1 )$ and $θ_2 \sim U( 0 , 1 )$.
+Calculate the denominator of Bayes’ rule. (Hint: use a numerical integration routine.)
+
+```{r}
+#| echo: false
+
+df <- read_csv('../data/denominator_NBCoins.csv', col_names = "X", show_col_types = FALSE)
+
+dnbinom <- function(x, n = 5, theta1, theta2) {
+  log(choose(n+x-1, x)) + n*log((1-theta1)*(1-theta2)+theta1*theta2) + x*log(1-(1-theta1)*(1-theta2)-theta1*theta2)
+}
+
+log_likelihood <- function(theta1, theta2) {
+    s <- rep(NA, length(theta1))
+    for (i in 1:length(theta1)) {
+        s[i] <- sum(dnbinom(df$X, 5, theta1[i], theta2[i]))
+    }
+    s
+}
+
+softmax <- function(x) {
+  exp_x <- exp(x - max(x))
+  return(exp_x / sum(exp_x))
+}
+
+p_data <- function() {
+  
+}
+
+theta1 <- seq(0.01,.99,length.out=100)
+theta2 <- seq(0.01,.99,,length.out=100)
+  
+grid <- expand.grid(theta1 = theta1, theta2 = theta2) |>  mutate(logLik = log_likelihood(theta1, theta2), posterior=softmax(logLik))
+
+```
+
+::: {style="color:blue"}
+$$
+\int_{0}^{1}\int_{0}^{1} NB(X \mid 5, \theta_1, \theta_2)d\theta_1\theta_2 
+$$
+TODO
+:::
+
+
+### Problem 6.2.3
+
+Draw a contour plot of the posterior. Why does the posterior have this shape?
+
+::: {style="color:blue"}
+The posterior is shown in @fig-6.2.3-sol. There is a thin band of probability mass associated with the
+lines $θ_1θ_2 = const$ or $(1 − θ1)(1 − θ2) = const$. The mass is mostly associated in the upper left and
+bottom right because the data has relatively long runs before 5 successes occur, meaning that the
+same values for the parameters are not likely.
+:::
+
+```{r}
+#| label: fig-6.2.3-sol
+#| fig-cap: "The posterior for the negative binomial coins example."
+#| echo: false
+
+grid |> ggplot() +
+  geom_contour_filled(
+    aes(x=theta1, y=theta2, z=posterior)
+  ) + 
+  theme_classic() +
+  labs(x=TeX("$\\theta_1$"), y=TeX("$\\theta_2$")) +
+  coord_fixed(ratio = 1.) +
+  scale_x_continuous(breaks = seq(0,1,.2), limits=c(0,1), minor_breaks = seq(0,1,.2/4), sec.axis = dup_axis(labels=NULL, breaks = seq(0,1,.2/4))) +
+  scale_y_continuous(breaks = seq(0,1,.2), limits=c(0,1), minor_breaks = seq(0,1,.2/4), sec.axis = dup_axis(labels=NULL, breaks = seq(0,1,.2/4))) +
+  theme(
+    legend.position = "none"
+  ) +
+  guides(
+    x = guide_axis(minor.ticks = TRUE),
+    y = guide_axis(minor.ticks = TRUE)
+  )
+```
+
+### Problem 6.2.4
+
+Comment on any issues with parameter identification for this model and how
+they might be rectified.
+
+::: {style="color:blue"}
+Clearly the model cannot differentiate between $θ_1$ and $θ_2$ because we have provided no further
+information on these. A solution would be to use a prior that assigns a strong weight to high/low
+values of one of the parameters. This isn’t an issue that can be solved by collecting more data,
+unless we could see the identities of each coin.
+:::
+
+### Problem 6.2.5
+
+Now suppose that we have three coins instead of two. Here we regard a success
+as all three coins showing the same result. Using the same data as before, attempt to calculate the
+denominator term. Why is there a problem?
+
+::: {style="color:blue"}
+Even with just three dimensions even sophisticated deterministic routines struggle.
+:::
+
+### Problem 6.2.6 Estimate the posterior mean of $θ_1$.
+
+
+::: {style="color:blue"}
+TODO
+:::
