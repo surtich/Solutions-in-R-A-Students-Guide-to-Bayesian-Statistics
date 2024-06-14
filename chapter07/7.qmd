@@ -1,0 +1,587 @@
+---
+title: "Chapter 07 Problem Sets"
+format: html
+editor: visual
+warning: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+library(latex2exp)
+library(broom.mixed)
+```
+
+## Problem 7.1 Googling
+
+Suppose you are chosen, for your knowledge of Bayesian statistics, to work at Google as a search traffic analyst. Based on historical data you have the data shown in Table 7.1 for the actual word searched, and the starting string (the first three letters typed in a search). It is your job to help make the search engines faster, by reducing the search-space for the machines to lookup each time a person types.
+
+```{r}
+#| label: tbl-7.1
+#| tbl-cap: "The columns give the historic breakdown of the search traffic for three topics: Barack Obama, Baby clothes, and Bayes; by the first three letters of the user’s search."
+#| echo: false
+
+term = c("Bar", "Bab", "Bay")
+word = c("Barack Obama", "Baby clothes", "Bayes")
+
+gt_fmt <- function(.data) {
+  
+  rows <- nrow(.data)
+  
+  result <- .data |> gt() |>
+  cols_label_with(
+    columns=everything(),
+    fn = md
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#FFDFD4")
+    ),
+    locations = cells_body(
+      rows = seq(1, rows, 2)
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+      columns = term
+    )
+  ) |>
+  tab_options(
+    table.border.top.color = "white",
+    table.border.bottom.color = "white",
+    table_body.hlines.color = "white",
+    table_body.vlines.color = "white",
+    table_body.border.bottom.color = "white",
+    heading.border.bottom.color = "white",
+    column_labels.border.top.color = "white",
+    column_labels.border.bottom.color = "white",
+    row_group.border.top.color = "white",
+    row_group.border.bottom.color = "white"
+  )
+  
+  if (rows > 1) {
+    result <- result |>
+    tab_style(
+      style = list(
+        cell_fill(color = "#F8E8E4")
+      ),
+      locations = cells_body(
+        rows = seq(2, rows, 2)
+      )
+    )
+  }
+  
+  result
+}
+
+df.googling <- expand.grid(term = term, word = word) |> mutate(prob = c(.5, .3, .2, .3, .6, .1, .3, .3, .4)) 
+
+
+df.googling |> pivot_wider(id_cols = term, names_from = word, values_from = prob) |> 
+  rename_with(.cols = -term, .fn = ~paste0("**",.,"**")) |> 
+  gt_fmt() |>
+  cols_label(term = "") |>
+  fmt_percent(
+    columns = -term,
+    decimals = 0
+  )
+
+```
+### Problem 7.1.1 
+
+Find the minimum coverage confidence
+intervals of topics that are at
+least at 70%.
+
+
+::: {style="color:blue"}
+
+In both cases (here and the next question) we are looking for sets of the actual words. Frequentists
+assume that the data we receive (each set of three letters) is a sample from an infinity of such
+experiments. As such they design their intervals such that at least 70% of such intervals contain
+the true word searched across all the potential data samples we could receive. This means that
+here we want to choose sets such that regardless of the three letters typed we get a coverage of at
+least 70% for each of the columns. These are shown in @tbl-7.1.1-sol.
+
+
+Confidence intervals = $P(Data | \theta) \ge 70\%$
+
+```{r}
+#| label: tbl-7.1.1-sol
+#| tbl-cap: ": ≥70% confidence intervals."
+#| echo: false
+
+
+intervals = list(
+  c(row=1, from=2, to=2),
+  c(row=2, from=3),
+  c(row=2, to=4),
+  c(row=3, from=2),
+  c(row=3, mid=3),
+  c(row=3, to=4)
+)
+
+fmt_interval <- function(r) {
+  function(x) {
+    y <- paste0(100*x,"%")
+    if (!is.na(r["from"])) {
+      y <- paste0("[",y)
+    }
+    if (!is.na(r["to"])) {
+      y <- paste0(y,"]")
+    }
+    y
+  }
+}
+
+add_coverage <- function(.data, intervals) {
+  
+  cov <- data.frame()
+  i = 1
+  for (coln in colnames(.data)) {
+    if (i == 1) {
+      cov[1,coln] = "Coverage"
+    } else {
+      cov[1,coln] = 0
+    }
+    i <- i + 1
+  }
+  
+  
+  for (i in intervals) {
+    if (!is.na(i["from"])) {
+      cov[1,i["from"]] <- cov[1,i["from"]] + .data[i["row"], i["from"]] 
+    } else if (!is.na(i["to"])) {
+      cov[1,i["to"]] <- cov[1,i["to"]] + .data[i["row"], i["to"]] 
+    } else if (!is.na(i["mid"])) {
+      cov[1,i["mid"]] <- cov[i["mid"]] + .data[i["row"], i["mid"]] 
+    }
+  }
+  
+  .data[nrow(.data)+1,] = cov
+  
+  .data
+}
+
+add_Credibillity <- function(.data, intervals) {
+  
+  .data <- .data |> mutate(Credibillity = 0) |> rowwise() |>
+    mutate(SumCredibillity = sum(c_across(-1))) |> ungroup() 
+  
+  for (i in intervals) {
+    if (!is.na(i["from"])) {
+      .data[i["row"], "Credibillity"] <- .data[i["row"], "Credibillity"] + .data[i["row"], i["from"]] 
+    } else if (!is.na(i["to"])) {
+      .data[i["row"], "Credibillity"] <- .data[i["row"], "Credibillity"] + .data[i["row"], i["to"]] 
+    } else if (!is.na(i["mid"])) {
+      .data[i["mid"], "Credibillity"] <- .data[i["mid"], "Credibillity"] + .data[i["row"], i["mid"]] 
+    }
+  }
+  
+   .data |>
+    mutate(Credibillity = Credibillity/SumCredibillity) |> select(-SumCredibillity)
+}
+
+color_interval <- function(.data, intervals) {
+  result <- .data
+  for (r in intervals) {
+    row <- as.integer(r["row"])
+    column <- as.integer(if_else(is.na(r["from"]),if_else(is.na(r["to"]),r["mid"],r["to"]),r["from"]))
+    result <- fmt(result,
+          rows = row,
+          columns = column,
+          fns = eval(call("fmt_interval", r))
+        ) |>
+        tab_style(
+          style = cell_text(color = "red"),
+          locations = cells_body(
+            rows = row,
+            columns = column
+          )
+        ) 
+  }
+  result
+}
+
+df.googling |> pivot_wider(id_cols = term, names_from = word, values_from = prob) |>
+  mutate(term = as.vector(term)) |>
+  add_Credibillity(intervals) |>
+  add_coverage(intervals) |>
+  gt() |> cols_label(term = "") |>
+  fmt_percent(
+    columns = -term,
+    decimals = 0
+  )  |>
+  color_interval(intervals) |>
+  fmt(
+    rows = 4,
+    columns = 5,
+    fns = function(x) {""}
+  )
+
+```
+
+
+
+:::
+
+
+### Problem 7.1.2
+
+Find most narrow credible intervals for topics that are at least at 70%.
+Now we suppose that your boss gives you the historic search information shown in @tbl-7.1.2.
+
+Further, you are told that it is most important to correctly suggest the actual topic as one of the first auto-complete options, *irrespective* of the topic searched.
+
+
+```{r}
+#| label: tbl-7.1.2
+#| tbl-cap: "The historic search traffic broken down by topic"
+#| echo: false
+
+df.search <- data.frame(term ="Search Volume", word=word, prob=c(.6, .3, .1))
+ 
+df.search |> pivot_wider(id_cols = term, names_from = word, values_from = prob) |> 
+  rename_with(.cols = -term, .fn = ~paste0("**",.,"**")) |> gt_fmt() |>
+  cols_label(term = "") |>
+  fmt_percent(
+    columns = -term,
+    decimals = 0
+  )
+```
+
+::: {style="color:blue"}
+Bayesians condition of the data we actually receive, and derive intervals based on this information.
+
+This means we need to consider the individual row sums; each time making an interval that exceeds
+at least 70% of that row. The answer for this question is shown in @tbl-7.1.2-sol.
+
+Now we suppose that your boss gives you the historic search information shown in @tbl-7.1.2.
+Further, you are told that it is most important to correctly suggest the actual topic as one of the
+first auto-complete options, irrespective of the topic searched.
+
+Credible intervals = $P(\theta | Data) \ge 70\%$
+
+```{r}
+#| label: tbl-7.1.2-sol
+#| tbl-cap: ": ≥70% credible intervals."
+#| echo: false
+
+
+intervals = list(
+  c(row=1, from=2),
+  c(row=1, to=3),
+  c(row=2, from=3),
+  c(row=2, to=4),
+  c(row=3, from=3),
+  c(row=3, to=4)
+)
+
+df.googling |> pivot_wider(id_cols = term, names_from = word, values_from = prob) |>
+  mutate(term = as.vector(term)) |>
+  add_Credibillity(intervals) |>
+  add_coverage(intervals) |>
+  gt() |> cols_label(term = "") |>
+  fmt_percent(
+    columns = -term,
+    decimals = 0
+  )  |>
+  color_interval(intervals) |>
+  fmt(
+    rows = 4,
+    columns = 5,
+    fns = function(x) {""}
+  )
+```
+:::
+
+### Problem 7.1.3.
+
+Do you prefer confidence intervals or credible intervals in this circumstance?
+
+::: {style="color:blue"}
+Here all we need to do is work out the total losses under the confidence and credible intervals. For
+both cases this means we need to work out the expected loss for each of the actual words being
+searched, using the volumes given in @tbl-7.1.2. This is easily done using the coverages at the
+bottom of each of tables @tbl-7.1.1-sol and @tbl-7.1.2-sol.
+
+For the confidence intervals we thus get an expected loss:
+
+$$
+loss = 0.6 × (1 − 0.7) + 0.3 × (1 − 0.7) + 0.1 × (1 − 0.7) = 0.3
+$$
+And for credible intervals:
+
+$$
+loss = 0.6 × (1 − 0.5) + 0.3 × (1 − 1) + 0.1 × (1 − 0.7) = 0.33
+$$
+
+So in this circumstance we prefer the confidence intervals.
+:::
+
+### Problem 7.1.4
+
+Now assume that it is most important to pick the correct actual word across all
+potential sets of three letters, which interval do you prefer now?
+
+::: {style="color:blue"}
+Now we need to find the loss for each possible three letter search. This requires that we first of
+all calculate the historic search volumes for these letters using Tables @tbl-7.1 and @@tbl-7.1.2. Specifically you
+take the matrix product of the two, yielding a percentage of historical searches of (42%, 39%, 19%, $P(Data|\theta)P(\theta) = P(Data, \theta)$)
+credible interval tables respectively to weight the losses.
+
+For confidence intervals:
+$$
+loss = 0.42 × (1 − 0.45) + 0.39 × (1 − 0.75) + 0.19 × (1 − 1) = 0.33
+$$
+And for credible intervals:
+$$
+loss = 0.42 × (1 − 0.73) + 0.39 × (1 − 0.75) + 0.19 × (1 − 0.71) = 0.27
+$$
+So in this case we prefer the credible intervals.
+:::
+
+### Problem 7.2 GDP versus infant mortality
+
+The data in `posterior_gdpInfantMortality.csv` contains the GDP per capita (in real terms)
+and infant mortality across a large sample of countries in 1998.
+
+### Problem 7.2.1
+
+A simple model is fitted to the data of the form:
+
+$$
+M_i \sim N ( α + β GDP_i , σ ) .
+$$
+
+Fit this model to the data using a Frequentist approach. How well does the model fit the data?
+
+
+```{r}
+#| label: fig-7.2.1-sol
+#| fig-cap: "log infant mortality vs log GPD"
+#| echo: false
+#| warning: false
+
+df <- read_csv('../data/posterior_gdpInfantMortality.csv', show_col_types = FALSE) 
+
+df |> ggplot(aes(x = gdp, y = infant.mortality)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color ="red") +
+  theme_classic()
+```
+
+# Problem 7.2.2
+
+An alternative model is:
+
+$$
+\log(M_i) \sim N ( α + β \log(GDP_i) , σ ) .
+$$
+```{r}
+#| label: fig-7.2.2-sol
+#| fig-cap: "log infant mortality vs log GPD"
+#| echo: false
+#| warning: false
+
+df |> ggplot(aes(x = gdp, y = infant.mortality)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color ="red") +
+  theme_classic() +
+  scale_y_log10() +
+  scale_x_log10()
+```
+
+
+### Problem 7.2.3
+
+Construct 80% confidence intervals for $( α , β )$.
+
+```{r}
+#| label: tbl-7.2.3-sol
+#| tbl-cap: "80% confidence intervals model's coefficients log infant mortality ~ log GPD"
+#| echo: false
+lm(log(infant.mortality) ~ log(gdp), data = df) |>
+  tidy(conf.int = TRUE, conf.level=.8) |> select(c("term", starts_with("conf"))) |>
+  gt() |> fmt_number(
+    decimals=2
+  )
+```
+
+### Problem 7.2.4
+
+We have fitted the log–log model to the data using Markov chain Monte
+Carlo. Samples from the posterior for $( α , β , σ )$ are contained within the file `posterior_posteriorsGdpInfantMortality.csv`. Using this data, find the 80% credible intervals for all
+parameters (assuming these intervals to be symmetric about the median). How do these compare
+with the confidence intervals calculated above for $( α , β )$ ? How does the point estimate of σ from
+the Frequentist approach above compare?
+
+```{r}
+#| label: tbl-7.2.4-sol
+#| tbl-cap: "80% credible intervals model's coefficients log infant mortality ~ log GPD"
+#| echo: false
+
+df2 <- read_csv('../data/posterior_posteriorsGdpInfantMortality.csv', show_col_types = FALSE) 
+
+df2 |> summarize(
+    across(everything(), list(conf.low = ~ quantile(.x, probs = 0.1), conf.high = ~ quantile(.x, probs = 0.9)))
+  ) |>
+  pivot_longer(
+    cols=everything(),
+    names_to = c("term", ".value"),
+    names_pattern = "(.*)_(.*)"
+  ) |>
+  gt() |> fmt_number(
+    decimals=2
+  )
+```
+
+### Problem 7.2.5
+
+The following priors were used for the three parameters:
+
+$$
+\begin{aligned}
+α &\sim N (0,10),\\
+β &\sim N (0,10),\\
+σ &\sim N (0,5),σ \ge 0
+\end{aligned}
+$$
+
+Explain any similarity between the confidence and credible intervals in this case.
+
+::: {style="color:blue"}
+Here the priors are very diffuse over the range of possible range of the parameters. To a (rough)
+approximation this is equivalent to a flat prior on the parameters. This means from Bayes’ rule we
+have (approximately):
+
+$$
+p(θ|X) ∝ p(X|θ)
+$$
+Therefore the confidence and credible intervals are going to be largely similar here.
+:::
+
+### Problem 7.2.6
+
+How are the estimates of parameters $( α , β , σ )$ correlated? Why?
+
+::: {style="color:blue"}
+$α$ and $β$ are negatively correlated. This is because we want a line that goes through the centre of
+the data: if the y intercept increases then the slope must decrease.
+
+```{r}
+round(cor(df2$alpha, df2$beta), 2)
+```
+
+:::
+
+### Problem 7.2.7
+
+Generate samples from the prior predictive distribution. How do the minimum
+and maximum of the prior predictive distribution compare with the actual data?
+
+::: {style="color:blue"}
+
+The prior predictive distributions show about two orders of magnitude greater variation in data
+compared to the actual data
+
+```{r}
+#| label: fig-7.2.7-sol
+#| fig-cap: "min and min prior predictive distribution vs max and min infant mortality."
+#| echo: false
+#| warning: false
+df <- na.omit(df)
+infant.mortality.prior <- replicate(100,
+             {
+                prior_alpha <- rnorm(1, mean=0, sd = sqrt(10))
+                prior_beta <- rnorm(1, mean=0, sd = sqrt(10))
+                prior_sigma <- abs(rnorm(1, mean=0, sd=sqrt(5)))
+                rnorm(nrow(df), prior_alpha + prior_beta*log(df$gdp), prior_sigma)
+             })
+
+infant.mortality.prior |>
+  as_tibble(.name_repair = ~as.character(1:100)) |> 
+  summarize(across(everything(), list(Min = min, Max = max))) |> 
+  pivot_longer(
+    cols=everything(),
+    names_to = c("term", ".value"),
+    names_pattern = "(.*)_(.*)"
+  ) |>
+  pivot_longer(names_to = "Stat", cols=c(Min, Max)) |>
+  ggplot() +
+  geom_histogram(aes(x=value, fill=Stat), alpha=0.6) +
+  theme_classic() +
+  guides(fill = guide_legend(title = NULL)) +
+  geom_vline(data=df, xintercept = min(log(df$infant.mortality)), color="blue", linetype="dashed")+
+  geom_vline(data=df, xintercept = max(log(df$infant.mortality)), color="red", linetype="dashed")
+  
+```
+:::
+
+### Problem 7.2.8
+
+Generate samples from the posterior predictive distribution, and compare these
+with the actual data. How well does the model fit the data?
+
+
+::: {style="color:blue"}
+
+There are a number of ways to compare the model vs the data here. I have just used the min and
+max as a point of comparison. What we see with these is that the minimum is captured well by the
+model, but the max isn’t. In particular the variation seen in fitted model is greater than that in
+the data. This is because at low values of GDP there could be a deviation from the log-log model
+(or it’s just due to sampling variation, of course).
+
+```{r}
+#| label: fig-7.2.8-sol
+#| fig-cap: "min and min posterior predictive distribution vs max and min infant mortality."
+#| echo: false
+#| warning: false
+
+infant.mortality.posterior <- df2 |> mutate(
+  samples = pmap(list(alpha, beta, sigma), ~rnorm(100, .1 + .2*log(df$gdp), .3))
+  ) |> rowwise() |>
+  mutate(Min=min(samples), Max=max(samples)) |> 
+  ungroup() |>
+  pivot_longer(names_to = "Stat", cols=c(Min, Max))
+
+infant.mortality.posterior |>
+  ggplot() +
+  geom_histogram(aes(x=value, fill=Stat), alpha=0.6) +
+  theme_classic() +
+  guides(fill = guide_legend(title = NULL)) +
+  geom_vline(data=df, xintercept = min(log(df$infant.mortality)), color="blue", linetype="dashed")+
+  geom_vline(data=df, xintercept = max(log(df$infant.mortality)), color="red", linetype="dashed")
+```
+:::
+
+## Problem 7.3 Bayesian neurosurgery
+
+Suppose that you are a neurosurgeon and have been given the unenviable task of finding the
+position of a tumour within a patient’s brain, and cutting it out. Along two dimensions (vertical height and left–right axis) the tumour’s position is known with a high degree of confidence.
+However, along the remaining axis (front–back) the position is uncertain and cannot be ascertained without surgery. However, a team of brilliant statisticians has already done most of the job
+for you, generating samples from the posterior for the tumour’s location along this axis which
+you will find in the data file `posterior_brainData.csv`.
+
+Suppose that the more brain that is cut, the more the patient is at risk of losing cognitive functions.
+Additionally, suppose that there is uncertainty over the amount of damage done to the patient
+during surgery. As such, three different surgeons have differing views on the damage caused:
+
+1. *Surgeon 1*: Damage varies quadratically with the distance the surgery starts away from the
+tumour.
+
+2. *Surgeon 2*: There is no damage if tissue cut is within 0.0001mm of the tumour; for cuts
+further away there is a fixed damage.
+
+3. *Surgeon 3*: Damage varies linearly with the absolute distance the surgery starts away from
+the tumour. (Hard - use fundamental theorem of Calculus for this part of the question.)
+
+::: {style="color:blue"}
+TODO
+:::
