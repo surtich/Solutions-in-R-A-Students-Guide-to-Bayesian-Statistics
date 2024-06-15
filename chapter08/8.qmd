@@ -1,0 +1,173 @@
+---
+title: "Chapter 08 Problem Sets"
+format: html
+editor: visual
+warning: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+library(latex2exp)
+library(broom.mixed)
+```
+
+### Problem 8.1 Drug trials
+
+Suppose that we are testing the efficacy of a certain drug which aims to cure depression, across
+two groups, each of size 10, with varying levels of the underlying condition: mild and severe.
+We suppose that the success rate of the drug varies across each of the groups, with $θ_{mild} > θ_{severe}$.
+We are comparing this with another group of 10 individuals, which has a success rate equal to
+the mean of the other two groups, $θ_{homogeneous} = ( θ_{mild} + θ_{severe} ) / 2$.
+
+## Problem 8.1.1
+
+Calculate the mean number of successful trials in each of the three groups.
+
+::: {style="color:blue"}
+Across each of the three groups:
+
+* $\mathbb{E}[X{mild}] = 10\times\theta_{mild}$
+* $\mathbb{E}[X{severe}] = 10\times\theta_{severe}$
+* $\mathbb{E}[X{homogeneous}] = 10\times\theta_{homogeneous}$
+
+:::
+
+### Problem 8.1.2
+
+Compare the mean across the two heterogeneous groups with that of the single
+group of 10 homogeneous people.
+::: {style="color:blue"}
+
+Taking the mean of the means for each group,
+
+$$
+\begin{aligned}
+\mathbb{E}[X{combined}] &= \frac{1}{2}\times10 (\theta_{mild} + \theta_{severe}) = 10\times\theta_{homogeneous}  
+\end{aligned}
+$$
+
+In words, the mean outcome across the two groups is the same.
+:::
+## Problem 8.1.3
+
+Calculate the variance of outcomes across each of the three groups.
+
+::: {style="color:blue"}
+The variance across each of the three groups is given by:
+
+
+* $var(X{mild}) = 10\times\theta_{mild}(1-\theta_{mild})$
+* $var(X{severe}) = 10\times\theta_{severe}(1-\theta_{severe})$
+* $var(X{homogeneous}) = 10\times\theta_{homogeneous}(1-theta_{homogeneous})$
+
+:::
+
+### Problem 8.1.4
+
+How does the variance across both heterogeneous studies compare with that of
+a homogeneous group of the same sample size and same mean?
+
+::: {style="color:blue"}
+TODO
+:::
+
+### Problem 8.1.5
+
+Now consider the extension to a large number of trials, where the depressive
+status of each group is unknown to the experimenter, but follows $θ ~ beta( α , β )$. Calculate the
+mean value of the beta distribution.
+
+
+::: {style="color:blue"}
+$\frac{\alpha}{\alpha+\beta}$
+:::
+
+### Problem 8.1.6
+
+Which combinations of $α$ and $β$ would make the mean the same as that of a
+single study with success probability $θ$?
+
+
+::: {style="color:blue"}
+TODO
+:::
+
+### Problem 8.1.7
+
+How does the variance change, as the parameters of the beta distribution are
+changed, so as to keep the same mean of $θ$?
+
+
+::: {style="color:blue"}
+TODO
+:::
+
+### Problem 8.1.8
+
+How does the variance of the number of disease cases compare to that of a single
+study with success probability $θ$?
+
+
+::: {style="color:blue"}
+TODO
+:::
+
+
+#### Problem 8.1.9
+
+Under what conditions does the variance in disease cases tend to that from a
+binomial distribution?
+
+
+::: {style="color:blue"}
+TODO
+:::
+
+### Problem 8.2 Political partying
+
+Suppose that in polls for an upcoming election there are three political parties that individuals
+can vote for, denoted by $\{ A , B , C \}$ , respectively.
+
+### Problem 8.2.1
+
+If we assume independence among those individuals who are polled then what
+likelihood might we choose?
+
+
+::: {style="color:blue"}
+A multinomial likelihood with probabilities of voting for each party given by $(p_A, p_B, p_C)$.
+:::
+
+### Problem 8.2.2
+
+In a sample of 10 individuals we find that the numbers who intend to vote for
+each party are $( n_A , n_B , n_C ) = (6,3,1)$ . Derive and calculate the maximum likelihood estimators of
+the proportions voting for each party.
+
+
+::: {style="color:blue"}
+$$
+\hat{p}_i = \frac{n_i}{n}\text{, where }i \in \{A, B, C\}
+$$
+```{r}
+ni <- c(na=6,nb=3,nc=1)
+n <- sum(ni)
+
+ni/n
+```
+
+:::
+
+## Problem 8.2.3
+Dirichlet
+Graph the likelihood in $( p_A , p_B )$ space.
+
+::: {style="color:blue"}
+TODO
+:::
+
+
