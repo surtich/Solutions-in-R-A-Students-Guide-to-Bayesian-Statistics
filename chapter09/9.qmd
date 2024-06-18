@@ -1,0 +1,197 @@
+---
+title: "Chapter 09 Problem Sets"
+format: html
+editor: visual
+warning: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+library(latex2exp)
+library(broom.mixed)
+```
+
+## Problem 9.1 The epidemiology of Lyme disease
+
+Lyme disease is a tick-borne infectious disease spread by bacteria of species *Borrelia*, which are
+transmitted to ticks when they feed on animal hosts. While fairly common in the United States,
+this disease has recently begun to spread throughout Europe.
+Imagine you are researching the occurrence of Lyme disease in the UK. As such, you begin
+by collecting samples of 10 ticks from fields and grasslands around Oxford, and counting the
+occurrence of the *Borrelia* bacteria.
+
+### Problem 9.1.1
+
+You start by assuming that the occurrence of *Borrelia* bacteria in one tick is independent of that in other ticks. In this case, why is it reasonable to assume a binomial likelihood?
+
+::: {style="color:blue"}
+If we assume independence in disease between ticks (as well as assuming the underlying prevalence is
+the same across all surveyed terrains; i.e. identically-distributed), then because the data is discrete,
+and the sample size fixed $⇒$ binomial likelihood.
+:::
+
+### Problem 9.1.2
+
+Suppose the number of *Borrelia*-positive ticks within each sample $i$ is given by
+the random variable $X_i$ , and that the underlying prevalence (among ticks) of this disease is $θ$.
+Write down the likelihood for sample $i$.
+
+::: {style="color:blue"}
+$$
+\begin{aligned}
+L(\theta|X_i) &= \Pr(X_i|\theta) \\
+              &= \binom{10}{X_i} \theta^{X_i} (1 - \theta)^{10 - X_i}
+\end{aligned}
+$$
+:::
+
+### Problem 9.1.3
+
+Suppose that in your first sample of size 10 you find $X_1 = 1$ case of Borrelia.
+Graph the likelihood here and hence (by eye) determine the maximum likelihood estimate of $θ$.
+
+```{r}
+#| echo: false
+
+n = 10
+x = 1
+theta <- seq(0,1,.01)
+likelihood <- dbinom(x, n, theta)
+```
+
+::: {style="color:blue"}
+The likelihood is shown in @fig-9.1.3-sol. The maximum likelihood estimate is at $θ = $ `r x/n`.
+
+```{r}
+#| label: fig-9.1.3-sol
+#| fig-cap: "The likelihood for $X_1 = 1$ in the ticks example."
+#| echo: false
+
+data.frame(theta = theta, likelihood = likelihood) |>
+  ggplot() +
+  geom_line(aes(x = theta, y = likelihood), color = "blue") +
+  geom_vline(xintercept = theta[which.max(likelihood)], color = "orange", linetype = "dashed") + 
+  theme_classic() + 
+  labs(x=TeX("$\\theta$"))
+
+```
+:::
+
+
+Problem 9.1.4
+
+By numerical integration show that the area under the likelihood curve is about
+$0.09$. Comment on this result.
+
+::: {style="color:blue"}
+
+The likelihood function is not a valid probability distribution!
+
+```{r}
+#| echo: true
+
+integrate(f = function(theta) {
+  dbinom(1,10,theta)
+}, lower = 0, upper = 1)
+```
+
+:::
+
+### Problem 9.1.5
+
+Assuming that $θ = 10%$, graph the probability distribution (also known as the
+sampling distribution). Show that, in contrast to the likelihood, this distribution is a valid probability distribution.
+
+```{r}
+#| echo: true
+
+n = 10
+x = 0:10
+theta <- 0.1
+prob <- dbinom(x, n, theta)
+
+sum(prob)
+```
+
+```{r}
+#| label: fig-9.1.5-sol
+#| fig-cap: "The sampling distribution for $θ = 0.1$."
+#| echo: false
+
+data.frame(x = x, prob = prob) |>
+  ggplot() +
+  geom_segment(aes(x = x, y =0, yend = prob), color = "blue", alpha=.2) +
+  geom_point(aes(x = x, y = prob), color = "blue") + 
+  theme_classic() + 
+  labs(x="X", y = "pmf")
+
+```
+
+### Problem 9.1.6 (Optional)
+
+Now assume that you do not know $θ$ . Use calculus to show that the
+maximum likelihood estimator of the parameter, for a single sample of size $10$ where you found
+$X$ ticks with the disease, is given by:
+
+$$
+\hat{\theta} = \frac{X}{10}
+$$
+
+::: {style="color:blue"}
+TODO
+:::
+
+### Problem 9.1.7
+
+A colleague mentions that a reasonable prior to use for $θ$ is a $beta ( a , b )$ distribution.
+Graph this for $a = 1$ and $b = 1$.
+
+```{r}
+#| label: fig-9.1.7-sol
+#| fig-cap: "Beta(1,1) prior"
+#| echo: false
+
+theta <- seq(0,1,.01)
+
+
+data.frame(x = theta, prob = dbeta(theta, 1, 1)) |>
+  ggplot() +
+  geom_line(aes(x = x, y = prob), color = "blue") + 
+  theme_classic() + 
+  labs(x="X", y = "pmf")
+
+```
+
+### Problem 9.1.8
+
+How does this distribution change as you vary $a$ and $b$?
+
+
+::: {style="color:blue"}
+TODO
+:::
+
+### Problem 9.1.9
+
+Prove that a $beta ( a , b )$ prior is conjugate to the binomial likelihood, showing
+that the posterior distribution is given by a $beta ( X + a ,10 − X + b )$ distribution.
+
+
+::: {style="color:blue"}
+TODO
+:::
+
+
+## Problem 9.1.10
+
+Graph the posterior for $a = 1$ and $b = 1$. How does the posterior distribution
+vary as you change the mean of the beta prior? (In both cases assume that $X = 1$).
+
+
+::: {style="color:blue"}
+TODO
+:::
