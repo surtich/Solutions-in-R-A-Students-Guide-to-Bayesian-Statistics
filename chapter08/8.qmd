@@ -15,7 +15,7 @@ library(latex2exp)
 library(broom.mixed)
 ```
 
-### Problem 8.1 Drug trials
+## Problem 8.1 Drug trials
 
 Suppose that we are testing the efficacy of a certain drug which aims to cure depression, across
 two groups, each of size 10, with varying levels of the underlying condition: mild and severe.
