@@ -1,0 +1,411 @@
+---
+title: "Chapter 13 Problem Sets"
+format: html
+editor: visual
+warning: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+library(latex2exp)
+library(RColorBrewer)
+library(patchwork)
+```
+
+## Problem 13.1 Ticked off
+
+Imagine once again that you are investigating the occurrence of Lyme disease in the UK. This is a
+vector-borne disease caused by bacteria of the species *Borrelia* which is carried by ticks. (The ticks
+pick up the infection by blood-feeding on animals or humans that are infected with *Borrelia*.) You
+decide to estimate the prevalence of these bacteria in ticks you collect from the grasslands and
+woodlands around Oxford.
+
+You decide to use sample sizes of 100 ticks, out of which you count the number of ticks testing
+positive for *Borrelia*. You decide to use a binomial likelihood since you assume that the presence
+of *Borrelia* in one tick is independent of that in other ticks. Also, because you sample a relatively
+small area, you assume that the presence of *Borrelia* is identically distributed across ticks.
+
+### Problem 13.1.1
+
+You specify a *beta(1,1)* distribution as a prior. Use independent sampling to estimate the prior predictive distribution (the same as the posterior predictive, except using sampling
+from the prior in the first step rather than the posterior), and show that its mean is approximately 50.
+
+::: {style="color:blue"}
+```{r}
+a <- 1
+b <- 1
+N <- 100
+prior_predictive <- replicate(10000, {
+  theta <- rbeta(1, a, b)
+  rbinom(1, N, theta)
+})
+
+mean(prior_predictive)
+```
+
+:::
+
+### Problem 13.1.2
+
+In a single sample you find that there are 6 ticks that test positive for *Borrelia*.
+Assuming a *beta(1,1)* prior, graph the posterior distribution, and find its mean.
+
+::: {style="color:blue"}
+```{r}
+X <- 6
+theta = seq(0,1,.001)
+posterior_df <- data.frame(theta, pdf = dbeta(theta, a + X, b + N - X))
+  posterior_df |>
+  ggplot() +
+  geom_line(aes(x=theta, y=pdf)) +
+  theme_classic()
+
+(posterior_mean = (a + X)/(a + X + b + N - X))
+```
+:::
+
+### Problem 13.1.3 
+
+Generate 100 independent samples from this distribution using your software’s in
+built (pseudo-)random-number generator. Graph this distribution. How does it compare to the PDF
+of the exact posterior?
+
+::: {style="color:blue"}
+```{r}
+posterior_samples <- rbeta(N, a + X, b + N - X)
+posterior_df |>
+  ggplot() +
+  geom_density(data=tibble(theta =posterior_samples), aes(x=theta, color="samples")) +
+  geom_line(aes(x=theta, y=pdf, color="posterior")) +
+  scale_color_manual(name = "", values = c("samples" = "blue", "posterior" = "orange"))+ 
+  theme_classic() +
+  guides(color = guide_legend(override.aes = list(linetype = c(1, 1), shape = c(NA, 1))))
+```
+:::
+
+### Problem 13.1.4
+
+Determine the effect of increasing the sample size on predictive accuracy using
+the independent sampler to estimate the posterior mean. (Hint: for each sample you are essentially comparing the sample mean with the true mean of the posterior.)
+
+::: {style="color:blue"}
+```{r}
+#| echo: false
+#| label: fig-13.1.4-sol
+#| fig-cap: "The estimated mean (left) and standard deviation in the error (right) using independent sampling to estimate the mean of the posterior for the ticks example."
+sample_from_posterior <- function(n_samples, times) {
+  means <- replicate(times, replicate(times, {
+    mean(rbeta(n_samples, a + X, b + N - X))
+  }))  
+  c(mean = mean(means), sd = sd(means))
+}
+
+
+posterior_samples <- tibble(n_samples = seq(10,1000,10)) |> 
+  rowwise() |>
+  mutate(tmp = list(sample_from_posterior(n_samples, 5))) |>
+  unnest_wider(tmp) |> mutate(ymin = mean - 2*sd, ymax = mean + 2*sd)
+  
+p1 <- posterior_samples |>
+  ggplot() +
+    geom_errorbar(aes(x=n_samples, ymin = ymin, ymax = ymax), alpha=.2) +
+    geom_point(aes(x=n_samples, y=mean), color ="orange") +
+    geom_hline(yintercept = posterior_mean, color = "blue") +
+    theme_classic() +
+    scale_y_continuous(breaks=seq(.05,.1,.01), limits = c(0.049,.101), minor_breaks = seq(0.03,.102,0.002)) +
+    scale_x_continuous(breaks=seq(100,1000,100), limits = c(10,1000), expand=c(.01,0), , minor_breaks = seq(10,1000,10)) +
+    guides(x = guide_axis(minor.ticks = TRUE), y = guide_axis(minor.ticks = TRUE)) +
+    labs(x="sample size", y = "estimated mean")
+
+p2 <- posterior_samples |>
+  ggplot() +
+    geom_point(aes(x=n_samples, y=sd), color = "orange") +
+    theme_classic() +
+    scale_y_continuous(breaks=seq(.00,.008,.002), limits = c(0.0,.0085), minor_breaks = seq(0.0,.0085,0.0002)) +
+  geom_smooth(aes(x=n_samples, y=sd), color = "blue", se=FALSE, formula = y ~ x, method = "loess") + 
+  scale_x_continuous(breaks=seq(0,1000,200), limits = c(0,1000), expand=c(.01,0), , minor_breaks = seq(0,1000,50)) +
+  guides(x = guide_axis(minor.ticks = TRUE), y = guide_axis(minor.ticks = TRUE)) +
+  labs(x="sample size", y = "standard deviation of error in estimates")
+
+p1 + p2
+```
+
+
+:::
+
+### Problem 13.1.5
+
+Estimate the variance of the posterior using independent sampling for a sample
+size of 100. How does your sample estimate compare with the exact solution?
+
+::: {style="color:blue"}
+```{r}
+sample_from_posterior <- function(n_samples, times) {
+  replicate(times, {
+    var(rbeta(n_samples, a + X, b + N - X))
+  })
+}
+
+posterior_variance <- (a + X)*(b + N - X)/((a + X + b + N - X)^2*(a + X + b + N - X + 1))
+
+tibble(var = sample_from_posterior(100, 2000)) |> ggplot() +
+  geom_histogram(aes(x=var), fill="orange", color="black", binwidth = 5e-5, boundary = 0) + 
+  geom_vline(xintercept = posterior_variance, color = "blue", linewidth=1) +
+  scale_y_continuous(expand = c(0,0)) +
+  scale_x_continuous(breaks = seq(0.0004,0.001,0.0002), labels = function(x) format(x, scientific = FALSE)) +
+  theme_classic() +
+  labs(x="estimated variance", y="frequency")
+```
+
+:::
+
+### Problem 13.1.6
+
+Create a proposal function for this problem that takes as input a current value
+of $θ$, along with a step size, and outputs a proposed value. For a proposal distribution here we
+use a normal distribution centred on the current $θ$ value with a standard deviation (step size)
+of 0.1. This means you will need to generate a random $θ$ from a normal distribution using your
+statistical software’s in-built random-number generator.
+
+```{r}
+fproposal <- function(theta, step_size = .1) {
+  rnorm(1, mean = theta, sd = step_size) %% 1
+}
+```
+
+### Problem 13.1.7
+
+Create the accept–reject function of Random Walk Metropolis that accepts as
+inputs both $θ_current$ and $θ_proposed$ and outputs the next value of $θ$.
+
+```{r}
+faceppt <- function(current, proposed) {
+  r <- min(1, dbeta(proposed, a + X, b + N - X) / dbeta(current, a + X, b + N - X))
+  
+  ifelse(runif(1,0,1) < r, proposed, current)
+}
+```
+
+### Problem 13.1.8
+
+Create a function that combines the previous two functions, so it takes as input
+a current value of $θ_current$ , generates a proposed $θ_proposed$ , and updates $θ_current$ in accordance with the Metropolis accept–reject rule.
+
+
+```{r}
+fnext <- function(current, step_size=.1) {
+  faceppt(current, fproposal(current, step_size))
+}
+
+```
+
+### Problem 13.1.9
+
+Create a fully working Random Walk Metropolis sampler. (Hint: you will need
+to iterate the last function. Use a uniformly distributed random number between 0 and 1 as a
+starting point.)
+
+```{r}
+fwalk <- function(init = runif(1,0,1), steps=100, step_size=.1) {
+  current <- init
+  values = replicate(steps, NA)
+  for (step in 1:steps) {
+    values[step] = current
+    current <- fnext(current, step_size)
+  }
+  values
+}
+```
+
+### Problem 13.1.10
+
+For a sample size of 100 from your Metropolis sampler compare the sampling
+distribution to the exact posterior. How does the estimated posterior compare with that obtained
+via independent sampling using the same sample size?
+
+```{r}
+compare_with_posterior <- function(dist, xend=.2) {
+  colors = c("blue", "orange","gray")
+  posterior_df |>
+    ggplot() +
+    geom_line(aes(x=theta, y=pdf, color="exact"), linewidth=1) +
+    geom_density(data=data.frame(theta = dist[[1]]), aes(x=theta, color=names(dist)[1]), linewidth=1) +
+    geom_density(data=data.frame(theta = dist[[2]]), aes(x=theta, color=names(dist)[2]), linewidth=1) +
+    theme_classic() +
+    scale_x_continuous(breaks = seq(0,xend,.05), limits = c(0,xend+.01), expand=c(0,0), minor_breaks = seq(0,xend,.01)) +
+    scale_y_continuous(breaks = seq(0,20,5), limits = c(0,20), expand=c(0,0), minor_breaks = seq(0,20,1)) +
+    scale_color_manual(name="", values=colors) +
+    guides(x = guide_axis(minor.ticks = TRUE), y = guide_axis(minor.ticks = TRUE)) +
+    labs(x=TeX("$\\theta$"), color = guide_legend(override.aes = list(shape = NA)))  
+}
+
+dist <- list(independent = rbeta(100, a + X, b + N - X), MCMC = fwalk(steps=100))
+
+compare_with_posterior(dist)
+```
+
+### Problem 13.1.11
+
+Run 1000 iterations, where in each iteration you run a single chain for 100
+iterations. Store the results in a 1000 × 100 matrix. For each iterate calculate the sample mean.
+Graph the resulting distribution of sample means. Determine the accuracy of the MCMC at estimating the posterior mean.
+
+### Problem 13.1.12
+
+Graph the distribution of the sample means for the second 50 observations
+of each chain. How does this result compare with that of the previous question? Why is there
+a difference?
+
+```{r}
+#| echo: false
+#| label: fig-13.1.11-sol
+#| fig-cap: "The sampling distribution of the sample mean of the MCMC runs for the ticks example, where (left) we use all 100 (light grey) or 1000 samples (dark grey) from each chain, and (right) we only use the second half of each."
+
+fcut <- function(vector, cut = .5) {
+  vector[min(ceiling((length(vector)+1)*cut),length(vector)):length(vector)]
+}
+
+
+fsimulate <- function(chains = 1000, steps = 100, step_size=.1, cut=0) {
+  replicate(chains, {
+    fcut(fwalk(runif(1,0,1),steps=steps, step_size),cut)
+  })
+}
+
+plot_means <- function(walk1, walk2, xend=0.25) {
+  tibble(means = walk1) |>
+    ggplot() +
+    geom_histogram(aes(x=means), color="grey", alpha=.2, binwidth = (xend-0.05)/50, boundary=0) +
+    geom_histogram(data=tibble(means = walk2), aes(x=means), color="grey", binwidth = (xend-0.05)/50, boundary=0, alpha=.8) +
+    geom_vline(xintercept = posterior_mean, color = "blue", linewidth=.5) +
+    scale_x_continuous(breaks=seq(0.05, xend, (xend-.05)/4), limits=c(.05,xend), expand=c(.005,.001)) +
+    scale_y_continuous(expand = c(0,0)) +
+    theme_classic() +
+    labs(x="estimated mean", y="frequency")
+}
+
+
+walk_means_100 <- apply(fsimulate(), 2, mean)
+walk_means_1000 <- apply(fsimulate(steps=1000), 2, mean)
+
+p1 <- plot_means(walk_means_100, walk_means_1000, xend=.25)
+
+walk_means_100 <- apply(fsimulate(cut=.5), 2, mean)
+walk_means_1000 <- apply(fsimulate(steps=1000, cut=.5), 2, mean)
+
+p2 <- plot_means(walk_means_100, walk_means_1000,xend=.1)
+
+p1+p2
+
+```
+
+### Problem 13.1.13
+
+Decrease the standard deviation (step size) of the proposal distribution to
+0.01. For a sample size of 200, how does the posterior for a step size of 0.01 compare to that
+obtained for 0.1?
+
+
+
+```{r}
+plot_chains <- function(chains, colors, yend = NULL ) {
+  step <- 1:length(chains[[1]])
+  df <- tibble(step)
+  for (i in 1:length(chains)) {
+    df[(names(chains))[i]] <- chains[[i]]
+  }
+  names(colors) <- names(chains) 
+  
+  p1 <- df |> pivot_longer(cols=-step) |> ggplot() +
+    geom_line(aes(x=step, y=value, color=name)) +
+    theme_classic() +
+    labs(y=TeX("$\\theta$"), x="step #") +
+    scale_color_manual(name="", values=colors)
+  
+  if (!is.null(yend)) {
+    p1 + scale_y_continuous(limits = c(0,yend))
+  }
+  
+  p1
+} 
+
+dist <- list(
+  "step size = 0.1" = fwalk(init=.9, steps=200),
+  "step size = 0.01" = fwalk(init=.9,steps=200, step_size = 0.01)
+)
+
+colors <- c("grey", "orange")
+
+p1<-compare_with_posterior(dist, xend=.4)
+p2<-plot_chains(dist, colors)
+
+p1 + p2
+```
+
+
+### Problem 13.1.14
+
+Increase the standard deviation (step size) of the proposal distribution to 1. For
+a sample size of 200, how does the posterior for a step size of 1 compare to that obtained for 0.1?
+
+
+
+```{r}
+dist <- list(
+  "step size = 0.1" = fwalk(init=.3, steps=200),
+  "step size = 1" = fwalk(init=.3,steps=200, step_size = 1)
+)
+
+colors <- c("grey", "orange")
+
+p1<-compare_with_posterior(dist, xend=.4)
+p2<-plot_chains(dist, colors, yend=.3)
+
+p2
+```
+### Problem 13.1.15
+
+Suppose we collect data for a number of such samples (each of size 100), and
+find the following numbers of ticks that test positive for Borrelia: (3,2,8,25). Either calculate the
+new posterior exactly, or use sampling to estimate it. (Hint: in both cases make sure you include
+the original sample of 6.)
+```{r}
+X_new <- c(3,2,8,25)
+
+X_total <- c(X, X_new)
+(a_new <- a + sum(X_total))
+(b_new <- b + N - X + 100*length(X_new) - sum(X_new))
+```
+
+
+### Problem 13.1.16
+
+Generate samples from the posterior distribution, and use these to
+test your model. What do these suggest about your model’s assumptions?
+
+```{r}
+posterior_predictive <- replicate(1000, {
+  theta<-rbeta(1,a_new,b_new)
+  rbinom(1,100,theta)
+})
+
+tibble(posterior_predictive) |> ggplot() +
+  geom_histogram(aes(x=posterior_predictive), binwidth = 1, fill="orange", color="black") +
+  geom_point(data=tibble(X=X_total), aes(x=X, y=0), color="blue") +
+  geom_jitter(data=tibble(posterior_predictive) |> slice_sample(n=50), aes(x=posterior_predictive, y=10), color="red", width=0,height=8) +
+  scale_x_continuous(expand = c(0.01,0), breaks=seq(0,25,1))+
+  scale_y_continuous(expand = c(0.01,0)) +
+  theme_classic() +
+  labs(x="cases", y="frequency")
+```
+
+
+
+
+
+
+
