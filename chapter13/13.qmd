@@ -395,10 +395,11 @@ posterior_predictive <- replicate(1000, {
 
 tibble(posterior_predictive) |> ggplot() +
   geom_histogram(aes(x=posterior_predictive), binwidth = 1, fill="orange", color="black") +
-  geom_point(data=tibble(X=X_total), aes(x=X, y=0), color="blue") +
-  geom_jitter(data=tibble(posterior_predictive) |> slice_sample(n=50), aes(x=posterior_predictive, y=10), color="red", width=0,height=8) +
+  geom_point(data=tibble(X=X_total), aes(x=X, y=0, color="actual")) +
+  geom_jitter(data=tibble(posterior_predictive) |> slice_sample(n=50), aes(x=posterior_predictive, y=10, color="simulated"), width=0,height=8) +
   scale_x_continuous(expand = c(0.01,0), breaks=seq(0,25,1))+
   scale_y_continuous(expand = c(0.01,0)) +
+  scale_color_manual(name="", values = c(actual = "blue", simulated = "red")) +
   theme_classic() +
   labs(x="cases", y="frequency")
 ```

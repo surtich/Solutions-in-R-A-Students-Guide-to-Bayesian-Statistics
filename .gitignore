@@ -1,2 +1,4 @@
 *_files/
 .Rproj.user/
+fits/*
+**/*_cache/**

@@ -1,0 +1,973 @@
+---
+title: "Chapter 16 Problem Sets"
+format: html
+editor: visual
+warning: false
+echo: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+library(latex2exp)
+library(RColorBrewer)
+library(patchwork)
+library(rstan)
+library(broom.mixed)
+
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write= TRUE)
+```
+
+## Problem 16.1 Discoveries data revisited
+
+The file `evaluation_discoveries.csv` contains data on the numbers of ‘great’ inventions and
+scientific discoveries ($X_t$) in each year from 1860 to 1959. In this question you will develop
+a model to explain the variation in scientific inventions over time. The simplest model here is
+to assume that (a) one discovery is independent of all others, and (b) the rate of occurrence of
+discoveries is the same in all years ($λ$) . Since the data are discrete, these assumptions suggest the
+use of a Poisson likelihood:
+
+$$
+X_t ∼ Poisson ( λ )
+$$
+
+### Problem 16.1.1
+
+Open a text editor and create a file called `discoveries.stan` in your working
+directory. In the file create three parameter blocks:
+
+```{stan, output.var="model"}
+#| eval: false
+#| echo: true
+data {
+}
+
+parameters {
+}
+
+model {
+}
+```
+
+
+### Problem 16.1.2
+
+Fill in the `data` and `parameter` blocks for the above model.
+
+### Problem 16.1.3
+
+Using a $log-N(2,1)$ prior for $λ$, code up the model block, making sure to save
+your file afterwards.
+
+### Problem 16.1.4
+
+Open your statistical software (R, Python, Matlab, and so on) and load any
+packages necessary to use Stan.
+
+```{stan output.var = "model", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of observations
+  int<lower=0> X[N]; // vector of discoveries
+}
+
+parameters {
+  real<lower=0> lambda;
+}
+
+model {
+  X ~ poisson(lambda); // likelihood
+  lambda ~ lognormal(2, 1); // prior
+}
+
+generated quantities{
+  int<lower=0> XSim[N];
+  
+  for (i in 1:N) {
+    XSim[i] = poisson_rng(lambda);
+  }
+}
+```
+
+### Problem 16.1.5
+
+Load the data into your software and then put it into a structure that can be passed to Stan.
+
+
+```{r}
+aDF <- read.csv('../data/evaluation_discoveries.csv')
+X <- aDF[, 2]
+N <- length(X)
+dataList <- list(N=N, X=X)
+```
+
+### Problem 16.1.6
+
+Run your model using Stan, with four chains, each with a sample size of 1000,
+and a warm-up of 500 samples. Set seed=1 to allow for reproducibility of your results. Store your
+result in an object called fit.
+
+```{r}
+#| echo: false
+if (file.exists("../fits/16.1.6.rds")) {
+  fit <- readRDS("../fits/16.1.6.rds")
+} else {
+  fit <- rstan::sampling(
+    model, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/16.1.6.rds"
+  )
+  saveRDS(fit, file = "../fits/16.1.6.rds")
+}
+```
+
+### Problem 16.1.7
+
+Diagnose whether your model has converged by printing `fit`.
+
+```{r}
+#| echo: false
+
+tidy(fit, , pars=c("lambda", "lp__"), drop.pars=NULL, rhat=TRUE) |> select(term, rhat) |> gt()
+```
+
+### Problem 16.1.8
+
+For your sample what is the equivalent number of samples for an independent sampler?
+
+```{r}
+#| echo: false
+
+tidy(fit, pars=c("lambda", "lp__"), drop.pars=NULL, ess=TRUE) |> select(term, ess) |> gt()
+```
+
+### Problem 16.1.9
+
+Find the central posterior 80% credible interval for $λ$.
+
+```{r}
+#| echo: false
+
+tidy(fit, , pars=c("lambda"), conf.level = .8, conf.int = TRUE) |> 
+  select(term, starts_with("conf.")) |> 
+  gt() |> fmt_number(decimals = 2)
+```
+
+```{r}
+lLambda <- extract(fit, 'lambda')[[1]]
+round(c(quantile(lLambda, 0.1), quantile(lLambda, 0.9)), 2)
+```
+
+### Problem 16.1.10
+
+Draw a histogram of your posterior samples for $λ$.
+
+```{r}
+data.frame(posterior_samples = lLambda) |> ggplot() +
+  geom_histogram(aes(x=posterior_samples), fill="orange", color="black", binwidth = .05) + 
+  #geom_jitter(data = data.frame(x=X), aes(x=x, y = 2), width=0, height = 3, color = "blue") + 
+  theme_classic() +
+  labs(x=TeX("$\\lambda$ samples"), y="frequency")
+```
+
+
+### Problem 16.1.11
+
+Load the `evaluation_discoveries.csv` data and graph it. What does this
+suggest about our model's assumptions?
+
+
+### Problem 16.1.12 
+
+Create a `generated quantities` block in your Stan file, and use it to sample
+from the posterior predictive distribution. Then carry out appropriate posterior predictive checks
+to evaluate your model. (Hint: use the `poisson_rng` function to generate independent samples
+from your lambda.)
+
+```{r}
+lXSim <- extract(fit, 'XSim')[[1]]
+```
+
+
+```{r}
+data.frame(X=X) |> ggplot() +
+  geom_density(aes(x=X, color="real"), linewidth=1) +
+  geom_density(
+    data=data.frame(
+      t(lXSim[sample(1:nrow(lXSim), 20),])
+    ) |>
+    pivot_longer(cols=everything(),names_to=".sample", values_to="X"),
+    aes(x=X, group=.sample, color="simulated"), linewidth=.1) +
+    scale_x_continuous(breaks=0:15) +
+  theme_classic()
+```
+
+```{r}
+lMax <- apply(lXSim, 1, max)
+mean(lMax >= max(X))
+```
+
+```{r}
+data.frame(max=lMax) |>
+ggplot() +
+  geom_histogram(aes(x=max), color="black", fill="orange", binwidth = 1) +
+  geom_vline(xintercept = max(X), color="blue") +
+  scale_x_continuous(breaks=5:20, expand=c(0,0)) +
+  scale_y_continuous(expand = c(0.05,0)) +
+  theme_classic()
+  
+```
+
+### Problem 16.1.13
+
+A more robust sampling distribution is a negative binomial model:
+
+$$
+X_i ∼ NB ( μ , κ ) ,
+$$
+
+where $μ$ is the mean number of discoveries per year, and $var ( X ) = μ + μ^2 / κ$ . Here $κ$ measures the degree of overdispersion of your model; specifically if $κ$ increases then overdispersion
+decreases.
+
+
+Write a new stan file called `discoveries_negbin.stan` that uses this new sampling model.
+(Hint: use the Stan manual section on discrete distributions to search for the correct negative
+binomial function namlog\text{-}Ne; be careful – there are two different parameterisations of this function
+available in Stan.) Assume that we are using the following priors:
+
+
+$$
+\begin{aligned}
+μ &∼ log\text{-}N (2,1) \\
+κ &∼ log\text{-}N (2,1)
+\end{aligned}
+$$
+Draw 1000 samples across four chains for your new model. Has it converged to the posterior?
+
+
+```{stan output.var = "modelNB", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of observations
+  int<lower=0> X[N]; // vector of discoveries
+}
+
+parameters {
+  real<lower=0> mu;
+  real<lower=0> kappa;
+}
+
+model {
+  X ~ neg_binomial_2(mu, kappa); // likelihood
+  mu ~ lognormal(2, 1); // prior
+  kappa ~ lognormal(2, 1); // prior
+}
+
+generated quantities{
+  int<lower=0> XSim[N];
+  
+  for (i in 1:N) {
+    XSim[i] = neg_binomial_2_rng(mu, kappa);
+  }
+}
+```
+
+```{r}
+#| echo: false
+
+if (file.exists("../fits/16.1.13.rds")) {
+  fitNB <- readRDS("../fits/16.1.13.rds")
+} else {
+  fitNB <- rstan::sampling(
+    modelNB, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/16.1.13.rds"
+  )
+  saveRDS(fitNB, file = "../fits/16.1.13.rds")
+}
+```
+
+```{r}
+tidy(fitNB, pars=c("mu", "kappa", "lp__"), drop.pars=NULL, ess=TRUE, rhat= TRUE, conf.level = .8, conf.int = TRUE) |> 
+  gt() |> fmt_number(decimals = 2)
+```
+
+## Problem 16.1.14
+
+Carry out posterior predictive checks on the new model. What do you conclude about the use of a negative binomial here versus the simpler Poisson?
+
+
+
+```{r}
+lXSimNB <- extract(fitNB, 'XSim')[[1]]
+lMaxNB <- apply(lXSimNB, 1, max)
+mean(lMaxNB >= max(X))
+```
+
+```{r}
+data.frame(X=X) |> ggplot() +
+  geom_density(aes(x=X, color="real"), linewidth=1) +
+  geom_density(
+    data=data.frame(
+      t(lXSimNB[sample(1:nrow(lXSimNB), 20),])
+    ) |>
+    pivot_longer(cols=everything(),names_to=".sample", values_to="X"),
+    aes(x=X, group=.sample, color="simulated"), linewidth=.1) +
+    scale_x_continuous(breaks=0:15) +
+  theme_classic()
+```
+
+```{r}
+data.frame(max=lMaxNB) |>
+ggplot() +
+  geom_histogram(aes(x=max), color="black", fill="orange", binwidth = 1) +
+  geom_vline(xintercept = max(X), color="blue") +
+  scale_x_continuous(breaks=5:20, expand=c(0,0)) +
+  scale_y_continuous(expand = c(0.005,0)) +
+  theme_classic()
+  
+```
+
+
+::: {style="color:blue"}
+Now I obtain about 20% of posterior predictive samples that have a maximum value greater than
+or equal to 12 (that of the real data). This is much more reasonable than that from the Poisson
+model.
+:::
+
+### Problem 16.1.15
+
+Find the central posterior 80% credible interval for the mean rate of discoveries $μ$ from the negative binomial model. How does it compare with your results from the Poisson
+model? Why is this the case?
+
+```{r}
+tidy(fit, pars=c("lambda"), conf.level = .8, conf.int = TRUE) |>
+  add_row(tidy(fitNB, pars=c("mu"), conf.level = .8, conf.int = TRUE)) |>
+  select(term, starts_with("conf.")) |> 
+  gt() |> fmt_number(decimals = 2)
+```
+
+### Problem 16.1.16
+
+Calculate the autocorrelation in the residuals between the actual and simulated data series. What do these suggest about our current model?
+
+
+```{r}
+#| eval: false
+lXSimNB <- extract(fitNB, 'XSim')[[1]]
+mResid <- sweep(lXSim, 2, X)
+lCorr <- sapply(seq(1, 200, 1),  function(i) acf(mResid[i, ], lag.max=1)$acf[[2]])
+
+data.frame(corr = lCorr) |> ggplot() +
+  geom_histogram(aes(x=corr), fill="orange", color="black", binwidth = .01) +
+  theme_classic()
+```
+### Problem 16.1.17
+
+Following on from the above, suggest an alternative model formulation.
+
+::: {style="color:blue"}
+TODO
+:::
+ 
+## Problem 16.2 Hungover holiday regressions
+
+The data in file `stan_hangover.csv` contains a series of Google Trends estimates of the search
+traffic volume for the term ‘hangover cure’ in the UK between February 2012 and January
+2016. The idea behind this problem is to determine how much more hung over people are in
+the ‘holiday season’, defined here as the period between 10 December and 7 January, than on
+average for the rest of the year.
+
+### Problem 16.2.1
+
+Graph the search volume over time, and try to observe the uplift in search
+volume around the holiday season.
+
+### Problem 16.2.2
+
+The variable holiday is a type of indicator variable that takes the value 1 if the
+given week is all holiday season, 0 if it contains none of it, and 0 < X < 1 for a week that contains
+a fraction X of days that fall in the holiday season. Graph this variable over time so that you
+understand how it works.
+
+```{r}
+df <- read.csv("../data/stan_hangover.csv") |> mutate(date = as.Date(date))
+
+df |> ggplot() +
+  geom_line(aes(x=date, y=volume, color=holiday)) + 
+  scale_color_gradientn(colors = c("lightblue", "red")) +
+  theme_classic()
+```
+### Problem 16.2.3
+
+A simple linear regression is proposed of the form:
+
+$$
+V_t ∼ \mathcal{N} ( β_0 + β_1 h_t , σ ) ,
+$$
+
+where $V_t$ is the search volume in week $t$ and $h_t$ is the holiday season indicator variable. Interpret
+$β_0$ and $β_1$ and explain how these can be used to estimate the increased percentage of hangovers
+in the holiday season.
+
+::: {style="color:blue"}
+$β_0$ is the average hangover search volume in weeks that aren’t in the holiday season, and $β_1$ shows
+the uplift for a week that falls in the holiday season. The percentage increase is hence $\frac{β_1}{β_0}$.
+:::
+
+### Problem 16.2.4
+
+Assuming $β_i ∼ \mathcal{N} (0,50)$ and $σ ∼ half \text{-} \mathcal{N}(0,10)$ priors, write a Stan model to estimate the percentage increase in hangoverness over the holiday period.
+
+```{stan output.var = "model16.2", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of observations
+  int<lower=0> Volume[N]; // Volume
+  real<lower=0,upper=1> Holiday[N];
+}
+
+parameters {
+  real beta0;
+  real beta1;
+  real<lower=0> sigma;
+}
+model {
+  for (i in 1:N) {
+    Volume[i] ~ normal(beta0+beta1*Holiday[i], sigma); // likelihood
+  }
+  beta0 ~ normal(0, 50); // prior
+  beta1 ~ normal(0, 50); // prior
+  sigma ~ normal(0, 10); // prior
+}
+
+generated quantities {
+  real uplift;
+  uplift = beta1 / beta0;
+}
+```
+
+```{r}
+#| echo: false
+
+dataList = list(
+  N = nrow(df),
+  Volume =  df$volume,
+  Holiday = df$holiday
+)
+
+if (file.exists("../fits/16.2.rds")) {
+  fit16.2 <- readRDS("../fits/16.2.rds")
+} else {
+  fit16.2 <- rstan::sampling(
+    model16.2, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/16.2.rds"
+  )
+  saveRDS(fit16.2, file = "../fits/16.2.rds")
+}
+```
+
+```{r}
+tidy(fit16.2, conf.int = TRUE, conf.level = .5, rhat=TRUE, ess=TRUE) |>
+  select(-std.error) |>
+  gt() |> fmt_number(columns=-ess, decimals = 2)
+```
+
+## Problem 16.3 Coding up a bespoke probability density
+
+In the file `stan_survival.csv` there is data for a variable $Y$ that we believe comes from a prob
+ability distribution:
+
+$$
+p(Y) = \frac{\sqrt[3]{b}}{\Gamma\left(\frac{4}{3}\right)} \exp(-bY^3)
+$$ {#eq-16.3}
+
+where $b > 0$ is a parameter of interest. In this question we are going to write a Stan program
+to estimate the parameter $b$ even though this distribution is not among Stan’s implemented
+distributions.
+
+### Problem 16.3.1
+
+Explain what is meant by the following statement in Stan:
+
+theta ~ beta(1,1);
+
+In particular, explain why this is essentially equivalent to the following:
+
+target += beta_lpdf(theta|1,1);
+
+where `target` is a Stan variable that stores the overall log probability, and += increments `target`
+by an amount corresponding to the right-hand side.
+
+::: {style="color:blue"}
+~ statements in Stan do not mean sampling! They always mean increment the log probability by
+something, since HMC works in the (negative) log probability space. In this case it means increment
+the log probability by an amount corresponding to the probability density of a value "theta" from
+a beta(1,1) distribution. This is why it is equivalent to the second piece of code where we explicitly
+increment the log probability.
+
+Note there is a subtle difference between the two which is that ~ statements drop all constant
+terms from the log probability update, whereas the target statements keep these. However for
+most purposes this is not important.
+:::
+
+### Problem 16.3.2
+
+Work out by hand an expression for the log probability of the density in @eq-16.3.
+
+::: {style="color:blue"}
+$$
+\log p = \log \left( \frac{\sqrt[3]{b}}{\Gamma \left( \frac{4}{3} \right)} \right) - b y^3
+$$
+:::
+
+
+### Problem 16.3.3
+
+Write a Stan function that for a given value of $y$ and $b$ calculates the log
+probability (ignoring any constant terms).
+
+### Problem 16.3.4
+
+Use your previously created function to write a Stan program that estimates $b$,
+and then use it to do so with the $y$ series contained within `stan_survival.csv`. (Hint: Stan
+functions must be declared at the top of a Stan program.)
+
+
+```{stan output.var = "model16.3", cache = TRUE}
+#| eval: true
+#| echo: true
+functions {
+  real fCustomProb(real aY, real aB) {
+    real aConst;
+    aConst = (aB ^ (1.0 / 3.0));
+    return(log(aConst) - aB * (aY ^ 3));
+  }
+}
+
+data {
+  int N;
+  real Y[N];
+}
+
+parameters {
+  real<lower=0> b;
+}
+model {
+  for(i in 1:N) {
+    target += fCustomProb(Y[i], b);
+  }
+}
+```
+
+```{r}
+#| echo: false
+
+df <- read.csv("../data/stan_survival.csv")
+
+dataList = list(
+  N = nrow(df),
+  Y =  df$x
+)
+
+if (file.exists("../fits/16.3.rds")) {
+  fit16.3 <- readRDS("../fits/16.3.rds")
+} else {
+  fit16.3 <- rstan::sampling(
+    model16.3, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/16.3.rds"
+  )
+  saveRDS(fit16.3, file = "../fits/16.3.rds")
+}
+```
+
+```{r}
+tidy(fit16.3) |> gt() |>
+  fmt_number(decimals = 2)
+```
+
+## Problem 16.4 Is a tumour benign or malignant?
+
+Suppose that if a tumour is benign the result of a clinical test for the disease for individual
+$i$ is $X_i ∼ B(20, θ_b )$, whereas if the tumour is malignant $Xi ∼ B(20, θ_m )$ , where $θ_b < θ_m$. Suppose
+that we collect data on 10 patients’ scores on this clinical test, $X = \{4,18,6,4,5,6,4,6,16,7\}$,
+and would like to infer the disease status for each individual, as well as the parameters ( $θ_b$, $θ_m$).
+
+### Problem 16.4.1
+
+Write down in pseudo-code the full model, where we suppose that we use
+uniform priors on ( $θ_b$ , $θ_m$ ) and discrete uniform priors on the disease status $s_i$ of individual $i$.
+
+::: {style="color:blue"}
+$$
+\begin{align}
+& s_i \sim \text{discrete-uniform}(1, 2) \\
+& \text{if} \quad (s_i = 1) \\
+& & X_i \sim \mathcal{B}(20, \theta_b) \\
+& \text{else if } (s_i = 2) \\
+& & X_i \sim \mathcal{B}(20, \theta_m) \\
+\end{align}
+$$
+:::
+
+### Problem 16.4.2
+
+Assuming that $s_i ∈[1,2]$ is the disease status of each individual (1 corresponding to a benign growth, and 2 to a malignant one), use the `transformed parameters` block to
+calculate the log probability of each individual’s data. (Hint: this will be a 10 × 2 matrix, where
+the 2 corresponds to two possible disease statuses for each individual.)
+
+### Problem 16.4.3
+
+The disease status of each individual $s_i ∈[1,2]$ is a discrete variable, and because
+Stan does not support discrete parameters directly it is not as straightforward to code up these
+problems as for continuous parameter problems. The way to do this is by marginalising out $s_i$
+from the joint distribution:
+
+$$
+p(\theta_b,\theta_m | X) = \sum_{s_1=1}^{2}p(\theta_b,\theta_m,s_1 | X),
+$$
+where we have illustrated this for the disease status of individual 1. This then allows us to find
+an expression for the posterior density which we log to give `lp`, and then use `target+=lp` to
+increment the log probability. However, because we do this on the log-density scale we instead
+do the following:
+
+$$
+\begin{aligned}
+\log p(\theta_b,\theta_m | X) &= \log \sum_{s_1=1}^{2}p(\theta_b,\theta_m,s_1 | X) \\
+                              &= \log \sum_{s_1=1}^{2}\exp (\log p(\theta_b,\theta_m,s_1 | X)) \\
+                              &= \text{log\_sum\_exp}_{s_1=1}^{2}(\log p(\theta_b,\theta_m,s_1 | X))
+\end{aligned}
+$$
+
+where `log_sum_exp(.)` (a function available in Stan) is defined as:
+
+
+$$
+\text{log\_sum\_exp}_{i=1}^{K} \alpha = \log \sum_{i=1}^{K} \exp(\alpha)
+$$
+
+
+and is a numerically more stable way of doing the above calculation. Using this knowledge, write
+a full Stan model that implements this marginalisation, and use it to estimate $θ_b$ and $θ_m$ . (Hint:
+use the `binomial_logit_lpmf(X[i]|N,alpha[s])` function in Stan and define **ordered**[2]
+`alpha`, then transform from the unconstrained alpha to theta using `inv_logit`.)
+
+### Problem 16.4.4
+
+We use the `generated quantities` block to estimate the probabilities of
+state s=1 in each different experiment by averaging over all *L* posterior draws:
+
+$$
+q(s=1|X) \approx \frac{1}{L}\sum_{i=1}^Lq(s=1,alpha[s=1]|X),
+$$
+
+where $q(.)$ is the unnormalised posterior density. The averaging over all posterior draws is
+necessary to marginalise out the alpha parameter. To normalise the posterior density we
+therefore divide the above by the sum of the un-normalised probability across both states:
+
+$$
+Pr(s=1|X) = \frac{q(s=1|X)}{q(s=1|X)+q(s=2|X)}
+$$
+Using the above knowledge, add a `generated quantities` block to your Stan model that does
+this, and hence estimate the probability that each individual’s tumour is benign.
+
+```{stan, output.var = "model16.4", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int<lower=1> nStudy; // number studies
+  int<lower=1> N; // samples per study
+  int<lower=0, upper=N> X[nStudy]; // number successes
+}
+
+parameters {
+  ordered[2] alpha;
+}
+
+transformed parameters {
+  real<lower=0,upper=1> theta[2];
+  matrix[nStudy, 2] lp;
+  
+  for(i in 1:2) {
+    theta[i] = inv_logit(alpha[i]);
+  }
+
+  for(n in 1:nStudy) {
+    for(s in 1:2) {
+      lp[n,s] = log(0.5) + binomial_logit_lpmf(X[n] | N, alpha[s]);
+    }
+  }
+}
+
+model {
+  for(n in 1:nStudy) {
+    target += log_sum_exp(lp[n]);
+  }
+}
+
+generated quantities {
+  matrix[nStudy, 2] pstate;
+  
+  for(n in 1:nStudy) {
+    pstate[n] = exp(lp[n] - log_sum_exp(lp[n]));
+  }
+}
+```
+
+
+```{r}
+#| echo: false
+
+X <- c(4,18,6,4,5,6,4,6,16,7)
+
+dataList = list(
+  nStudy = length(X),
+  N = 20,
+  X =  X
+)
+
+if (file.exists("../fits/16.4.rds")) {
+  fit16.4 <- readRDS("../fits/16.4.rds")
+} else {
+  fit16.4 <- rstan::sampling(
+    model16.4, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/16.4.rds"
+  )
+  saveRDS(fit16.4, file = "../fits/16.4.rds")
+}
+```
+
+```{r}
+#| echo: false
+
+tidy(fit16.4, pars=c("pstate")) |>
+  select(-std.error) |>
+  mutate(
+    subject = as.integer(gsub("pstate\\[(\\d+),\\d+\\]", "\\1", term)),
+    tumour = ifelse(grepl("pstate\\[\\d+,1\\]", term), "benign", "malignant")
+  ) |>
+  pivot_wider(
+    id_cols=subject,
+    names_from = tumour,
+    values_from = estimate,
+    names_prefix = "prob_"
+  ) |> gt() |>
+  fmt_number(decimals = 2, columns = -subject)
+```
+## Problem 16.5 How many times did I flip the coin?
+
+Suppose that I have a coin with $θ$ denoting the probability of it landing heads-up. In each experiment I flip the coin $N$ times, where $N$ is unknown to the observer, and record the number of heads
+obtained $Y$. I repeat the experiment 10 times, each time flipping the coin the same $N$ times, and
+record $Y = \{9, 7, 11, 10, 10, 9, 8, 11, 9, 11\}$ heads.
+
+### Problem 16.5.1
+
+Write down an expression for the likelihood, stating any assumptions you
+make.
+
+Assuming independent and identically-distributed observations we obtain,
+
+::: {style="color:blue"}
+$$
+Y_i \sim \mathcal{B}(N,\theta)
+$$
+:::
+
+### Problem 16.5.2
+
+Suppose that the maximum number of times the coin could be flipped is 20,
+and that all other (allowed) values we regard a priori as equally probable. Further suppose that,
+based on previous coin flipping fun, we specify a prior $θ ∼ beta(7,2)$.  Write down the model
+as a whole (namely, the likelihood and the priors).
+
+::: {style="color:blue"}
+$$
+\begin{aligned}
+Y_i &\sim \mathcal{B}(N,\theta) \\
+N &\sim \text{discrete-uniform}(11, 20) \\
+\theta &\sim beta(7,2)
+\end{aligned}
+$$
+
+:::
+
+### Problem 16.5.3
+
+This problem can be coded in Stan by marginalising out the discrete parameter $N$.
+The key to doing this is to write down an expression for the log probability for each result $Y_i$ conditional on an assumed value of $N$, and $θ$ . Explain why this can be written in Stan as:
+
+`log(0.1) + **binomial_lpmf**(Y[i]|N[s],theta);`
+
+where `N[s]` is the *s*th element of a vector $\textbf{N}$ containing all possible values for this variable.
+
+### Problem 16.5.4
+
+In the `transformed parameters` block, write code that calculates the log
+probability for each experiment and each possible value of $N$.
+
+### Problem 16.5.5
+
+Write a Stan program to estimate $θ$. (Hint: in the `model` block use 
+`target+=log_sum_exp(lp)` to marginalise out $N$ and increment the log probability.)
+
+### Problem 16.5.6
+
+Use the `generated quantities` block to estimate the probabilities of each
+state.
+
+
+::: {style="color:blue"}
+
+This relies on us estimating the un-normalised density for the number of coin flips by averaging
+over all samples for $θ$,
+
+$$
+q(N=11|Y) = \frac{1}{L}\sum_{i=1}^Lq(N=11,\theta_i|Y)
+$$
+
+where $q(.)$ is the un-normalised posterior density and $L$ is the number of posterior samples. To
+normalise this density we then divide the above by the un-normalised density for all other possible
+values for $N$,
+
+$$
+Pr(N=11|Y) = \frac{q(N=11|Y)}{\sum_{N=11}^{20}q(N=i|Y)}
+$$
+
+To do this in Stan we use `log_sum_exp(.)` which is defined as,
+
+$$
+\text{log\_sum\_exp}_{i=1}^{K}\alpha = \log\sum_{i=1}^{K}\exp(\alpha),
+$$
+
+which allows us to marginalise out any dependence on $N$ in log prob space because,
+
+
+$$
+\begin{aligned}
+\log p(\theta) &= \log \sum_{N=11}^{20}p(\theta, N) \\
+                              &= \log \sum_{N=11}^{20}\exp (\log p(\theta, N)) \\
+                              &= \text{log\_sum\_exp}_{N=11}^{20}(\log p(\theta, N)),
+\end{aligned}
+$$
+
+```{stan, output.var = "model16.5", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int K;
+  int Y[K];
+}
+
+transformed data {
+  int N[10];
+  for(s in 11:20) {
+    N[s-10] = s;
+  }
+}
+
+parameters {
+  real<lower=0,upper=1> theta;
+}
+
+transformed parameters {
+  vector[10] lp;
+  
+  for(s in 1:10) {
+    lp[s] = log(0.1) + binomial_lpmf(Y | N[s], theta);
+  }
+}
+
+model {
+  target += log_sum_exp(lp);
+  theta ~ beta(7,2);
+}
+
+generated quantities {
+  simplex[10] pState;
+  pState = exp(lp - log_sum_exp(lp));
+}
+```
+
+```{r}
+#| echo: false
+
+Y <- c(9,7,11,10,10,9,8,11,9,11)
+
+dataList = list(
+  K = length(Y),
+  Y = Y
+)
+
+if (file.exists("../fits/16.5.rds")) {
+  fit16.5 <- readRDS("../fits/16.5.rds")
+} else {
+  fit16.5 <- rstan::sampling(
+    model16.5, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/16.5.rds"
+  )
+  saveRDS(fit16.5, file = "../fits/16.5.rds")
+}
+```
+
+
+```{r}
+#| echo: false
+
+lPrN <- extract(fit16.5)$pState
+
+data.frame(lPrN) |> 
+  pivot_longer(
+    cols=everything(), 
+    names_to = "N", 
+    values_to = "Pr(N)",
+    names_transform = ~factor(10+as.integer(gsub("X(\\d+)", "\\1", .x)))
+  ) |> 
+  ggplot() +
+  geom_boxplot(aes(x=N, y=`Pr(N)`, color=N)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+```{r}
+fExpectation <- function(mStates){
+  lN <- apply(mStates, 1, function(x) sum(x * seq(11, 20)))
+  return(lN)
+}
+
+lExpectedN <- fExpectation(lPrN)
+
+fRunningMean <- function(lSample){
+  return(cumsum(lSample) / seq_along(lSample))
+}
+
+tibble(N=fRunningMean(lExpectedN)) |>
+  mutate(time=row_number()) |>
+  ggplot() +
+  geom_line(aes(x=time, y=N), color="lightblue") +
+  theme_classic()
+```
+
+
+:::
