@@ -19,11 +19,11 @@ library(RColorBrewer)
 
 At a fairground a man advertises a gambling game that allows participants the chance to win a money prize if they pay an entrance fee. The game sequence goes like this:
 
-* You pay $£X$.
-* The man flips a fair coin (with an equal chance of the coin landing heads or tails up).
-* If the coin lands tails up, the game ends and you walk away with nothing.
-* If the coin lands heads up, he flips the coin a further two times and you receive the total number of heads across these latter two flips, $H$. So if the coin lands heads up twice, you receive $£2$; if once, you receive $£1$; if zero, you receive $£0$.
-* Your winnings are given by $£(H - X)$.
+-   You pay $£X$.
+-   The man flips a fair coin (with an equal chance of the coin landing heads or tails up).
+-   If the coin lands tails up, the game ends and you walk away with nothing.
+-   If the coin lands heads up, he flips the coin a further two times and you receive the total number of heads across these latter two flips, $H$. So if the coin lands heads up twice, you receive $£2$; if once, you receive $£1$; if zero, you receive $£0$.
+-   Your winnings are given by $£(H - X)$.
 
 # Problem 12.1.1
 
@@ -31,15 +31,15 @@ Calculate the expected value of your winnings W if you participate, and hence de
 
 ::: {style="color:blue"}
 $$
-\mathbb{E}[W] = 0 \times \frac{1}{2} + \frac{1}{2}\times(2 \times \frac{1}{4} + 1 \times \frac{1} {2}) - X  \\
+\mathbb{E}[W] = 0 \times \frac{1}{2} + \frac{1}{2}\times(2 \times \frac{1}{4} + 1 \times \frac{1} {2}) - X \\
 
 \text{fair game} \implies \mathbb{E}[W] = £0 \implies X = £0.5
 $$
 :::
 
 ### Problem 12.1.2
-Create an R function that simulates a single run of the game, and use this to
-estimate the expected value of your winnings.
+
+Create an R function that simulates a single run of the game, and use this to estimate the expected value of your winnings.
 
 ```{r}
 X <- .5
@@ -71,9 +71,7 @@ round(mean(replicate(1000, {
 
 ### Problem 12.1.4
 
-Suppose you start with $£10$, and play the game $100$ times (stopping only if your
-wealth is below the price of entry), each time paying $£0.49$. You want to insure against the risk of
-losing all your wealth. What is the fair price to pay for such an insurance scheme?
+Suppose you start with $£10$, and play the game $100$ times (stopping only if your wealth is below the price of entry), each time paying $£0.49$. You want to insure against the risk of losing all your wealth. What is the fair price to pay for such an insurance scheme?
 
 ```{r}
 X <- .49
@@ -167,17 +165,16 @@ quantile(replicate(1000, {
 
 ### Problem 12.2.4
 
-Verify your previous answer by calculating the mean and variance of this
-distribution.
+Verify your previous answer by calculating the mean and variance of this distribution.
 
 ```{r}
 (aMean <- integrate(function(x) x * fPDF(x), 0, 5)[[1]])
 (aVar <- integrate(function(x) x ^ 2 * fPDF(x), 0, 5)[[1]] - aMean ^ 2)
 ```
+
 ### Problem 12.2.6
 
-Using the above method, where $g$ is the continuous uniform distribution
-between $0$ and $5$, find an estimate of the mean.
+Using the above method, where $g$ is the continuous uniform distribution between $0$ and $5$, find an estimate of the mean.
 
 ```{r}
 fImportance <- function(N){
@@ -196,20 +193,11 @@ fImportance(10000)
 
 $$
 \int_{-\infty}^{\infty} \frac{x^6}{\sqrt{2\pi}} \exp\left( -\frac{x^2}{2} \right) \, dx
-$$
-::: {style="color:blue"}
-TODO
-:::
-## Problem 12.4 Markovian coin
-Consider a type of coin for which the result of the next throw (heads or tails) can depend on the
-result of the current throw. In particular, if a heads is thrown then the probability of obtaining
-a heads on the next throw is $\frac{1}{2} + \epsilon$ ; if instead a tails is thrown then the probability of obtaining
-a tails on the next throw is $\frac{1}{2} + \epsilon$ . To start, we assume $0 ≤ \epsilon ≤ \frac{1}{2}$ . The random variable $X$ takes the
-value $0$ if the coin lands tails up or $1$ if it lands heads up on a given throw.
+$$ ::: {style="color:blue"} TODO ::: \## Problem 12.4 Markovian coin Consider a type of coin for which the result of the next throw (heads or tails) can depend on the result of the current throw. In particular, if a heads is thrown then the probability of obtaining a heads on the next throw is $\frac{1}{2} + \epsilon$ ; if instead a tails is thrown then the probability of obtaining a tails on the next throw is $\frac{1}{2} + \epsilon$ . To start, we assume $0 ≤ \epsilon ≤ \frac{1}{2}$ . The random variable $X$ takes the value $0$ if the coin lands tails up or $1$ if it lands heads up on a given throw.
 
-### Problem 12.4.2 
-Computationally estimate the mean of the coin by simulating 10, 20 and 100
-throws for $\epsilon = 0$.
+### Problem 12.4.2
+
+Computationally estimate the mean of the coin by simulating 10, 20 and 100 throws for $\epsilon = 0$.
 
 ```{r}
 epsilon = 0
@@ -251,6 +239,7 @@ data.frame(throws=c(10, 20, 100)) |>
     y="frequency"
   )
 ```
+
 ### Problem 12.4.3
 
 As $\epsilon$ increases, how does the error in estimating the mean change, and why?
@@ -269,7 +258,3 @@ expand.grid(throws=c(10, 20, 100), epsilon=seq(0,.5,.05)) |>
   geom_line() +
   theme_classic()
 ```
-
-
-
-

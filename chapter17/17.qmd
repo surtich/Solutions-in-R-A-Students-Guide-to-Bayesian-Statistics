@@ -1,0 +1,1722 @@
+---
+title: "Chapter 17 Problem Sets"
+format: html
+editor: visual
+warning: false
+echo: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+library(latex2exp)
+library(RColorBrewer)
+library(patchwork)
+library(rstan)
+library(broom.mixed)
+
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write= TRUE)
+```
+
+## Problem 17.1 A meta-analysis of beta blocker trials
+
+@tbl-17.1 shows the results of some of the
+22 trials included in a meta-analysis of clinical trial data on the effect of beta-blockers on
+reducing the risk of myocardial infarction.
+The file `hierarchical_betaBlocker.csv`
+contains the full data set.
+
+```{r}
+#| label: tbl-17.1
+#| tbl-cap: "The data from the original study."
+#| echo: false
+
+df <- read.csv("../data/hierarchical_betaBlocker.csv")
+
+df |> rename(Study = X) |> mutate(
+  Treated = paste0(rt, "/", nt),
+  Control = paste0(rc, "/", nc)
+) |> select(Study, Treated, Control) |>
+  gt() |>
+  tab_spanner(label = "Mortality", columns=c("Treated", "Control"), level = 1, id = "mortality") |>
+  cols_align(
+    align = "center",
+    columns = c("Treated", "Control")
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#FFDFD4")
+    ),
+    locations = cells_body(
+      rows = seq(1, nrow(df), 2)
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F8E8E4")
+    ),
+    locations = cells_body(
+      rows = seq(2, nrow(df), 2)
+    )
+  ) |>
+  tab_options(
+    table.border.top.color = "white",
+    table.border.bottom.color = "white",
+    table_body.hlines.color = "white",
+    table_body.vlines.color = "white",
+    table_body.border.bottom.color = "white",
+    heading.border.bottom.color = "white",
+    column_labels.border.top.color = "white",
+    column_labels.border.bottom.color = "white",
+    row_group.border.top.color = "white",
+    row_group.border.bottom.color = "white"
+  )
+```
+The aim of this meta-analysis is to determine a robust estimate of the effect of beta-blockers
+by pooling information from a range of previous studies.
+
+### Problem 17.1.1
+
+Start by assuming that the numbers of deaths in the control ($r_i^c$) and treated
+($r_i^t$) groups for each trial are given by binomial distributions of the form:
+
+$$
+\begin{aligned}
+r_i^c &∼ \mathcal{B}(p_i^c , n_i^c),\\
+r_i^t &∼ \mathcal{B}(p_i^t , n_t^c),
+\end{aligned}
+$$
+
+where ($n_i^t$, $n_i^c$) are the numbers of individuals in the treatment and control data sets, respectively. Further assume that the probabilities of mortality in the treatment and control data sets
+are given by:
+
+$$
+\begin{aligned}
+\text{logit}(p_i^c) = \mu_i,\\
+\text{logit}(p_i^t) = \mu_i + \delta_i,\\
+\end{aligned}
+$$
+where:
+
+$$
+\text{logit}(\mathcal{x}) = \log \left( \frac{\mathcal{x}}{1-\mathcal{x}}\right)
+$$
+
+and we expect $δ_i < 0$ if the beta-blockers have the desired effect. We assume the following diffuse
+priors for the parameters:
+
+$$
+\begin{aligned}
+\mu_i &\sim \mathcal{N}(0,10), \\
+\delta_i &\sim \mathcal{N}(0,10),
+\end{aligned}
+$$
+
+Estimate the posteriors for $δ_i$ for the above model using Stan, or otherwise. Note that for this model there is no interdependence between the studies. (Hint: use the Stan `binomial_logit` function.)
+
+
+```{stan output.var = "model17.1.1", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of trials
+  int<lower=0> rc[N];
+  int<lower=0> nc[N];
+  int<lower=0> rt[N];
+  int<lower=0> nt[N];
+}
+
+parameters {
+  vector[N] mu;
+  vector[N] delta;
+}
+
+model {
+  rc ~ binomial_logit(nc, mu);
+  rt ~ binomial_logit(nt, mu + delta);
+  
+  delta ~ normal(0, 10);
+  mu ~ normal(0, 10);
+}
+```
+
+```{r}
+#| echo: false
+
+dataList = list(
+  N = nrow(df),
+  rc = df$rc,
+  nc = df$nc,
+  rt = df$rt,
+  nt = df$nt
+)
+
+if (file.exists("../fits/17.1.1.rds")) {
+  fit17.1.1 <- readRDS("../fits/17.1.1.rds")
+} else {
+  fit17.1.1 <- rstan::sampling(
+    model17.1.1, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.1.1.rds"
+  )
+  saveRDS(fit17.1.1, file = "../fits/17.1.1.rds")
+}
+```
+
+::: {style="color:blue"}
+The posteriors for $δ_i$
+in this model are fairly wide and contain non-zero densities at zero (@fig-17.1).
+:::
+
+## Problem 17.1.2
+
+An alternative framework is a hierarchical model where we assume there to be a
+common overarching distribution across trials such that $δ_i ∼ N ( d , σ )$. By assuming the following
+priors on these parameters estimate this model:
+
+$$
+\begin{aligned}
+d &∼ N (0,10),\\
+σ &∼ Cauchy(0,2.5), \hspace{.5cm} \text{for }σ ≥ 0.
+\end{aligned}
+$$
+
+Estimate the posteriors for $δ_i$ using Stan. How do these estimates compare to the non-hierarchical
+model?
+
+
+```{stan output.var = "model17.1.2", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of trials
+  int<lower=0> rc[N];
+  int<lower=0> nc[N];
+  int<lower=0> rt[N];
+  int<lower=0> nt[N];
+}
+
+parameters {
+  real d;
+  real<lower=0> sigma;
+  vector[N] mu;
+  vector[N] delta;
+  
+}
+
+model {
+  rc ~ binomial_logit(nc, mu);
+  rt ~ binomial_logit(nt, mu + delta);
+  
+  delta ~ normal(d, sigma);
+  mu ~ normal(0, 10);
+  d ~ normal(0, 10);
+  sigma ~ cauchy(0, 2.5);
+}
+
+generated quantities {
+  real delta_new;
+  int<lower=0> simTreatMort[N];
+  int<lower=0> simContrMort[N];
+  int indicatorTreat[N];
+  int indicatorContr[N];
+  
+  delta_new = normal_rng(d, sigma);
+  
+  for (i in 1:N) {
+    simTreatMort[i] = binomial_rng(nt[i], inv_logit(mu[i] + delta[i]));
+    simContrMort[i] = binomial_rng(nc[i], inv_logit(mu[i]));
+    indicatorTreat[i] = (simTreatMort[i] > rt[i]);
+    indicatorContr[i] = (simContrMort[i] > rc[i]);
+  }
+}
+```
+
+
+```{r}
+#| echo: false
+
+if (file.exists("../fits/17.1.2.rds")) {
+  fit17.1.2 <- readRDS("../fits/17.1.2.rds")
+} else {
+  fit17.1.2 <- rstan::sampling(
+    model17.1.2, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    control=list(adapt_delta=.95, stepsize=.001),
+    sample_file = "../fits/17.1.2.rds"
+  )
+  saveRDS(fit17.1.2, file = "../fits/17.1.2.rds")
+}
+```
+
+
+::: {style="color:blue"}
+The hierarchical estimates of the effect of the drug are much more concentrated (@fig-17.1) - by
+pooling data across all studies we are better able to precisely estimate the effect of the drug. These
+indicate that the beta-blockers appear to act as desired - decreasing the probability of mortality.
+:::
+
+```{r}
+#| label: fig-17.1
+#| fig-cap: "The posterior estimates of $δ_i$ for the fully-heterogeneous (orange) and hierarchical (blue) models."
+
+df.delta <- data.frame(
+  delta.no.pooled=extract(fit17.1.1, "delta")[[1]], delta.hierarchical=extract(fit17.1.2, "delta")[[1]]) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = c("Model", "Study"),
+    values_to = "Value",
+    names_prefix ="delta.",
+    names_pattern = "^(.+)\\.(\\d+)$"
+  ) |> mutate(Study = ordered(Study, levels = 1:nrow(df)), Model = ordered(Model, levels=c("no.pooled", "hierarchical")))
+
+df.delta |> ggplot() +
+  geom_violin(
+    aes(x=Study, y=Value, fill=Model),
+    color="black",
+    position = position_dodge(width = 0),
+    alpha = 0.4,
+    scale = "width",
+    adjust = 3
+  ) +
+  geom_hline(yintercept = 0, linetype="dashed") +
+  theme_classic() +
+  labs(x="trial number", y=TeX("$\\textbf{\\delta}$")) + 
+  scale_y_continuous(breaks = seq(-4,4,2), limits = c(-4,4)) +
+  scale_fill_manual(values = c("no.pooled" = "orange", "hierarchical" = "purple")) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(size = 12, face = "bold"),
+    axis.text.y = element_text(size = 12, face = "bold"),
+    axis.title.x = element_text(size = 12, face = "bold"),
+    axis.title.y = element_text(size = 12, face = "bold")
+  )
+
+```
+
+### Problem 17.1.3
+
+Using the hierarchical model, estimate the cross-study effect of the beta-blockers.
+(Hint: use the `generated quantities` code block.)
+
+
+::: {style="color:blue"}
+Overall we estimate a negative value for $δ$ (fig-17.1.3-sol). Whilst the posterior does overlap zero,
+we are fairly confident in concluding that $δ < 0$.
+:::
+
+```{r}
+#| label: fig-17.1.3-sol
+#| fig-cap: "The posterior estimate of δ across all trials for the hierarchical model."
+
+delta_new=extract(fit17.1.2, "delta_new")[[1]]
+
+data.frame(delta_new) |>
+  ggplot() +
+  geom_histogram(aes(x=delta_new), color="black", fill="blue", binwidth = .1) +
+  theme_classic() +
+  scale_x_continuous(breaks = seq(-.8,.2,.2), limits = c(-.8,.2), expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "cross-study δ")
+
+```
+
+
+### Problem 17.1.4
+
+For an out-of-sample trial suppose we know that $μ_i = −2.5$ . Using the cross-study estimates for $δ$, estimate the reduction in probability for a patient taking the beta-blockers.
+
+```{r}
+inv.logit <- Vectorize(function(x) {
+  1/(1+exp(x))
+})
+
+mu.sample <- 2.5
+risk <- inv.logit(mu.sample)
+
+
+df.risk <- data.frame(delta_new, diff.risk = inv.logit(mu.sample+delta_new)-risk)
+
+```
+
+
+::: {style="color:blue"}
+This is done by using the inverse-logit transformation (the logistic sigmoid). Essentially you want
+to evaluate `logistic-sigmoid(-2.5)` and compare it with `logistic-sigmoid(-2.5-delta)`, across all the samples in your model. This results in a posterior distribution that is peaked at about `r round(mean(df.risk$diff.risk), 3)`
+(@fig-17.1.4-sol); indicating about a `r round(mean(df.risk$diff.risk), 3)*100`% reduction in mortality risk for those patients taking betablockers.
+:::
+
+```{r}
+#| label: fig-17.1.4-sol
+#| fig-cap: "The posterior estimates of the reduction in mortality risk associated with taking a beta-blocker when µ = −2.5."
+
+df.risk |>
+  ggplot() +
+  geom_histogram(aes(x=diff.risk), color="black", fill="blue", binwidth = .005) +
+  theme_classic() +
+  scale_x_continuous(breaks = seq(-.01,.05,.01), limits = c(-.01,.05), expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "reduction in risk of mortality")
+
+```
+
+### Problem 17.1.5
+
+Estimate a model with a single, constant value of $δ$ and $μ$ across all trials.
+Graph the posterior for $δ$ , and compare it with the cross-study hierarchical model estimate.
+
+::: {style="color:blue"}
+The non-hierarchical model gives us a false confidence in our estimates of $δ$, by assuming that the
+data from the individual studies are equivalent (exchangeable). This means that the estimate of $δ$
+obtained is more concentrated than for the hierarchical model (fig-17.1.5-sol).
+:::
+
+```{stan output.var = "model17.1.5", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of trials
+  int<lower=0> rc[N];
+  int<lower=0> nc[N];
+  int<lower=0> rt[N];
+  int<lower=0> nt[N];
+}
+
+parameters {
+  real mu;
+  real delta;
+}
+
+model {
+  rc ~ binomial_logit(nc, mu);
+  rt ~ binomial_logit(nt, mu + delta);
+  
+  delta ~ normal(0, 10);
+  mu ~ normal(0, 10);
+}
+
+generated quantities {
+  int<lower=0> simTreatMort[N];
+  int<lower=0> simContrMort[N];
+  int indicatorTreat[N];
+  int indicatorContr[N];
+  
+  for (i in 1:N) {
+    simTreatMort[i] = binomial_rng(nt[i], inv_logit(mu + delta));
+    simContrMort[i] = binomial_rng(nc[i], inv_logit(mu));
+    indicatorTreat[i] = (simTreatMort[i] > rt[i]);
+    indicatorContr[i] = (simContrMort[i] > rc[i]);
+  }
+}
+```
+
+```{r}
+#| echo: false
+
+if (file.exists("../fits/17.1.5.rds")) {
+  fit17.1.5 <- readRDS("../fits/17.1.5.rds")
+} else {
+  fit17.1.5 <- rstan::sampling(
+    model17.1.5, data=dataList,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.1.5.rds"
+  )
+  saveRDS(fit17.1.5, file = "../fits/17.1.5.rds")
+}
+```
+
+```{r}
+#| label: fig-17.1.5-sol
+#| fig-cap: "The posterior estimates of cross-study $δ$ for the hierarchical (blue) and homogeneous (orange) models."
+
+delta_new_pooled=extract(fit17.1.5, "delta")[[1]]
+
+data.frame(hierarchical = delta_new, pooled = delta_new_pooled) |>
+  pivot_longer(cols = everything(), names_to = "Model", values_to = "Delta") |>
+  ggplot() +
+  geom_histogram(aes(x=Delta, fill=Model), color="black", binwidth = .05, alpha=.7) +
+  scale_fill_manual(values=c(hierarchical = "blue", pooled = "orange")) +
+  scale_x_continuous(limits = c(-.6,.1), expand=c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(x = "cross-study δ")
+
+```
+
+### Problem 17.1.6
+
+Carry out appropriate posterior predictive checks on the homogeneous and
+hierarchical models, and hence conclude the preferred modelling choice.
+
+
+::: {style="color:blue"}
+For both models we find that there are a range of Bayesian $p values$ near 0 or 1 for
+the homogeneous (pooled) model, whereas this is not the case for the hierarchical model (@fig-17.1.6-sol) Intuitively - by assuming that there was no difference between the data from each study - the homogeneous coefficient model is unable to replicate the degree of variation we see in the real data. We therefore prefer the hierarchical model.
+:::
+ 
+```{r}
+df.17.1.6 <- data.frame(
+  Pooled=extract(fit17.1.5, c("indicatorTreat", "indicatorContr")),
+  Hierarchical=extract(fit17.1.2, c("indicatorTreat", "indicatorContr"))
+) |> pivot_longer(
+  cols = everything(),
+  names_to = c("Model", "Group", "Study"),
+  values_to = "Indicator",
+  names_pattern = "^(.+)\\.indicator(.+)\\.(\\d+)$"
+) |> 
+  mutate(
+    Study = ordered(Study, levels = 1:nrow(df)),
+    Model = ordered(Model, levels = c("Pooled", "Hierarchical"))
+  ) |>
+  group_by(Model, Group, Study) |>
+  summarize(p_value = mean(Indicator), .groups = "drop")
+```
+
+```{r}
+#| label: fig-17.1.6-sol
+#| fig-cap: "The distribution of Bayesian p values measuring whether the posterior predictive data exceeds the actual across each of the 22 trials for the homogeneous (orange) and hierarchical (blue) models."
+
+df.17.1.6 |> ggplot() +
+  facet_grid(rows=vars(Group), cols=vars(Model)) +
+  geom_histogram(aes(x=p_value, fill=Model), color="black", binwidth = .1, boundary = 0) +
+  scale_fill_manual(values=c(Pooled = "orange", Hierarchical = "blue")) +
+  scale_x_continuous(breaks = seq(0,1,.1)) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(x="p value")
+```
+
+
+## Problem 17.2 I can’t get no sleep
+
+The data are from a study described in Belenky et al. that measured the effect of sleep deprivation on cognitive performance. There were 18 subjects chosen from a population of interest (lorry drivers) who were restricted to 3 hours of sleep during the trial. On each day of the
+experiment their reaction time to a visual stimulus was measured. The data for this example is
+contained within `evaluation_sleepstudy.csv`, consisting of three variables, *Reaction*, *Days*
+and *Subject ID*, which measure the reaction time of a given subject on a particular day.
+
+A simple model that explains the variation in reaction times is a linear regression model of the form:
+
+$$
+R ( t ) ∼ N ( α + β t , σ ) ,
+$$
+
+where $R ( t )$ is the reaction time on day $t$ of the experiment across all observations.
+
+### Problem 17.2.1
+
+Assuming $\mathcal{N}(0,250)$ priors on both $\alpha$ and $β$, code up the above model in Stan.
+Use it to generate 1000 samples per chain, across four chains. Has the sampling algorithm
+converged?
+
+
+```{r}
+df2 <- read.csv("../data/evaluation_sleepstudy.csv")
+```
+
+```{stan output.var = "model17.2.1", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of observations
+  matrix[N,2] X; // ones + days of sleep deprivation
+  vector[N] R; // reaction times
+}
+
+parameters {
+  vector[2] gamma;
+  real<lower=0> sigma;
+}
+
+model {
+  R ~ normal(X * gamma, sigma);
+  gamma ~ normal(0, 250);
+}
+
+generated quantities {
+  real R_Simulated[N];
+  
+  R_Simulated = normal_rng(X * gamma, sigma);
+}
+```
+
+```{r}
+#| echo: false
+
+dataList2 = list(
+  N = nrow(df2),
+  X = cbind(1, df2$Days),
+  R = df2$Reaction
+)
+
+if (file.exists("../fits/17.2.1.rds")) {
+  fit17.2.1 <- readRDS("../fits/17.2.1.rds")
+} else {
+  fit17.2.1 <- rstan::sampling(
+    model17.2.1, data=dataList2,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.2.1.rds"
+  )
+  saveRDS(fit17.2.1, file = "../fits/17.2.1.rds")
+}
+```
+
+```{r}
+tidy(fit17.2.1, pars=c("gamma", "sigma"), rhat=TRUE) |> select(term, rhat) |> 
+  gt() |> fmt_number(decimals = 2) 
+```
+
+### Problem 17.2.2
+
+Plot the posterior samples for α and β. What is the relationship between the
+two variables, and why?
+
+::: {style="color:blue"}
+There is a strong negative correlation between the estimates of these two variables. This is because
+to generate a line going through the centre of the dataset, if the intercept increases, the gradient
+must decrease (@fig-17.2.2-sol).
+:::
+
+
+```{r}
+#| label: fig-17.2.2-sol
+#| fig-cap: "Negative correlation between $\\alpha$ and $\\beta$."
+
+df2.no.pooled.samples <- data.frame(extract(fit17.2.1, c("gamma")))
+colnames(df2.no.pooled.samples) <- c("alpha", "beta")
+
+df2.no.pooled.samples |>
+  ggplot() +
+  geom_point(aes(x=alpha, y=beta), color = "blue") +
+  theme_classic() + 
+  labs(x=TeX("$\\alpha$"), y=TeX("$\\beta$"))
+```
+
+### Problem 17.2.3
+
+By using the `generated quantities` code block or otherwise, generate
+samples from the posterior predictive distribution. By overlaying the real time series for each
+individual on a graph of the posterior predictive, comment on the fit of the model to data.
+
+
+::: {style="color:blue"}
+The posterior predictive distribution - whilst being a reasonable fit to the data for the anonymous
+data - is not able to fit well the data at the individual level (@fig-17.2.3-sol).
+:::
+
+```{r}
+#| label: fig-17.2.3-sol
+#| fig-cap: "The posterior predictive distribution (orange) and the data for one individual in the sleep study (blue) using the \"homogeneous coefficients\" model."
+
+
+reaction_compare <- function(model, Subject_Compare=309, Subject_filter=NULL) {
+  df2.simulated.reaction <- data.frame(extract(model, "R_Simulated")[[1]]) |> 
+  pivot_longer(
+    cols = everything(),
+    values_to = "ReactionSim",
+    names_to ="X",
+    names_prefix = "X"
+  ) |> mutate(X = as.integer(X)) |> 
+  left_join(df2, by="X")
+  
+  if (!is.null(Subject_filter)) {
+    df2.simulated.reaction <- df2.simulated.reaction |> filter(Subject == Subject_filter)  
+  }
+  
+  df2.simulated.reaction <- df2.simulated.reaction |> select(ReactionSim, Days)
+
+  df2 |> filter(Subject == Subject_Compare) |> ggplot(aes(x=Days, y=Reaction)) +
+    geom_violin(data=df2.simulated.reaction, aes(x=Days, y=ReactionSim, group=Days),  fill="orange") +
+    geom_point(color="blue") + geom_line(color="blue") +
+    scale_x_continuous(breaks = 0:9) +
+    scale_y_continuous(breaks = seq(100,500,100), limits = c(50,550)) +
+    theme_classic() +
+    labs(x="days of sleep deprivation", y="average reaction time, ms")
+}
+
+reaction_compare(fit17.2.1)
+```
+### Problem 17.2.4
+
+Fit a model with separate ($α$, $β$ ) for each individual in the data set. Use separate and independent $\mathcal{N}(0,250)$ priors for the parameters. Again use 1000 samples per chain
+over four chains.
+
+```{stan output.var = "model17.2.4", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of observations
+  int S; // number of individuals in the study
+  vector[N] t; // days of sleep deprivation
+  vector[N] R; // reaction times of individuals in the study
+  int subject[N]; // subject ID
+}
+
+parameters {
+  real alpha[S];
+  real beta[S];
+  real<lower=0> sigma;
+}
+
+model {
+  for (i in 1:N) {
+    R[i] ~ normal(alpha[subject[i]] + beta[subject[i]] * t[i], sigma);
+  }
+  
+  alpha ~ normal(0, 250);
+  beta ~ normal(0, 250);
+  sigma ~ normal(0, 50);
+}
+
+generated quantities {
+  vector[N] R_Simulated;
+  for (i in 1:N) {
+    R_Simulated[i] = normal_rng(alpha[subject[i]] + beta[subject[i]] * t[i], sigma);
+  }
+}
+```
+
+```{r}
+#| echo: false
+
+df2 <- df2 |> mutate(SubjectPos = ordered(Subject, labels=1:length(unique(df2$Subject))))
+
+dataList2.4 = list(
+  N = nrow(df2),
+  S = as.integer(max(df2$SubjectPos)),
+  t = df2$Days,
+  R = df2$Reaction,
+  subject = as.integer(df2$SubjectPos)
+)
+
+if (file.exists("../fits/17.2.4.rds")) {
+  fit17.2.4 <- readRDS("../fits/17.2.4.rds")
+} else {
+  fit17.2.4 <- rstan::sampling(
+    model17.2.4, data=dataList2.4,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.2.4.rds"
+  )
+  saveRDS(fit17.2.4, file = "../fits/17.2.4.rds")
+}
+```
+
+### Problem 17.2.5
+
+Compute the posterior mean estimates of the $β$ parameters for the new heterogeneous parameters model. How do these compare to the single $β$ estimate obtained for the
+homogeneous model?
+
+```{r}
+beta.pooled <- mean(extract(fit17.2.1, "gamma[2]")[[1]])
+
+beta.no.pooled <- data.frame(extract(fit17.2.4, "beta")[[1]]) |>
+  pivot_longer(
+    cols=everything(),
+    names_to = "SubjectPos",
+    values_to = "beta",
+    names_prefix = "X"
+  ) |> left_join(df2 |> select(Subject, SubjectPos) |> unique(), by="SubjectPos") |>
+  group_by(Subject) |>
+  summarise(beta = mean(beta))
+
+min.beta.no.pooled <- beta.no.pooled |> filter(beta == min(beta))
+max.beta.no.pooled <- beta.no.pooled |> filter(beta == max(beta))
+
+beta.no.pooled <- mean(beta.no.pooled$beta)
+```
+
+::: {style="color:blue"}
+The homogeneous estimate is about `r round(beta.pooled,2)`, with the heterogeneous estimates ranging from `r round(min.beta.no.pooled$beta, 2)` (for
+subject `r min.beta.no.pooled$Subject`) to `r round(max.beta.no.pooled$beta, 2)` (for subject `r max.beta.no.pooled$Subject`). Overall the heterogeneous estimates should have a mean that is
+roughly similar to the single estimate (it’s not exactly so, `r round(beta.no.pooled, 2)`).
+:::
+
+### Problem 17.2.6
+
+Using the `generated quantities` code block or otherwise, generate samples
+from the posterior predictive distribution. By comparing individual subject data to the posterior
+predictive samples, comment on the fit of the new model.
+
+::: {style="color:blue"}
+The heterogeneous coefficients model is able to fit the data much more effectively at the individual
+data (@fig-17.2.6-sol). This is unsurprising - essentially we may be guilty of overfitting the model to
+the data.
+:::
+
+```{r}
+#| label: fig-17.2.6-sol
+#| fig-cap: "The posterior predictive distribution (orange) and the data for one individual in the sleep study (blue) using the \"“heterogeneous coefficients\" model."
+
+reaction_compare(fit17.2.4, Subject_filter = 309)
+```
+
+
+### Problem 17.2.7
+
+Partition the data into two subsets: a training set (of subjects 1–17) and a testing
+set (of subject 18 only). By fitting both the heterogeneous and homogeneous coefficients models to
+the training sets, compare the performance of each model on predicting the test set data.
+
+::: {style="color:blue"}
+For the heterogeneous model there is really only one way to generate predictions for the test set
+- sample a value of the parameters from the priors, and using these parameter values to generate
+predictive datasets. Because the priors are wide this actually produces very poor predictions (@fig-17.2.7-sol right).
+
+The homogeneous coefficients model however performs much better as is much more generalisable
+to new datasets. Intuitively the heterogeneous coefficients model is overfit to the data (@fig-17.2.7-sol left).
+:::
+
+```{stan output.var = "model17.2.7", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of observations in training set
+  int S; // number of individuals in training set
+  vector[N] t; // days of sleep deprivation in training set
+  vector[N] R; // reaction times of individuals in in training set
+  int subject[N]; // subject ID
+  
+  int N2; // number of data points in the test set
+  vector[N2] t2; // time obs in test set
+}
+
+parameters {
+  real alpha[S];
+  real beta[S];
+  real<lower=0> sigma;
+}
+
+model {
+  for (i in 1:N) {
+    R[i] ~ normal(alpha[subject[i]] + beta[subject[i]] * t[i], sigma);
+  }
+  
+  alpha ~ normal(0, 250);
+  beta ~ normal(0, 250);
+  sigma ~ normal(0, 50);
+}
+
+generated quantities {
+  vector[N2] R_Simulated;
+  real aAlpha;
+  real aBeta;
+  
+  aAlpha = normal_rng(0, 250);
+  aBeta = normal_rng(0, 250);
+  
+  for (i in 1:N2) {
+    R_Simulated[i] = normal_rng(aAlpha + aBeta * t2[i], sigma);
+  }
+}
+```
+
+```{r}
+#| echo: false
+
+df2.7 <- df2 |> filter(SubjectPos != max(SubjectPos))
+Subject_Compare <- df2 |> filter(SubjectPos == max(SubjectPos))
+
+dataList2.7 = list(
+  N = nrow(df2.7),
+  S = as.integer(max(df2.7$SubjectPos)),
+  t = df2.7$Days,
+  R = df2.7$Reaction,
+  X = cbind(1, df2.7$Days),
+  subject = as.integer(df2.7$SubjectPos),
+  N2 = nrow(Subject_Compare),
+  t2 = Subject_Compare$Days
+)
+
+if (file.exists("../fits/17.2.1b.rds")) {
+  fit17.2.1b <- readRDS("../fits/17.2.1b.rds")
+} else {
+  fit17.2.1b <- rstan::sampling(
+    model17.2.1, data=dataList2.7,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.2.1b.rds"
+  )
+  saveRDS(fit17.2.1b, file = "../fits/17.2.1b.rds")
+}
+
+
+if (file.exists("../fits/17.2.7.rds")) {
+  fit17.2.7 <- readRDS("../fits/17.2.7.rds")
+} else {
+  fit17.2.7 <- rstan::sampling(
+    model17.2.7, data=dataList2.7,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.2.7.rds"
+  )
+  saveRDS(fit17.2.7, file = "../fits/17.2.7.rds")
+}
+```
+
+```{r}
+#| label: fig-17.2.7-sol
+#| fig-cap: "The posterior predictive distribution (orange) and the data for subject 18 for a model fitted to the other 17 subjects’ data, across the homogeneous coefficients (left), and heterogeneous coefficients (right) models."
+
+p1 <- reaction_compare(fit17.2.1b, Subject_Compare = Subject_Compare$Subject[1]) + labs(title = "homogeneous")
+
+p2 <- reaction_compare(fit17.2.7, Subject_Compare = Subject_Compare$Subject[1]) + labs(title = "heterogeneous")
+
+p1 + p2
+```
+
+### Problem 17.2.8
+
+Alternatively, we can fit a hierarchical model to the data which (hopefully) captures some of the best elements of each of the aforementioned models. Fit such a model in Stan using
+normal priors for $α_i$ and $β_i$ and appropriate priors on the hyper-parameters of these distributions.
+
+::: {style="color:blue"}
+The posterior distribution for the parameters exhibits shrinkage towards the grand mean (@fig-17.8-sol). In general those parameter estimates with a. the highest uncertainty, and b. lie furthest
+away from the mean, are shrunk the most in hierarchical models.
+:::
+
+```{stan output.var = "model17.2.8", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N; // number of observations
+  int S; // number of individuals in the study
+  vector[N] t; // days of sleep deprivation
+  vector[N] R; // reaction times of individuals in the study
+  int subject[N]; // subject ID
+}
+
+parameters {
+  real alpha[S];
+  real beta[S];
+  real<lower=0> sigma;
+  
+  real a;
+  real b;
+  real c;
+  real d;
+}
+
+model {
+  for (i in 1:N) {
+    R[i] ~ normal(alpha[subject[i]] + beta[subject[i]] * t[i], sigma);
+  }
+  
+  a ~ normal(100, 100);
+  b ~ cauchy(0, 5);
+  c ~ normal(10, 5);
+  d ~ cauchy(0, 1);
+  alpha ~ normal(a, b);
+  beta ~ normal(c, d);
+  sigma ~ normal(0, 50);
+}
+
+generated quantities {
+  real aBeta;
+  aBeta = normal_rng(c, d);
+}
+```
+
+```{r}
+#| echo: false
+
+if (file.exists("../fits/17.2.8.rds")) {
+  fit17.2.8 <- readRDS("../fits/17.2.8.rds")
+} else {
+  fit17.2.8 <- rstan::sampling(
+    model17.2.8, data=dataList2.4,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.2.8.rds"
+  )
+  saveRDS(fit17.2.8, file = "../fits/17.2.8.rds")
+}
+```
+
+```{r}
+#| label: fig-17.8-sol
+#| fig-cap: "The posterior estimates of $\\beta$ for the heterogeneous estimates (orange) versus the hierarchical estimates (blue)."
+
+df.beta <- data.frame(
+  beta.heterogeneous=extract(fit17.2.4, "beta")[[1]], beta.hierarchical=extract(fit17.2.8, "beta")[[1]]) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = c("Model", "SubjectPos"),
+    values_to = "Value",
+    names_prefix ="beta.",
+    names_pattern = "^(.+)\\.(\\d+)$"
+  ) |> left_join(df2 |> select(Subject, SubjectPos) |> unique(), by="SubjectPos")
+
+df.beta |> ggplot() +
+  geom_violin(
+    aes(x=factor(Subject), y=Value, fill=Model),
+    color="black",
+    position = position_dodge(width = 0),
+    alpha = 0.6,
+    scale = "width",
+    adjust = 1
+  )  +
+  theme_classic() +
+  labs(x="Subject ID", y=TeX("$\\beta$ posterior estimate")) + 
+  scale_y_continuous(breaks = seq(-10,30,10)) +
+  scale_fill_manual(values = c("heterogeneous" = "orange", "hierarchical" = "purple")) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(size = 12, face = "bold"),
+    axis.text.y = element_text(size = 12, face = "bold"),
+    axis.title.x = element_text(size = 12, face = "bold"),
+    axis.title.y = element_text(size = 12, face = "bold")
+  )
+
+```
+
+### Problem 17.2.9
+
+Graph the posterior distribution for $β$ for another individual (not in the original
+data set). How does this distribution compare to the value of $β$ obtained from the homogeneous
+coefficient model?
+
+::: {style="color:blue"}
+The posterior distribution for $β$ has a mean of 10.2 (about the same as the original homogeneous
+estimate), but is wider (@fig-17.2.9-sol).
+:::
+
+```{r}
+#| label: fig-17.2.9-sol
+#| fig-cap: "The posterior estimates of $\\beta$ for an out-of-sample individual for the homogeneous coefficients and hierarchical models."
+
+data.frame(
+  beta.homogeneous=extract(fit17.2.1, "gamma[2]")[[1]], beta.hierarchical=extract(fit17.2.8, "aBeta")[[1]]) |>
+  pivot_longer(
+    cols = everything(), 
+    names_to = "Model",
+    values_to = "beta",
+    names_prefix="beta."
+  ) |> ggplot() +
+  geom_histogram(aes(x=beta, fill=Model, y = (..count..)/sum(..count..)), color="black", binwidth = 1, alpha=.5) +
+  scale_fill_manual(values=c(hierarchical = "orange", homogeneous = "blue")) +
+  scale_x_continuous(expand=c(0,0), limits = c(-5,25)) +
+  scale_y_continuous(expand = c(0.01,0), labels = scales::percent_format()) +
+  theme_classic() +
+  labs(x = TeX("$\\beta$"), y = TeX("Prob $\\beta$"))
+
+```
+
+## Problem 17.3 Hierarchical ODEs: bacterial cell population growth
+
+The file `hierarchical_ode.csv` contains data for five replicates of an experiment in which
+bacterial cell population numbers were measured over time. The following model for bacterial
+population size is proposed to explain the data:
+
+$$
+\frac{\partial{N}}{\partial{t}} = \alpha N(1-\beta N)
+$$
+
+However, measurement of bacterial cell numbers is subject to random, uncorrelated measurement error:
+
+$$
+N^* ( t ) ∼ \mathcal{N} ( N ( t ), σ ) ,
+$$
+
+where $N^* ( t )$ is the measured number of cells, and $N ( t )$ is the true population size. Finally, we suppose that the initial number of bacterial cells is unknown, and hence must be estimated.
+Further we assume the following priors:
+
+$$
+\begin{aligned}
+α &∼ N (0,2), \\
+β &∼ N (0,2), \\
+σ &∼ Cauchy(0,1), \\
+N(0) &∼ N (5,2) ,
+\end{aligned}
+$$
+where all parameters have a lower value of 0.
+
+```{r}
+df3 <- read.csv("../data/hierarchical_ode.csv")
+```
+
+### Problem 17.3.1
+
+Write a Stan function that returns $\frac{\partial{N}}{\partial{t}}$ . Hint 1: this will need to be
+done within the functions block at the top of the Stan file. Hint 2: the function must have
+a structure:
+
+```{verbatim, cache = TRUE, lang = "stan"}
+#| echo: true
+
+real[] bacteria_deriv(real t,real[] y,real[] theta,real[] x_r,int[] x_i)
+```
+where the variables $x_i$ and $x_r$ are not used here, but nonetheless need to be defined:
+
+```{verbatim, cache = TRUE, lang = "stan"}
+#| echo: true
+
+transformed data {
+  real x_r[0];
+  int x_i[0];
+}
+```
+
+### Problem 17.3.2 
+
+Estimate a model where the parameters ( $α$ , $β$ ) are assumed to be the same
+across all experimental replicates.
+
+```{stan output.var = "model17.3.2", cache = TRUE}
+#| eval: true
+#| echo: true
+
+functions {
+  real[] bacteria_deriv(real t,real[] y,real[] theta,real[] x_r,int[] x_i) {
+    real dydt[1];
+    
+    dydt[1] = theta[1] * y[1] * (1 - theta[2] * y[1]);
+    return dydt;
+  }
+}
+
+data {
+  int<lower=1> T;
+  int<lower=0> N;
+  real t0;
+  real ts[T];
+  matrix[T,N] y;
+}
+
+transformed data {
+  real x_r[0];
+  int x_i[0];
+}
+
+parameters {
+  real<lower=0, upper=2> theta[2]; // contains parameters (alpha,beta)
+  real<lower=0> sigma;
+  real<lower=0, upper=10> y0[1];
+}
+
+model {
+  real y_hat[T, 1];
+  sigma ~ cauchy(0, 1);
+  theta ~ normal(0, 2);
+  y0 ~ normal(5, 2);
+  y_hat = integrate_ode(bacteria_deriv, y0, t0, ts, theta, x_r, x_i);
+  for (i in 1:N)
+    for (t in 1:T)
+      y[t, i] ~ normal(y_hat[t, 1], sigma);
+}
+
+generated quantities {
+  vector[N * T] logLikelihood;
+  int k;
+  real y_hat[T, 1];
+  
+  k = 1;
+  y_hat = integrate_ode(bacteria_deriv, y0, t0, ts, theta, x_r, x_i);
+  for (i in 1:N) {
+    for (t in 1:T) {
+      logLikelihood[k] = normal_log(y[t, i], y_hat[t, 1], sigma);
+      k = k + 1;
+    }
+  }
+}
+```
+
+```{r}
+#| echo: false
+
+dataList3 <- list(
+  t0 = 0,
+  T = nrow(df3),
+  N = length(colnames(df3))-2,
+  ts = df3$time,
+  y = df3 |> select(starts_with("V")) |> as.matrix()
+)
+
+if (file.exists("../fits/17.3.2.rds")) {
+  fit17.3.2 <- readRDS("../fits/17.3.2.rds")
+} else {
+  fit17.3.2 <- rstan::sampling(
+    model17.3.2, data=dataList3,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.3.2.rds"
+  )
+  saveRDS(fit17.3.2, file = "../fits/17.3.2.rds")
+}
+```
+
+
+::: {style="color:blue"}
+The posteriors for ($α$, $β$) are shown in @fig-17.3.2-sol.
+:::
+
+
+```{r}
+#| label: fig-17.3.2-sol
+#| fig-cap: "Homogeneous model estimates of ($\\alpha$, $\\beta$)."
+data.frame(extract(fit17.3.2,"theta")) |>
+  pivot_longer(cols=everything(), names_to = "Param", values_to = "Value") |> 
+  mutate(Param = if_else(Param == "theta.1", "alpha", "beta")) |>
+  ggplot() +
+  facet_grid(cols = vars(Param), scales="free_x") +
+  geom_histogram(aes(x=Value), fill="orange", color="black", bins=10) +
+  theme_classic() +
+  theme(
+    strip.background = element_blank(),  # Eliminar el fondo del título de la faceta
+    strip.text = element_text(size = 12, face = "bold"),  # Estilo del texto del título de la faceta
+    strip.placement = "outside",  # Coloca los títulos de las facetas fuera
+    strip.placement.y = "bottom",  # Coloca los títulos de las facetas en la parte inferior
+    strip.switch.pad.grid = unit(0, "cm")  # Elimina el espacio extra entre las facetas y los títulos
+  ) +
+  labs(x="")
+
+```
+
+### Problem 17.3.3.
+
+By graphing the data, or otherwise, comment on the assumption of a common
+($α$, $β$) across all replicates.
+
+::: {style="color:blue"}
+There is quite a clear variability between the replicates across different experiments (@fig-17.3.3-sol).
+This makes the assumption of common parameter values across all replicates look quite weak. An
+alternative here would be to do some posterior predictive checks, but this isn’t really needed here
+to be honest since the raw data plots are illuminating.
+:::
+
+```{r}
+#| label: fig-17.3.3-sol
+#| fig-cap: "Time series plot of 5 experimental replicates."
+df3 |>
+  pivot_longer(
+    cols=starts_with("V"),
+    names_to = "experiment",
+    values_to="y") |>
+  ggplot() +
+  geom_line(aes(x=time, y=y, color=experiment)) +
+  scale_x_continuous(breaks = seq(0,10,2)) +
+  theme_classic() +
+  labs(x="time, days", y="population size") +
+  theme(legend.position = "none")
+```
+
+
+
+
+### Problem 17.3.4
+
+Now estimate a model that estimates separate values for ( $α$ , $β$ ) across all replicates.
+Graph the posterior distribution for each parameter.
+
+
+::: {style="color:blue"}
+There is considerable heterogeneity in posterior estimates of ($α$, $β$) (@fig-17.3.4-sol).
+:::
+
+```{stan output.var = "model17.3.4", cache = TRUE}
+#| eval: true
+#| echo: true
+
+functions {
+  real[] bacteria_deriv(real t,real[] y,real[] theta,real[] x_r,int[] x_i) {
+    real dydt[1];
+    
+    dydt[1] = theta[1] * y[1] * (1 - theta[2] * y[1]);
+    return dydt;
+  }
+}
+
+data {
+  int<lower=1> T;
+  int<lower=0> N;
+  real t0;
+  real ts[T];
+  matrix[T,N] y;
+}
+
+transformed data {
+  real x_r[0];
+  int x_i[0];
+}
+
+parameters {
+  real<lower=0, upper=2> theta[N, 2];
+  real<lower=0> sigma;
+  real<lower=0, upper=10> y0[1];
+}
+
+model {
+  real y_hat[T, 1];
+  sigma ~ cauchy(0, 1);
+  y0 ~ normal(5, 2);
+  
+  
+  for (i in 1:N) {
+    theta[i] ~ normal(0, 2);
+    y_hat = integrate_ode(bacteria_deriv, y0, t0, ts, theta[i], x_r, x_i);
+    for (t in 1:T)
+      y[t, i] ~ normal(y_hat[t, 1], sigma);
+  }
+}
+
+generated quantities {
+  vector[N * T] logLikelihood;
+  int k;
+  real y_hat[T, 1];
+  
+  k = 1;
+  for (i in 1:N) {
+    y_hat = integrate_ode(bacteria_deriv, y0, t0, ts, theta[i], x_r, x_i);
+    for (t in 1:T) {
+      logLikelihood[k] = normal_log(y[t, i], y_hat[t, 1], sigma);
+      k = k + 1;
+    }
+  }
+}
+```
+
+```{r}
+#| echo: false
+
+if (file.exists("../fits/17.3.4.rds")) {
+  fit17.3.4 <- readRDS("../fits/17.3.4.rds")
+} else {
+  fit17.3.4 <- rstan::sampling(
+    model17.3.4, data=dataList3,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.3.4.rds"
+  )
+  saveRDS(fit17.3.4, file = "../fits/17.3.4.rds")
+}
+```
+
+```{r}
+#| label: fig-17.3.4-sol
+#| fig-cap: "Posterior parameter estimates for heterogeneous model."
+df.17.3.4 <- data.frame(extract(fit17.3.4,"theta")) |>
+  pivot_longer(
+    cols=everything(),
+    names_to = c("Experiment", "Param"),
+    values_to = "Value",
+    names_prefix = "theta.",
+    names_pattern = "^(\\d+)\\.(\\d+)"
+  ) |>
+  mutate(Param = if_else(Param == "1", "alpha", "beta"))
+
+
+  df.17.3.4 |> ggplot() +
+  geom_violin(aes(x=Experiment, y=Value), fill="orange", color="black") +
+  facet_wrap(vars(Param), scales="free_y") +
+  theme_classic() +
+  theme(
+    strip.background = element_blank(),  # Eliminar el fondo del título de la faceta
+    strip.text = element_text(size = 12, face = "bold"),  # Estilo del texto del título de la faceta
+    strip.placement = "outside",  # Coloca los títulos de las facetas fuera
+    strip.placement.y = "bottom",  # Coloca los títulos de las facetas en la parte inferior
+    strip.switch.pad.grid = unit(0, "cm")  # Elimina el espacio extra entre las facetas y los títulos,
+  ) +
+  labs(x="replicate", y=TeX(""))
+
+```
+### Problem 17.3.5
+
+Estimate a hierarchical model assuming the following priors:
+
+$$
+\begin{aligned}
+α &∼ Γ( a , b ) ,\\
+β &∼ Γ( c , d ) ,\\
+a &∼ N (20,5),\\
+b &∼ N (40,5),\\
+c &∼ N (10,3),\\
+d &∼ N (100,5).
+\end{aligned}
+$$
+Compare your estimates of ( $α$ , $β$ ) with those from the completely heterogeneous model.
+
+
+
+::: {style="color:blue"}
+There is very limited shrinkage versus the purely heterogeneous model (@fig-17.3.4-sol versus Figure
+@fig-17.3.5-sol.) This is because there is quite a lot of data for each replicate.
+:::
+
+
+```{stan output.var = "model17.3.5", cache = TRUE}
+#| eval: true
+#| echo: true
+
+functions {
+  real[] bacteria_deriv(real t,real[] y,real[] theta,real[] x_r,int[] x_i) {
+    real dydt[1];
+    
+    dydt[1] = theta[1] * y[1] * (1 - theta[2] * y[1]);
+    return dydt;
+  }
+}
+
+data {
+  int<lower=1> T;
+  int<lower=0> N;
+  real t0;
+  real ts[T];
+  matrix[T,N] y;
+}
+
+transformed data {
+  real x_r[0];
+  int x_i[0];
+}
+
+parameters {
+  real<lower=0> a1[2];
+  real<lower=0> a2[2];
+  
+  real<lower=0, upper=2> theta[N, 2];
+  real<lower=0> sigma;
+  real<lower=0, upper=10> y0[1];
+}
+
+model {
+  real y_hat[T, 1];
+  a1[1] ~ normal(20, 5);
+  a1[2] ~ normal(40, 5);
+  a2[1] ~ normal(10, 3);
+  a2[2] ~ normal(100, 5);
+  sigma ~ cauchy(0, 1);
+  y0 ~ normal(5, 2);
+  
+  
+  for (i in 1:N) {
+    theta[i, 1] ~ gamma(a1[1], a1[2]);
+    theta[i, 2] ~ gamma(a2[1], a2[2]);
+    y_hat = integrate_ode(bacteria_deriv, y0, t0, ts, theta[i], x_r, x_i);
+    for (t in 1:T)
+      y[t, i] ~ normal(y_hat[t, 1], sigma);
+  }
+}
+
+generated quantities {
+  vector[N * T] logLikelihood;
+  int k;
+  real y_hat[T, 1];
+  real aTheta[2];
+  real y_hat_overall[T, 1];
+  
+  aTheta[1] = gamma_rng(a1[1], a1[2]);
+  aTheta[2] = gamma_rng(a2[1], a2[2]);
+  y_hat_overall = integrate_ode(bacteria_deriv, y0, t0, ts, aTheta, x_r, x_i);
+  k = 1;
+  for (i in 1:N) {
+    y_hat = integrate_ode(bacteria_deriv, y0, t0, ts, theta[i], x_r, x_i);
+    for (t in 1:T) {
+      logLikelihood[k] = normal_log(y[t, i], y_hat[t, 1], sigma);
+      k = k + 1;
+    }
+  }
+}
+```
+
+```{r}
+#| echo: false
+
+if (file.exists("../fits/17.3.5.rds")) {
+  fit17.3.5 <- readRDS("../fits/17.3.5.rds")
+} else {
+  fit17.3.5 <- rstan::sampling(
+    model17.3.5, data=dataList3,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.3.5.rds"
+  )
+  saveRDS(fit17.3.5, file = "../fits/17.3.5.rds")
+}
+```
+
+```{r}
+#| label: fig-17.3.5-sol
+#| fig-cap: "Posterior parameter estimates for hirarchical model."
+df.17.3.5 <- data.frame(extract(fit17.3.5,"theta")) |>
+  pivot_longer(
+    cols=everything(),
+    names_to = c("Experiment", "Param"),
+    values_to = "Value",
+    names_prefix = "theta.",
+    names_pattern = "^(\\d+)\\.(\\d+)"
+  ) |>
+  mutate(Param = if_else(Param == "1", "alpha", "beta"))
+
+
+  df.17.3.5 |> ggplot() +
+  geom_violin(aes(x=Experiment, y=Value), fill="orange", color="black") +
+  facet_wrap(vars(Param), scales="free_y") +
+  theme_classic() +
+  theme(
+    strip.background = element_blank(),  # Eliminar el fondo del título de la faceta
+    strip.text = element_text(size = 12, face = "bold"),  # Estilo del texto del título de la faceta
+    strip.placement = "outside",  # Coloca los títulos de las facetas fuera
+    strip.placement.y = "bottom",  # Coloca los títulos de las facetas en la parte inferior
+    strip.switch.pad.grid = unit(0, "cm")  # Elimina el espacio extra entre las facetas y los títulos,
+  ) +
+  labs(x="replicate", y=TeX(""))
+
+```
+
+### Problem 17.3.6
+
+Estimate the overall ($α$ , $β$) for the hierarchical model. How do these compare
+to the pooled model estimates?
+
+::: {style="color:blue"}
+The estimates reflect greater uncertainty compared to the pooled model (@fig-17.3.6-sol versus @fig-17.3.2-sol). This is desirable since the pooled model understates uncertainty.
+:::
+
+
+```{r}
+#| label: fig-17.3.6-sol
+#| fig-cap: "Overall parameter estimates for the posterior parameters in the hierarchical model."
+data.frame(extract(fit17.3.5,"theta")) |>
+  pivot_longer(
+    cols=everything(),
+    names_to = "Param",
+    values_to = "Value",
+    names_pattern = "^theta\\.\\d+\\.(\\d+)$"
+  ) |> 
+  mutate(Param = if_else(Param == "1", "alpha", "beta")) |>
+  ggplot() +
+  facet_grid(cols = vars(Param), scales="free_x") +
+  geom_histogram(aes(x=Value), fill="orange", color="black", bins=10) +
+  theme_classic() +
+  theme(
+    strip.background = element_blank(),  # Eliminar el fondo del título de la faceta
+    strip.text = element_text(size = 12, face = "bold"),  # Estilo del texto del título de la faceta
+    strip.placement = "outside",  # Coloca los títulos de las facetas fuera
+    strip.placement.y = "bottom",  # Coloca los títulos de las facetas en la parte inferior
+    strip.switch.pad.grid = unit(0, "cm")  # Elimina el espacio extra entre las facetas y los títulos
+  ) +
+  labs(x="")
+
+```
+
+### Problem 17.3.7
+
+By holding out one of your data sets, compare the predictive performance of each model.
+
+
+
+::: {style="color:blue"}
+TODO
+:::
+
+## Problem 17.4 Bowel cancer model selection
+
+The file `hierarchical_cancer.csv` contains (fictitious) data on the population size of a given
+county ($N$) and the number of bowel cancer cases in that county ($X$). In this question we aim to
+build a model to estimate the underlying rate of cancer occurrence $λ$.
+
+```{r}
+df4 <- read.csv("../data/hierarchical_cancer.csv")
+```
+
+### Problem 17.4.1
+
+A simple model is to assume that cancer occurrence is an independent event,
+and hence we use the model:
+
+$$
+X_i ∼ Poisson( N_i \times λ ) ,
+$$
+
+where $N_i$ is the population in county $i$, and $X_i$ is the number of cases of bowel cancer in the same
+county. Write a model in Stan to estimate the underlying rate of bowel cancer occurrence ($λ$),
+where we assume a prior of the form $λ ∼ N (0.5,0.5)$.
+
+### Problem 17.4.2
+
+Using the `generated quantities` block record the estimated log-likelihood
+of each data point, for each posterior sample of $λ$.
+
+### Problem 17.4.3
+
+By using Stan’s `optimizing` function to obtain the MAP estimate of $λ$, estimate the expected log pointwise predictive density ($elpd$) via a deviance information criterion
+(DIC) method:
+
+$$
+\widehat{elpd} = \log p(X \mid \hat{\theta}_{\text{Bayes}}) - 2 \, \mathrm{var}_{s=1}^S \log p(X \mid \theta_s)
+$$
+
+where $\mathrm{var}_{s=1}^S \log p(X \mid \theta_s)$ is the variance in log-likelihood for all data points across $S$ posterior
+draws. (*Hint*: the latter part of the formula requires that we estimate the model by sampling.)
+
+
+```{stan output.var = "model17.4.3", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int K;
+  vector[K] N;
+  int X[K];
+}
+
+parameters {
+  real<lower=0> lambda;
+}
+
+model {
+  X ~ poisson(lambda * N);
+  lambda ~ normal(.5, .5);
+}
+
+generated quantities{
+  vector[K] lLoglikelihood;
+  for(i in 1:K) {
+    lLoglikelihood[i] = poisson_lpmf(X[i] | N[i] * lambda);
+  }
+}
+```
+
+```{r}
+dataList4 <- list(
+  K = nrow(df4),
+  N = df4$N,
+  X = df4$X
+)
+#| echo: false
+if (file.exists("../fits/17.4.3.rds")) {
+  fit17.4.3 <- readRDS("../fits/17.4.3.rds")
+} else {
+  fit17.4.3 <- rstan::sampling(
+    model17.4.3, data=dataList4,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/17.4.3.rds"
+  )
+  saveRDS(fit17.4.3, file = "../fits/17.4.3.rds")
+}
+```
+```{r}
+bFit <- optimizing(model17.4.3, data=dataList4)
+likelihoodBayes <- sum(bFit$par[2:1001])
+
+lLoglikelihood <- extract(fit17.4.3, 'lLoglikelihood')[[1]]
+aLogLikelihood <- rowSums(lLoglikelihood)
+pDIC <- 2 * var(aLogLikelihood)
+
+aDIC <- likelihoodBayes - pDIC
+```
+
+
+
+::: {style="color:blue"}
+The $\widehat{elpd}$ DIC estimate is $\approx$ `r round(aDIC, 0)`.
+:::
+
+### Problem 17.4.4
+
+Estimate $elpd$ using the Akaike information criterion (AIC) method. (*Hint*: use
+Stan’s `optimizing` function where the Stan file has had the prior commented out, to achieve the
+maximum likelihood estimate of the log-likelihood.)
+
+
+```{r}
+aAIC <- likelihoodBayes - 1
+```
+
+
+::: {style="color:blue"}
+The AIC method penalises the estimated log-likelihood by one since there is only a single parameter
+in the model which is $\approx$ `r round(aAIC, 0)`.
+:::
+
+### Problem 17.4.5
+
+Either manually or using the `loo` package in R, estimate *elpd* by a Watanabe–Akaike information criterion (WAIC) method. If you choose the manual method, this can be
+done with the formula:
+
+$$
+\widehat{\text{elpd}} = \underbrace{\sum_{i=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} p(X_i \mid \theta_s) \right)}_{\text{log pointwise predictive density}} - p_{\text{WAIC}},
+$$
+
+where:
+
+$$
+p_{\text{WAIC}} = \sum_{i=1}^{N} \mathrm{var}_{s=1}^{S} \left[ \log (X_i \mid \theta_s) \right].
+$$
+
+
+```{r}
+library(loo)
+aWAIC <- waic(lLoglikelihood)
+```
+
+
+
+::: {style="color:blue"}
+The $\widehat{elpd}$ WAIC estimate is $\approx$ `r round(aWAIC[[1]][1,1], 0)`.
+:::
+
+
+### Problem 17.4.6
+
+By partitioning the data into 10 folds of training and testing sets (where one
+data point occurs in each testing set once only), estimate the out-of-sample predictive capability
+of the model. (*Hint 1*: in R use the `Caret` package’s `createFolds` to create 10 non-overlapping
+folds. *Hint 2*: adjust your Stan program to calculate the log-likelihood on the test set.)
+
+```{stan output.var = "model17.4.6", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int KTrain;
+  vector[KTrain] NTrain;
+  int XTrain[KTrain];
+  
+  int KTest;
+  vector[KTest] NTest;
+  int XTest[KTest];
+}
+
+parameters {
+  real<lower=0> lambda;
+}
+
+model {
+  XTrain ~ poisson(lambda * NTrain);
+  lambda ~ normal(.5, .5);
+}
+
+generated quantities{
+  vector[KTest] lLoglikelihood;
+  for(i in 1:KTest) {
+    lLoglikelihood[i] = poisson_lpmf(XTest[i] | NTest[i] * lambda);
+  }
+}
+```
+
+
+
+::: {style="color:blue"}
+TODO
+:::
+

@@ -1,0 +1,2525 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.489">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Chapter 17 Problem Sets</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="17_files/libs/clipboard/clipboard.min.js"></script>
+<script src="17_files/libs/quarto-html/quarto.js"></script>
+<script src="17_files/libs/quarto-html/popper.min.js"></script>
+<script src="17_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="17_files/libs/quarto-html/anchor.min.js"></script>
+<link href="17_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="17_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="17_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="17_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="17_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Chapter 17 Problem Sets</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="problem-17.1-a-meta-analysis-of-beta-blocker-trials" class="level2">
+<h2 class="anchored" data-anchor-id="problem-17.1-a-meta-analysis-of-beta-blocker-trials">Problem 17.1 A meta-analysis of beta blocker trials</h2>
+<p><a href="#tbl-17.1" class="quarto-xref">Table&nbsp;1</a> shows the results of some of the 22 trials included in a meta-analysis of clinical trial data on the effect of beta-blockers on reducing the risk of myocardial infarction. The file <code>hierarchical_betaBlocker.csv</code> contains the full data set.</p>
+<div class="cell">
+<div id="tbl-17.1" class="cell anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-17.1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: The data from the original study.
+</figcaption>
+<div aria-describedby="tbl-17.1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div id="nlixgzkwjy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#nlixgzkwjy table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#nlixgzkwjy thead, #nlixgzkwjy tbody, #nlixgzkwjy tfoot, #nlixgzkwjy tr, #nlixgzkwjy td, #nlixgzkwjy th {
+  border-style: none;
+}
+
+#nlixgzkwjy p {
+  margin: 0;
+  padding: 0;
+}
+
+#nlixgzkwjy .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #FFFFFF;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#nlixgzkwjy .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#nlixgzkwjy .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#nlixgzkwjy .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #FFFFFF;
+}
+
+#nlixgzkwjy .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #FFFFFF;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#nlixgzkwjy .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#nlixgzkwjy .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#nlixgzkwjy .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#nlixgzkwjy .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #FFFFFF;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#nlixgzkwjy .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#nlixgzkwjy .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #FFFFFF;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#nlixgzkwjy .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #FFFFFF;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #FFFFFF;
+  vertical-align: middle;
+}
+
+#nlixgzkwjy .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#nlixgzkwjy .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#nlixgzkwjy .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #FFFFFF;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #FFFFFF;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#nlixgzkwjy .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nlixgzkwjy .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#nlixgzkwjy .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#nlixgzkwjy .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#nlixgzkwjy .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nlixgzkwjy .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#nlixgzkwjy .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nlixgzkwjy .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#nlixgzkwjy .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #FFFFFF;
+}
+
+#nlixgzkwjy .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nlixgzkwjy .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#nlixgzkwjy .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nlixgzkwjy .gt_left {
+  text-align: left;
+}
+
+#nlixgzkwjy .gt_center {
+  text-align: center;
+}
+
+#nlixgzkwjy .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#nlixgzkwjy .gt_font_normal {
+  font-weight: normal;
+}
+
+#nlixgzkwjy .gt_font_bold {
+  font-weight: bold;
+}
+
+#nlixgzkwjy .gt_font_italic {
+  font-style: italic;
+}
+
+#nlixgzkwjy .gt_super {
+  font-size: 65%;
+}
+
+#nlixgzkwjy .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#nlixgzkwjy .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#nlixgzkwjy .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#nlixgzkwjy .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#nlixgzkwjy .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#nlixgzkwjy .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#nlixgzkwjy .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table cell table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings gt_spanner_row">
+<th rowspan="2" id="Study" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Study</th>
+<th colspan="2" id="Mortality" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" scope="colgroup"><span class="gt_column_spanner">Mortality</span></th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="Treated" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Treated</th>
+<th id="Control" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Control</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">1</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">3/38</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">3/39</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">2</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">7/114</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">14/116</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">3</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">5/69</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">11/93</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">4</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">102/1533</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">127/1520</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">5</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">28/355</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">27/365</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">6</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">4/59</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">6/52</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">7</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">98/945</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">152/939</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">8</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">60/632</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">48/471</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">9</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">25/278</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">37/282</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">10</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">138/1916</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">188/1921</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">11</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">64/873</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">52/583</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">12</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">45/263</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">47/266</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">13</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">9/291</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">16/293</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">14</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">57/858</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">45/883</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">15</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">25/154</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">31/147</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">16</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">33/207</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">38/213</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">17</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">28/251</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">12/122</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">18</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">8/151</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">6/154</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">19</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">6/174</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">3/134</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">20</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">32/209</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">40/218</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="Study" style="background-color: #FFDFD4">21</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #FFDFD4">27/391</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #FFDFD4">43/364</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="Study" style="background-color: #F8E8E4">22</td>
+<td class="gt_row gt_center" headers="Treated" style="background-color: #F8E8E4">22/680</td>
+<td class="gt_row gt_center" headers="Control" style="background-color: #F8E8E4">39/674</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The aim of this meta-analysis is to determine a robust estimate of the effect of beta-blockers by pooling information from a range of previous studies.</p>
+<section id="problem-17.1.1" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.1.1">Problem 17.1.1</h3>
+<p>Start by assuming that the numbers of deaths in the control (<span class="math inline">\(r_i^c\)</span>) and treated (<span class="math inline">\(r_i^t\)</span>) groups for each trial are given by binomial distributions of the form:</p>
+<p><span class="math display">\[
+\begin{aligned}
+r_i^c &amp;∼ \mathcal{B}(p_i^c , n_i^c),\\
+r_i^t &amp;∼ \mathcal{B}(p_i^t , n_t^c),
+\end{aligned}
+\]</span></p>
+<p>where (<span class="math inline">\(n_i^t\)</span>, <span class="math inline">\(n_i^c\)</span>) are the numbers of individuals in the treatment and control data sets, respectively. Further assume that the probabilities of mortality in the treatment and control data sets are given by:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\text{logit}(p_i^c) = \mu_i,\\
+\text{logit}(p_i^t) = \mu_i + \delta_i,\\
+\end{aligned}
+\]</span> where:</p>
+<p><span class="math display">\[
+\text{logit}(\mathcal{x}) = \log \left( \frac{\mathcal{x}}{1-\mathcal{x}}\right)
+\]</span></p>
+<p>and we expect <span class="math inline">\(δ_i &lt; 0\)</span> if the beta-blockers have the desired effect. We assume the following diffuse priors for the parameters:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mu_i &amp;\sim \mathcal{N}(0,10), \\
+\delta_i &amp;\sim \mathcal{N}(0,10),
+\end{aligned}
+\]</span></p>
+<p>Estimate the posteriors for <span class="math inline">\(δ_i\)</span> for the above model using Stan, or otherwise. Note that for this model there is no interdependence between the studies. (Hint: use the Stan <code>binomial_logit</code> function.)</p>
+<div class="cell" data-output.var="model17.1.1" data-hash="17_cache/html/unnamed-chunk-3_d2ea3b915110e74e1c12e22b0a4147a2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N; <span class="co">// number of trials</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; rc[N];</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; nc[N];</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; rt[N];</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; nt[N];</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] mu;</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] delta;</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  rc ~ binomial_logit(nc, mu);</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  rt ~ binomial_logit(nt, mu + delta);</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  delta ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div style="color:blue">
+<p>The posteriors for <span class="math inline">\(δ_i\)</span> in this model are fairly wide and contain non-zero densities at zero (<a href="#fig-17.1" class="quarto-xref">Figure&nbsp;1</a>).</p>
+</div>
+</section>
+</section>
+<section id="problem-17.1.2" class="level2">
+<h2 class="anchored" data-anchor-id="problem-17.1.2">Problem 17.1.2</h2>
+<p>An alternative framework is a hierarchical model where we assume there to be a common overarching distribution across trials such that <span class="math inline">\(δ_i ∼ N ( d , σ )\)</span>. By assuming the following priors on these parameters estimate this model:</p>
+<p><span class="math display">\[
+\begin{aligned}
+d &amp;∼ N (0,10),\\
+σ &amp;∼ Cauchy(0,2.5), \hspace{.5cm} \text{for }σ ≥ 0.
+\end{aligned}
+\]</span></p>
+<p>Estimate the posteriors for <span class="math inline">\(δ_i\)</span> using Stan. How do these estimates compare to the non-hierarchical model?</p>
+<div class="cell" data-output.var="model17.1.2" data-hash="17_cache/html/unnamed-chunk-5_ea12eeb8999986d9e11b649cff24515a">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N; <span class="co">// number of trials</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; rc[N];</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; nc[N];</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; rt[N];</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; nt[N];</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> d;</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] mu;</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] delta;</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  rc ~ binomial_logit(nc, mu);</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  rt ~ binomial_logit(nt, mu + delta);</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  delta ~ normal(d, sigma);</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  d ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  sigma ~ cauchy(<span class="dv">0</span>, <span class="fl">2.5</span>);</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> delta_new;</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; simTreatMort[N];</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; simContrMort[N];</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> indicatorTreat[N];</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> indicatorContr[N];</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  delta_new = normal_rng(d, sigma);</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    simTreatMort[i] = binomial_rng(nt[i], inv_logit(mu[i] + delta[i]));</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    simContrMort[i] = binomial_rng(nc[i], inv_logit(mu[i]));</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    indicatorTreat[i] = (simTreatMort[i] &gt; rt[i]);</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    indicatorContr[i] = (simContrMort[i] &gt; rc[i]);</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div style="color:blue">
+<p>The hierarchical estimates of the effect of the drug are much more concentrated (<a href="#fig-17.1" class="quarto-xref">Figure&nbsp;1</a>) - by pooling data across all studies we are better able to precisely estimate the effect of the drug. These indicate that the beta-blockers appear to act as desired - decreasing the probability of mortality.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.1" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The posterior estimates of <span class="math inline">\(δ_i\)</span> for the fully-heterogeneous (orange) and hierarchical (blue) models.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="problem-17.1.3" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.1.3">Problem 17.1.3</h3>
+<p>Using the hierarchical model, estimate the cross-study effect of the beta-blockers. (Hint: use the <code>generated quantities</code> code block.)</p>
+<div style="color:blue">
+<p>Overall we estimate a negative value for <span class="math inline">\(δ\)</span> (fig-17.1.3-sol). Whilst the posterior does overlap zero, we are fairly confident in concluding that <span class="math inline">\(δ &lt; 0\)</span>.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.1.3-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.1.3-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.1.3-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.1.3-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The posterior estimate of δ across all trials for the hierarchical model.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.1.4" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.1.4">Problem 17.1.4</h3>
+<p>For an out-of-sample trial suppose we know that <span class="math inline">\(μ_i = −2.5\)</span> . Using the cross-study estimates for <span class="math inline">\(δ\)</span>, estimate the reduction in probability for a patient taking the beta-blockers.</p>
+<div style="color:blue">
+<p>This is done by using the inverse-logit transformation (the logistic sigmoid). Essentially you want to evaluate <code>logistic-sigmoid(-2.5)</code> and compare it with <code>logistic-sigmoid(-2.5-delta)</code>, across all the samples in your model. This results in a posterior distribution that is peaked at about 0.02 (<a href="#fig-17.1.4-sol" class="quarto-xref">Figure&nbsp;3</a>); indicating about a 2% reduction in mortality risk for those patients taking betablockers.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.1.4-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.1.4-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.1.4-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.1.4-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The posterior estimates of the reduction in mortality risk associated with taking a beta-blocker when µ = −2.5.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.1.5" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.1.5">Problem 17.1.5</h3>
+<p>Estimate a model with a single, constant value of <span class="math inline">\(δ\)</span> and <span class="math inline">\(μ\)</span> across all trials. Graph the posterior for <span class="math inline">\(δ\)</span> , and compare it with the cross-study hierarchical model estimate.</p>
+<div style="color:blue">
+<p>The non-hierarchical model gives us a false confidence in our estimates of <span class="math inline">\(δ\)</span>, by assuming that the data from the individual studies are equivalent (exchangeable). This means that the estimate of <span class="math inline">\(δ\)</span> obtained is more concentrated than for the hierarchical model (fig-17.1.5-sol).</p>
+</div>
+<div class="cell" data-output.var="model17.1.5" data-hash="17_cache/html/unnamed-chunk-11_9d5c46377148ba9036e96f7783b7bbd2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N; <span class="co">// number of trials</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; rc[N];</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; nc[N];</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; rt[N];</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; nt[N];</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> mu;</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> delta;</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  rc ~ binomial_logit(nc, mu);</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  rt ~ binomial_logit(nt, mu + delta);</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  delta ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; simTreatMort[N];</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; simContrMort[N];</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> indicatorTreat[N];</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> indicatorContr[N];</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    simTreatMort[i] = binomial_rng(nt[i], inv_logit(mu + delta));</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    simContrMort[i] = binomial_rng(nc[i], inv_logit(mu));</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    indicatorTreat[i] = (simTreatMort[i] &gt; rt[i]);</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    indicatorContr[i] = (simContrMort[i] &gt; rc[i]);</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.1.5-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.1.5-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.1.5-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.1.5-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: The posterior estimates of cross-study <span class="math inline">\(δ\)</span> for the hierarchical (blue) and homogeneous (orange) models.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.1.6" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.1.6">Problem 17.1.6</h3>
+<p>Carry out appropriate posterior predictive checks on the homogeneous and hierarchical models, and hence conclude the preferred modelling choice.</p>
+<div style="color:blue">
+<p>For both models we find that there are a range of Bayesian <span class="math inline">\(p values\)</span> near 0 or 1 for the homogeneous (pooled) model, whereas this is not the case for the hierarchical model (<a href="#fig-17.1.6-sol" class="quarto-xref">Figure&nbsp;5</a>) Intuitively - by assuming that there was no difference between the data from each study - the homogeneous coefficient model is unable to replicate the degree of variation we see in the real data. We therefore prefer the hierarchical model.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.1.6-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.1.6-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.1.6-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.1.6-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: The distribution of Bayesian p values measuring whether the posterior predictive data exceeds the actual across each of the 22 trials for the homogeneous (orange) and hierarchical (blue) models.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="problem-17.2-i-cant-get-no-sleep" class="level2">
+<h2 class="anchored" data-anchor-id="problem-17.2-i-cant-get-no-sleep">Problem 17.2 I can’t get no sleep</h2>
+<p>The data are from a study described in Belenky et al.&nbsp;that measured the effect of sleep deprivation on cognitive performance. There were 18 subjects chosen from a population of interest (lorry drivers) who were restricted to 3 hours of sleep during the trial. On each day of the experiment their reaction time to a visual stimulus was measured. The data for this example is contained within <code>evaluation_sleepstudy.csv</code>, consisting of three variables, <em>Reaction</em>, <em>Days</em> and <em>Subject ID</em>, which measure the reaction time of a given subject on a particular day.</p>
+<p>A simple model that explains the variation in reaction times is a linear regression model of the form:</p>
+<p><span class="math display">\[
+R ( t ) ∼ N ( α + β t , σ ) ,
+\]</span></p>
+<p>where <span class="math inline">\(R ( t )\)</span> is the reaction time on day <span class="math inline">\(t\)</span> of the experiment across all observations.</p>
+<section id="problem-17.2.1" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.1">Problem 17.2.1</h3>
+<p>Assuming <span class="math inline">\(\mathcal{N}(0,250)\)</span> priors on both <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(β\)</span>, code up the above model in Stan. Use it to generate 1000 samples per chain, across four chains. Has the sampling algorithm converged?</p>
+<div class="cell" data-output.var="model17.2.1" data-hash="17_cache/html/unnamed-chunk-17_7a63837a56a5c5650c8238ef0febb8d3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N; <span class="co">// number of observations</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">matrix</span>[N,<span class="dv">2</span>] X; <span class="co">// ones + days of sleep deprivation</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] R; <span class="co">// reaction times</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[<span class="dv">2</span>] gamma;</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  R ~ normal(X * gamma, sigma);</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  gamma ~ normal(<span class="dv">0</span>, <span class="dv">250</span>);</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> R_Simulated[N];</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  R_Simulated = normal_rng(X * gamma, sigma);</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="sxmujutgqx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#sxmujutgqx table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#sxmujutgqx thead, #sxmujutgqx tbody, #sxmujutgqx tfoot, #sxmujutgqx tr, #sxmujutgqx td, #sxmujutgqx th {
+  border-style: none;
+}
+
+#sxmujutgqx p {
+  margin: 0;
+  padding: 0;
+}
+
+#sxmujutgqx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#sxmujutgqx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#sxmujutgqx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#sxmujutgqx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#sxmujutgqx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#sxmujutgqx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#sxmujutgqx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#sxmujutgqx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#sxmujutgqx .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#sxmujutgqx .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#sxmujutgqx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#sxmujutgqx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#sxmujutgqx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#sxmujutgqx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#sxmujutgqx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sxmujutgqx .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#sxmujutgqx .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#sxmujutgqx .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#sxmujutgqx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sxmujutgqx .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#sxmujutgqx .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sxmujutgqx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#sxmujutgqx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sxmujutgqx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sxmujutgqx .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sxmujutgqx .gt_left {
+  text-align: left;
+}
+
+#sxmujutgqx .gt_center {
+  text-align: center;
+}
+
+#sxmujutgqx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#sxmujutgqx .gt_font_normal {
+  font-weight: normal;
+}
+
+#sxmujutgqx .gt_font_bold {
+  font-weight: bold;
+}
+
+#sxmujutgqx .gt_font_italic {
+  font-style: italic;
+}
+
+#sxmujutgqx .gt_super {
+  font-size: 65%;
+}
+
+#sxmujutgqx .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#sxmujutgqx .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#sxmujutgqx .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#sxmujutgqx .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#sxmujutgqx .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#sxmujutgqx .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#sxmujutgqx .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="term" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">term</th>
+<th id="rhat" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">rhat</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="term">gamma[1]</td>
+<td class="gt_row gt_right" headers="rhat">1.00</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="term">gamma[2]</td>
+<td class="gt_row gt_right" headers="rhat">1.00</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="term">sigma</td>
+<td class="gt_row gt_right" headers="rhat">1.00</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.2.2" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.2">Problem 17.2.2</h3>
+<p>Plot the posterior samples for α and β. What is the relationship between the two variables, and why?</p>
+<div style="color:blue">
+<p>There is a strong negative correlation between the estimates of these two variables. This is because to generate a line going through the centre of the dataset, if the intercept increases, the gradient must decrease (<a href="#fig-17.2.2-sol" class="quarto-xref">Figure&nbsp;6</a>).</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.2.2-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.2.2-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.2.2-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.2.2-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Negative correlation between <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.2.3" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.3">Problem 17.2.3</h3>
+<p>By using the <code>generated quantities</code> code block or otherwise, generate samples from the posterior predictive distribution. By overlaying the real time series for each individual on a graph of the posterior predictive, comment on the fit of the model to data.</p>
+<div style="color:blue">
+<p>The posterior predictive distribution - whilst being a reasonable fit to the data for the anonymous data - is not able to fit well the data at the individual level (<a href="#fig-17.2.3-sol" class="quarto-xref">Figure&nbsp;7</a>).</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.2.3-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.2.3-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.2.3-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.2.3-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: The posterior predictive distribution (orange) and the data for one individual in the sleep study (blue) using the “homogeneous coefficients” model.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.2.4" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.4">Problem 17.2.4</h3>
+<p>Fit a model with separate (<span class="math inline">\(α\)</span>, <span class="math inline">\(β\)</span> ) for each individual in the data set. Use separate and independent <span class="math inline">\(\mathcal{N}(0,250)\)</span> priors for the parameters. Again use 1000 samples per chain over four chains.</p>
+<div class="cell" data-output.var="model17.2.4" data-hash="17_cache/html/unnamed-chunk-22_457423313e62e16b56ab867dfd9d30ab">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N; <span class="co">// number of observations</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> S; <span class="co">// number of individuals in the study</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] t; <span class="co">// days of sleep deprivation</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] R; <span class="co">// reaction times of individuals in the study</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> subject[N]; <span class="co">// subject ID</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> alpha[S];</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> beta[S];</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    R[i] ~ normal(alpha[subject[i]] + beta[subject[i]] * t[i], sigma);</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  alpha ~ normal(<span class="dv">0</span>, <span class="dv">250</span>);</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  beta ~ normal(<span class="dv">0</span>, <span class="dv">250</span>);</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  sigma ~ normal(<span class="dv">0</span>, <span class="dv">50</span>);</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] R_Simulated;</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    R_Simulated[i] = normal_rng(alpha[subject[i]] + beta[subject[i]] * t[i], sigma);</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="problem-17.2.5" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.5">Problem 17.2.5</h3>
+<p>Compute the posterior mean estimates of the <span class="math inline">\(β\)</span> parameters for the new heterogeneous parameters model. How do these compare to the single <span class="math inline">\(β\)</span> estimate obtained for the homogeneous model?</p>
+<div style="color:blue">
+<p>The homogeneous estimate is about 10.46, with the heterogeneous estimates ranging from -2.69 (for subject 335) to 21.96 (for subject 308). Overall the heterogeneous estimates should have a mean that is roughly similar to the single estimate (it’s not exactly so, 10.63).</p>
+</div>
+</section>
+<section id="problem-17.2.6" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.6">Problem 17.2.6</h3>
+<p>Using the <code>generated quantities</code> code block or otherwise, generate samples from the posterior predictive distribution. By comparing individual subject data to the posterior predictive samples, comment on the fit of the new model.</p>
+<div style="color:blue">
+<p>The heterogeneous coefficients model is able to fit the data much more effectively at the individual data (<a href="#fig-17.2.6-sol" class="quarto-xref">Figure&nbsp;8</a>). This is unsurprising - essentially we may be guilty of overfitting the model to the data.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.2.6-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.2.6-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.2.6-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.2.6-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: The posterior predictive distribution (orange) and the data for one individual in the sleep study (blue) using the ““heterogeneous coefficients” model.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.2.7" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.7">Problem 17.2.7</h3>
+<p>Partition the data into two subsets: a training set (of subjects 1–17) and a testing set (of subject 18 only). By fitting both the heterogeneous and homogeneous coefficients models to the training sets, compare the performance of each model on predicting the test set data.</p>
+<div style="color:blue">
+<p>For the heterogeneous model there is really only one way to generate predictions for the test set - sample a value of the parameters from the priors, and using these parameter values to generate predictive datasets. Because the priors are wide this actually produces very poor predictions (<a href="#fig-17.2.7-sol" class="quarto-xref">Figure&nbsp;9</a> right).</p>
+<p>The homogeneous coefficients model however performs much better as is much more generalisable to new datasets. Intuitively the heterogeneous coefficients model is overfit to the data (<a href="#fig-17.2.7-sol" class="quarto-xref">Figure&nbsp;9</a> left).</p>
+</div>
+<div class="cell" data-output.var="model17.2.7" data-hash="17_cache/html/unnamed-chunk-26_5bfcb53ad334c331728cae19bd6fb21a">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N; <span class="co">// number of observations in training set</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> S; <span class="co">// number of individuals in training set</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] t; <span class="co">// days of sleep deprivation in training set</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] R; <span class="co">// reaction times of individuals in in training set</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> subject[N]; <span class="co">// subject ID</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N2; <span class="co">// number of data points in the test set</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N2] t2; <span class="co">// time obs in test set</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> alpha[S];</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> beta[S];</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    R[i] ~ normal(alpha[subject[i]] + beta[subject[i]] * t[i], sigma);</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  alpha ~ normal(<span class="dv">0</span>, <span class="dv">250</span>);</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  beta ~ normal(<span class="dv">0</span>, <span class="dv">250</span>);</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  sigma ~ normal(<span class="dv">0</span>, <span class="dv">50</span>);</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N2] R_Simulated;</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> aAlpha;</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> aBeta;</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  aAlpha = normal_rng(<span class="dv">0</span>, <span class="dv">250</span>);</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  aBeta = normal_rng(<span class="dv">0</span>, <span class="dv">250</span>);</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N2) {</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    R_Simulated[i] = normal_rng(aAlpha + aBeta * t2[i], sigma);</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.2.7-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.2.7-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.2.7-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.2.7-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: The posterior predictive distribution (orange) and the data for subject 18 for a model fitted to the other 17 subjects’ data, across the homogeneous coefficients (left), and heterogeneous coefficients (right) models.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.2.8" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.8">Problem 17.2.8</h3>
+<p>Alternatively, we can fit a hierarchical model to the data which (hopefully) captures some of the best elements of each of the aforementioned models. Fit such a model in Stan using normal priors for <span class="math inline">\(α_i\)</span> and <span class="math inline">\(β_i\)</span> and appropriate priors on the hyper-parameters of these distributions.</p>
+<div style="color:blue">
+<p>The posterior distribution for the parameters exhibits shrinkage towards the grand mean (<a href="#fig-17.8-sol" class="quarto-xref">Figure&nbsp;10</a>). In general those parameter estimates with a. the highest uncertainty, and b. lie furthest away from the mean, are shrunk the most in hierarchical models.</p>
+</div>
+<div class="cell" data-output.var="model17.2.8" data-hash="17_cache/html/unnamed-chunk-29_b28e2798a9087b06edad34dfeca3d61e">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N; <span class="co">// number of observations</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> S; <span class="co">// number of individuals in the study</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] t; <span class="co">// days of sleep deprivation</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] R; <span class="co">// reaction times of individuals in the study</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> subject[N]; <span class="co">// subject ID</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> alpha[S];</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> beta[S];</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> a;</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> b;</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> c;</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> d;</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    R[i] ~ normal(alpha[subject[i]] + beta[subject[i]] * t[i], sigma);</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  a ~ normal(<span class="dv">100</span>, <span class="dv">100</span>);</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  b ~ cauchy(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  c ~ normal(<span class="dv">10</span>, <span class="dv">5</span>);</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  d ~ cauchy(<span class="dv">0</span>, <span class="dv">1</span>);</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  alpha ~ normal(a, b);</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  beta ~ normal(c, d);</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  sigma ~ normal(<span class="dv">0</span>, <span class="dv">50</span>);</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> aBeta;</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  aBeta = normal_rng(c, d);</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.8-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.8-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.8-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.8-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: The posterior estimates of <span class="math inline">\(\beta\)</span> for the heterogeneous estimates (orange) versus the hierarchical estimates (blue).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.2.9" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.2.9">Problem 17.2.9</h3>
+<p>Graph the posterior distribution for <span class="math inline">\(β\)</span> for another individual (not in the original data set). How does this distribution compare to the value of <span class="math inline">\(β\)</span> obtained from the homogeneous coefficient model?</p>
+<div style="color:blue">
+<p>The posterior distribution for <span class="math inline">\(β\)</span> has a mean of 10.2 (about the same as the original homogeneous estimate), but is wider (<a href="#fig-17.2.9-sol" class="quarto-xref">Figure&nbsp;11</a>).</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.2.9-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.2.9-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.2.9-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.2.9-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: The posterior estimates of <span class="math inline">\(\beta\)</span> for an out-of-sample individual for the homogeneous coefficients and hierarchical models.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="problem-17.3-hierarchical-odes-bacterial-cell-population-growth" class="level2">
+<h2 class="anchored" data-anchor-id="problem-17.3-hierarchical-odes-bacterial-cell-population-growth">Problem 17.3 Hierarchical ODEs: bacterial cell population growth</h2>
+<p>The file <code>hierarchical_ode.csv</code> contains data for five replicates of an experiment in which bacterial cell population numbers were measured over time. The following model for bacterial population size is proposed to explain the data:</p>
+<p><span class="math display">\[
+\frac{\partial{N}}{\partial{t}} = \alpha N(1-\beta N)
+\]</span></p>
+<p>However, measurement of bacterial cell numbers is subject to random, uncorrelated measurement error:</p>
+<p><span class="math display">\[
+N^* ( t ) ∼ \mathcal{N} ( N ( t ), σ ) ,
+\]</span></p>
+<p>where <span class="math inline">\(N^* ( t )\)</span> is the measured number of cells, and <span class="math inline">\(N ( t )\)</span> is the true population size. Finally, we suppose that the initial number of bacterial cells is unknown, and hence must be estimated. Further we assume the following priors:</p>
+<p><span class="math display">\[
+\begin{aligned}
+α &amp;∼ N (0,2), \\
+β &amp;∼ N (0,2), \\
+σ &amp;∼ Cauchy(0,1), \\
+N(0) &amp;∼ N (5,2) ,
+\end{aligned}
+\]</span> where all parameters have a lower value of 0.</p>
+<section id="problem-17.3.1" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.3.1">Problem 17.3.1</h3>
+<p>Write a Stan function that returns <span class="math inline">\(\frac{\partial{N}}{\partial{t}}\)</span> . Hint 1: this will need to be done within the functions block at the top of the Stan file. Hint 2: the function must have a structure:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">real</span>[] bacteria_deriv(<span class="dt">real</span> t,<span class="dt">real</span>[] y,<span class="dt">real</span>[] theta,<span class="dt">real</span>[] x_r,<span class="dt">int</span>[] x_i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>where the variables <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_r\)</span> are not used here, but nonetheless need to be defined:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">transformed data</span> {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> x_r[<span class="dv">0</span>];</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> x_i[<span class="dv">0</span>];</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="problem-17.3.2" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.3.2">Problem 17.3.2</h3>
+<p>Estimate a model where the parameters ( <span class="math inline">\(α\)</span> , <span class="math inline">\(β\)</span> ) are assumed to be the same across all experimental replicates.</p>
+<div class="cell" data-output.var="model17.3.2" data-hash="17_cache/html/unnamed-chunk-36_8eec80d763e0f76e0884cc8f406be129">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">functions</span> {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>[] bacteria_deriv(<span class="dt">real</span> t,<span class="dt">real</span>[] y,<span class="dt">real</span>[] theta,<span class="dt">real</span>[] x_r,<span class="dt">int</span>[] x_i) {</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">real</span> dydt[<span class="dv">1</span>];</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    dydt[<span class="dv">1</span>] = theta[<span class="dv">1</span>] * y[<span class="dv">1</span>] * (<span class="dv">1</span> - theta[<span class="dv">2</span>] * y[<span class="dv">1</span>]);</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dydt;</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; T;</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> t0;</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> ts[T];</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">matrix</span>[T,N] y;</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="kw">transformed data</span> {</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> x_r[<span class="dv">0</span>];</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> x_i[<span class="dv">0</span>];</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">2</span>&gt; theta[<span class="dv">2</span>]; <span class="co">// contains parameters (alpha,beta)</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">10</span>&gt; y0[<span class="dv">1</span>];</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y_hat[T, <span class="dv">1</span>];</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  sigma ~ cauchy(<span class="dv">0</span>, <span class="dv">1</span>);</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>  theta ~ normal(<span class="dv">0</span>, <span class="dv">2</span>);</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  y0 ~ normal(<span class="dv">5</span>, <span class="dv">2</span>);</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  y_hat = <span class="kw">integrate_ode</span>(bacteria_deriv, y0, t0, ts, theta, x_r, x_i);</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N)</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:T)</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>      y[t, i] ~ normal(y_hat[t, <span class="dv">1</span>], sigma);</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N * T] logLikelihood;</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> k;</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y_hat[T, <span class="dv">1</span>];</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>  k = <span class="dv">1</span>;</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>  y_hat = <span class="kw">integrate_ode</span>(bacteria_deriv, y0, t0, ts, theta, x_r, x_i);</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:T) {</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>      logLikelihood[k] = normal_log(y[t, i], y_hat[t, <span class="dv">1</span>], sigma);</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>      k = k + <span class="dv">1</span>;</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div style="color:blue">
+<p>The posteriors for (<span class="math inline">\(α\)</span>, <span class="math inline">\(β\)</span>) are shown in <a href="#fig-17.3.2-sol" class="quarto-xref">Figure&nbsp;12</a>.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.3.2-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.3.2-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.3.2-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.3.2-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: Homogeneous model estimates of (<span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\beta\)</span>).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.3.3." class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.3.3.">Problem 17.3.3.</h3>
+<p>By graphing the data, or otherwise, comment on the assumption of a common (<span class="math inline">\(α\)</span>, <span class="math inline">\(β\)</span>) across all replicates.</p>
+<div style="color:blue">
+<p>There is quite a clear variability between the replicates across different experiments (<a href="#fig-17.3.3-sol" class="quarto-xref">Figure&nbsp;13</a>). This makes the assumption of common parameter values across all replicates look quite weak. An alternative here would be to do some posterior predictive checks, but this isn’t really needed here to be honest since the raw data plots are illuminating.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.3.3-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.3.3-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.3.3-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.3.3-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13: Time series plot of 5 experimental replicates.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.3.4" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.3.4">Problem 17.3.4</h3>
+<p>Now estimate a model that estimates separate values for ( <span class="math inline">\(α\)</span> , <span class="math inline">\(β\)</span> ) across all replicates. Graph the posterior distribution for each parameter.</p>
+<div style="color:blue">
+<p>There is considerable heterogeneity in posterior estimates of (<span class="math inline">\(α\)</span>, <span class="math inline">\(β\)</span>) (<a href="#fig-17.3.4-sol" class="quarto-xref">Figure&nbsp;14</a>).</p>
+</div>
+<div class="cell" data-output.var="model17.3.4" data-hash="17_cache/html/unnamed-chunk-40_a5d54d1c74161593c674d3bfc13ed1f1">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">functions</span> {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>[] bacteria_deriv(<span class="dt">real</span> t,<span class="dt">real</span>[] y,<span class="dt">real</span>[] theta,<span class="dt">real</span>[] x_r,<span class="dt">int</span>[] x_i) {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">real</span> dydt[<span class="dv">1</span>];</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    dydt[<span class="dv">1</span>] = theta[<span class="dv">1</span>] * y[<span class="dv">1</span>] * (<span class="dv">1</span> - theta[<span class="dv">2</span>] * y[<span class="dv">1</span>]);</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dydt;</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; T;</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> t0;</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> ts[T];</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">matrix</span>[T,N] y;</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="kw">transformed data</span> {</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> x_r[<span class="dv">0</span>];</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> x_i[<span class="dv">0</span>];</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">2</span>&gt; theta[N, <span class="dv">2</span>];</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">10</span>&gt; y0[<span class="dv">1</span>];</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y_hat[T, <span class="dv">1</span>];</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  sigma ~ cauchy(<span class="dv">0</span>, <span class="dv">1</span>);</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>  y0 ~ normal(<span class="dv">5</span>, <span class="dv">2</span>);</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    theta[i] ~ normal(<span class="dv">0</span>, <span class="dv">2</span>);</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    y_hat = <span class="kw">integrate_ode</span>(bacteria_deriv, y0, t0, ts, theta[i], x_r, x_i);</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:T)</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>      y[t, i] ~ normal(y_hat[t, <span class="dv">1</span>], sigma);</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N * T] logLikelihood;</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> k;</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y_hat[T, <span class="dv">1</span>];</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>  k = <span class="dv">1</span>;</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>    y_hat = <span class="kw">integrate_ode</span>(bacteria_deriv, y0, t0, ts, theta[i], x_r, x_i);</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:T) {</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>      logLikelihood[k] = normal_log(y[t, i], y_hat[t, <span class="dv">1</span>], sigma);</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>      k = k + <span class="dv">1</span>;</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.3.4-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.3.4-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.3.4-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.3.4-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14: Posterior parameter estimates for heterogeneous model.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.3.5" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.3.5">Problem 17.3.5</h3>
+<p>Estimate a hierarchical model assuming the following priors:</p>
+<p><span class="math display">\[
+\begin{aligned}
+α &amp;∼ Γ( a , b ) ,\\
+β &amp;∼ Γ( c , d ) ,\\
+a &amp;∼ N (20,5),\\
+b &amp;∼ N (40,5),\\
+c &amp;∼ N (10,3),\\
+d &amp;∼ N (100,5).
+\end{aligned}
+\]</span> Compare your estimates of ( <span class="math inline">\(α\)</span> , <span class="math inline">\(β\)</span> ) with those from the completely heterogeneous model.</p>
+<div style="color:blue">
+<p>There is very limited shrinkage versus the purely heterogeneous model (<a href="#fig-17.3.4-sol" class="quarto-xref">Figure&nbsp;14</a> versus Figure <a href="#fig-17.3.5-sol" class="quarto-xref">Figure&nbsp;15</a>.) This is because there is quite a lot of data for each replicate.</p>
+</div>
+<div class="cell" data-output.var="model17.3.5" data-hash="17_cache/html/unnamed-chunk-43_7a1f29d7e8534d7def18817212ce2a8a">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">functions</span> {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>[] bacteria_deriv(<span class="dt">real</span> t,<span class="dt">real</span>[] y,<span class="dt">real</span>[] theta,<span class="dt">real</span>[] x_r,<span class="dt">int</span>[] x_i) {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">real</span> dydt[<span class="dv">1</span>];</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    dydt[<span class="dv">1</span>] = theta[<span class="dv">1</span>] * y[<span class="dv">1</span>] * (<span class="dv">1</span> - theta[<span class="dv">2</span>] * y[<span class="dv">1</span>]);</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dydt;</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; T;</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> t0;</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> ts[T];</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">matrix</span>[T,N] y;</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="kw">transformed data</span> {</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> x_r[<span class="dv">0</span>];</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> x_i[<span class="dv">0</span>];</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; a1[<span class="dv">2</span>];</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; a2[<span class="dv">2</span>];</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">2</span>&gt; theta[N, <span class="dv">2</span>];</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">10</span>&gt; y0[<span class="dv">1</span>];</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y_hat[T, <span class="dv">1</span>];</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>  a1[<span class="dv">1</span>] ~ normal(<span class="dv">20</span>, <span class="dv">5</span>);</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>  a1[<span class="dv">2</span>] ~ normal(<span class="dv">40</span>, <span class="dv">5</span>);</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>  a2[<span class="dv">1</span>] ~ normal(<span class="dv">10</span>, <span class="dv">3</span>);</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  a2[<span class="dv">2</span>] ~ normal(<span class="dv">100</span>, <span class="dv">5</span>);</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>  sigma ~ cauchy(<span class="dv">0</span>, <span class="dv">1</span>);</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>  y0 ~ normal(<span class="dv">5</span>, <span class="dv">2</span>);</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    theta[i, <span class="dv">1</span>] ~ gamma(a1[<span class="dv">1</span>], a1[<span class="dv">2</span>]);</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    theta[i, <span class="dv">2</span>] ~ gamma(a2[<span class="dv">1</span>], a2[<span class="dv">2</span>]);</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    y_hat = <span class="kw">integrate_ode</span>(bacteria_deriv, y0, t0, ts, theta[i], x_r, x_i);</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:T)</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>      y[t, i] ~ normal(y_hat[t, <span class="dv">1</span>], sigma);</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N * T] logLikelihood;</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> k;</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y_hat[T, <span class="dv">1</span>];</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> aTheta[<span class="dv">2</span>];</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y_hat_overall[T, <span class="dv">1</span>];</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>  aTheta[<span class="dv">1</span>] = gamma_rng(a1[<span class="dv">1</span>], a1[<span class="dv">2</span>]);</span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>  aTheta[<span class="dv">2</span>] = gamma_rng(a2[<span class="dv">1</span>], a2[<span class="dv">2</span>]);</span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>  y_hat_overall = <span class="kw">integrate_ode</span>(bacteria_deriv, y0, t0, ts, aTheta, x_r, x_i);</span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>  k = <span class="dv">1</span>;</span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>    y_hat = <span class="kw">integrate_ode</span>(bacteria_deriv, y0, t0, ts, theta[i], x_r, x_i);</span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:T) {</span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>      logLikelihood[k] = normal_log(y[t, i], y_hat[t, <span class="dv">1</span>], sigma);</span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>      k = k + <span class="dv">1</span>;</span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.3.5-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.3.5-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.3.5-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.3.5-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15: Posterior parameter estimates for hirarchical model.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.3.6" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.3.6">Problem 17.3.6</h3>
+<p>Estimate the overall (<span class="math inline">\(α\)</span> , <span class="math inline">\(β\)</span>) for the hierarchical model. How do these compare to the pooled model estimates?</p>
+<div style="color:blue">
+<p>The estimates reflect greater uncertainty compared to the pooled model (<a href="#fig-17.3.6-sol" class="quarto-xref">Figure&nbsp;16</a> versus <a href="#fig-17.3.2-sol" class="quarto-xref">Figure&nbsp;12</a>). This is desirable since the pooled model understates uncertainty.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-17.3.6-sol" class="quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17.3.6-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="17_files/figure-html/fig-17.3.6-sol-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-17.3.6-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16: Overall parameter estimates for the posterior parameters in the hierarchical model.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="problem-17.3.7" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.3.7">Problem 17.3.7</h3>
+<p>By holding out one of your data sets, compare the predictive performance of each model.</p>
+<div style="color:blue">
+<p>TODO</p>
+</div>
+</section>
+</section>
+<section id="problem-17.4-bowel-cancer-model-selection" class="level2">
+<h2 class="anchored" data-anchor-id="problem-17.4-bowel-cancer-model-selection">Problem 17.4 Bowel cancer model selection</h2>
+<p>The file <code>hierarchical_cancer.csv</code> contains (fictitious) data on the population size of a given county (<span class="math inline">\(N\)</span>) and the number of bowel cancer cases in that county (<span class="math inline">\(X\)</span>). In this question we aim to build a model to estimate the underlying rate of cancer occurrence <span class="math inline">\(λ\)</span>.</p>
+<section id="problem-17.4.1" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.4.1">Problem 17.4.1</h3>
+<p>A simple model is to assume that cancer occurrence is an independent event, and hence we use the model:</p>
+<p><span class="math display">\[
+X_i ∼ Poisson( N_i \times λ ) ,
+\]</span></p>
+<p>where <span class="math inline">\(N_i\)</span> is the population in county <span class="math inline">\(i\)</span>, and <span class="math inline">\(X_i\)</span> is the number of cases of bowel cancer in the same county. Write a model in Stan to estimate the underlying rate of bowel cancer occurrence (<span class="math inline">\(λ\)</span>), where we assume a prior of the form <span class="math inline">\(λ ∼ N (0.5,0.5)\)</span>.</p>
+</section>
+<section id="problem-17.4.2" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.4.2">Problem 17.4.2</h3>
+<p>Using the <code>generated quantities</code> block record the estimated log-likelihood of each data point, for each posterior sample of <span class="math inline">\(λ\)</span>.</p>
+</section>
+<section id="problem-17.4.3" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.4.3">Problem 17.4.3</h3>
+<p>By using Stan’s <code>optimizing</code> function to obtain the MAP estimate of <span class="math inline">\(λ\)</span>, estimate the expected log pointwise predictive density (<span class="math inline">\(elpd\)</span>) via a deviance information criterion (DIC) method:</p>
+<p><span class="math display">\[
+\widehat{elpd} = \log p(X \mid \hat{\theta}_{\text{Bayes}}) - 2 \, \mathrm{var}_{s=1}^S \log p(X \mid \theta_s)
+\]</span></p>
+<p>where <span class="math inline">\(\mathrm{var}_{s=1}^S \log p(X \mid \theta_s)\)</span> is the variance in log-likelihood for all data points across <span class="math inline">\(S\)</span> posterior draws. (<em>Hint</em>: the latter part of the formula requires that we estimate the model by sampling.)</p>
+<div class="cell" data-output.var="model17.4.3" data-hash="17_cache/html/unnamed-chunk-48_f3b5b01a60da096a71e80364017aee79">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> K;</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[K] N;</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> X[K];</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; lambda;</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  X ~ poisson(lambda * N);</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  lambda ~ normal(.<span class="dv">5</span>, .<span class="dv">5</span>);</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span>{</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[K] lLoglikelihood;</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span>:K) {</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    lLoglikelihood[i] = poisson_lpmf(X[i] | N[i] * lambda);</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div style="color:blue">
+<p>The <span class="math inline">\(\widehat{elpd}\)</span> DIC estimate is <span class="math inline">\(\approx\)</span> -3996.</p>
+</div>
+</section>
+<section id="problem-17.4.4" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.4.4">Problem 17.4.4</h3>
+<p>Estimate <span class="math inline">\(elpd\)</span> using the Akaike information criterion (AIC) method. (<em>Hint</em>: use Stan’s <code>optimizing</code> function where the Stan file has had the prior commented out, to achieve the maximum likelihood estimate of the log-likelihood.)</p>
+<div style="color:blue">
+<p>The AIC method penalises the estimated log-likelihood by one since there is only a single parameter in the model which is <span class="math inline">\(\approx\)</span> -3996.</p>
+</div>
+</section>
+<section id="problem-17.4.5" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.4.5">Problem 17.4.5</h3>
+<p>Either manually or using the <code>loo</code> package in R, estimate <em>elpd</em> by a Watanabe–Akaike information criterion (WAIC) method. If you choose the manual method, this can be done with the formula:</p>
+<p><span class="math display">\[
+\widehat{\text{elpd}} = \underbrace{\sum_{i=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} p(X_i \mid \theta_s) \right)}_{\text{log pointwise predictive density}} - p_{\text{WAIC}},
+\]</span></p>
+<p>where:</p>
+<p><span class="math display">\[
+p_{\text{WAIC}} = \sum_{i=1}^{N} \mathrm{var}_{s=1}^{S} \left[ \log (X_i \mid \theta_s) \right].
+\]</span></p>
+<div style="color:blue">
+<p>The <span class="math inline">\(\widehat{elpd}\)</span> WAIC estimate is <span class="math inline">\(\approx\)</span> -3998.</p>
+</div>
+</section>
+<section id="problem-17.4.6" class="level3">
+<h3 class="anchored" data-anchor-id="problem-17.4.6">Problem 17.4.6</h3>
+<p>By partitioning the data into 10 folds of training and testing sets (where one data point occurs in each testing set once only), estimate the out-of-sample predictive capability of the model. (<em>Hint 1</em>: in R use the <code>Caret</code> package’s <code>createFolds</code> to create 10 non-overlapping folds. <em>Hint 2</em>: adjust your Stan program to calculate the log-likelihood on the test set.)</p>
+<div class="cell" data-output.var="model17.4.6" data-hash="17_cache/html/unnamed-chunk-53_b132bf61152d65a89047987bfe7422c5">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> KTrain;</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[KTrain] NTrain;</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> XTrain[KTrain];</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> KTest;</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[KTest] NTest;</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> XTest[KTest];</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; lambda;</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  XTrain ~ poisson(lambda * NTrain);</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  lambda ~ normal(.<span class="dv">5</span>, .<span class="dv">5</span>);</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span>{</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[KTest] lLoglikelihood;</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span>:KTest) {</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    lLoglikelihood[i] = poisson_lpmf(XTest[i] | NTest[i] * lambda);</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div style="color:blue">
+<p>TODO</p>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

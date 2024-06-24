@@ -1,3 +1,5 @@
 .Rproj.user/
 fits/*
 **/*_cache/**
+**/.RData
+**/.Rhistory
