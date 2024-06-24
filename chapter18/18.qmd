@@ -1,0 +1,457 @@
+---
+title: "Chapter 18 Problem Sets"
+format: html
+editor: visual
+warning: false
+echo: false
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| output: false
+library(tidyverse)
+library(gt)
+library(latex2exp)
+library(RColorBrewer)
+library(patchwork)
+library(rstan)
+library(broom.mixed)
+
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write= TRUE)
+```
+## Problem 18.1 Crime and punishment
+
+The data in `linearRegression_crimePunishment.csv` contains the murder rate per capita
+and the rate of automobile crimes per 100,000 individuals (both on the log scale) in the 10 US
+states that have changed their legislation on capital punishment since 1960 (in all cases the
+states abolished capital punishment). We also include a dummy variable (*law*) that is 1 if the state
+allows capital punishment in that year, and 0 otherwise.
+
+```{r}
+df1 <- read.csv("../data/linearRegression_crimePunishment.csv")
+```
+
+### Problem 18.1.1
+
+Graph the data and comment on any trends.
+
+::: {style="color:blue"}
+The data is shown in @fig-18.1.1-sol. There seems to be some association between the
+murder rate and auto crimes. In all cases it is difficult to visually discern an impact of the change
+in legislation.
+:::
+
+```{r}
+#| label: fig-18.1.1-sol
+#| fig-cap: "The log per capita murder rate (red) and auto crime rate (divided by 2 on log scale; green) versus the death penalty dummy (1 if state has death penalty; 0 otherwise; blue) in five of the US States which abolished the death penalty since 1960."
+#| echo: false
+
+df1 |>
+  ggplot() +
+  facet_wrap(vars(stateName)) +
+  geom_line(aes(x=year, y=murder), color="red") +
+  geom_line(aes(x=year, y=car/2), color="green") +
+  geom_line(aes(x=year, y=law), color="blue") +
+  labs(x="Year", y="Value")
+```
+
+### Problem 18.1.2
+
+A simple model for murder rates is of the form:
+
+$$
+murder_{i , t} \sim N ( α + β penalty_{i , t} + γ car_{i , t} , σ ) ,
+$$
+
+where we assume that the effect of having the death penalty is given by $β$, which is assumed to be
+the same across all states. We include $car_{i , t}$ , a measure of crimes on automobiles, as an independent variable to proxy for the contemporaneous underlying level of crime. Estimate this model
+and hence determine whether the death penalty acts as a deterrent to murder.
+
+
+::: {style="color:blue"}
+This model can be estimated using the following Stan code:
+
+```{stan output.var = "model18.1.2", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N;
+  real murder[N];
+  real car[N];
+  int<lower=0, upper=1> law[N];
+  int state[N];
+}
+
+parameters {
+  real alpha;
+  real beta;
+  real gamma;
+  real<lower=0> sigma;
+}
+
+model {
+  for(i in 1:N) {
+    murder[i] ~ normal(alpha + beta * law[i] + gamma * car[i], sigma);
+  }
+  
+  alpha ~ normal(0, 1);
+  beta ~ normal(0, 1);
+  gamma ~ normal(0, 1);
+  sigma ~ normal(0, 1);
+}
+
+generated quantities{
+  real logLikelihood[N];
+  for(i in 1:N)
+      logLikelihood[i] = normal_lpdf(murder[i] | alpha + beta * law[i] +
+                  gamma * car[i], sigma);
+}
+```
+
+
+```{r}
+#| echo: false
+
+dataList18.1.2 = list(
+  N = nrow(df1),
+  murder = df1$murder,
+  car = df1$car,
+  law = df1$law,
+  state = df1$state
+)
+
+if (file.exists("../fits/18.1.2.rds")) {
+  fit18.1.2 <- readRDS("../fits/18.1.2.rds")
+} else {
+  fit18.1.2 <- rstan::sampling(
+    model18.1.2, data=dataList18.1.2,
+    iter=1000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/18.1.2.rds"
+  )
+  saveRDS(fit18.1.2, file = "../fits/18.1.2.rds")
+}
+```
+
+which when we run we obtain the following results,
+
+```{r}
+data.frame(summary(fit18.1.2)$summary) |> 
+  rename_with(
+    function(col_names) {str_replace_all(col_names, "^X(\\d+\\.?\\d*)\\.$", "\\1%")}
+  ) |> rownames_to_column(var = "term") |> filter(term %in% c("alpha", "beta", "gamma")) |> gt() |> fmt_number(decimals=2)
+```
+Where we see that we estimate that the imposition of the death penalty on average raises the
+murder rate by on average `r round(summary(fit18.1.2)$summary["beta","mean"]*100, 0)`%!
+:::
+
+## Problem 18.1.3
+
+An alternative model allows there to be state-level effects:
+
+
+$$
+murder_{i , t} \sim N ( α_i + β_i penalty_{i , t} + γ_i car_{i , t} , σ_i ) ,
+$$
+where we assume that $α_i \sim \mathcal{N} (\bar{α} , σ_α )$, $β_i \sim \mathcal{N} ( β , σ_β )$ and $γ_i \sim \mathcal{N}( γ , σ_γ )$ (we assume fully heterogeneous estimates for $σ$). Estimate the above model and compare the results with the homogeneous coefficients model.
+
+
+::: {style="color:blue"}
+This model can be estimated using the following code,
+
+```{stan output.var = "model18.1.3", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N;
+  int K;
+  real murder[N];
+  real car[N];
+  int<lower=0, upper=1> law[N];
+  int state[N];
+}
+
+parameters {
+  real alpha[K];
+  real beta[K];
+  real gamma[K];
+  real<lower=0> sigma[K];
+  
+  real alpha_top;
+  real<lower=0> alpha_sigma;
+  real beta_top;
+  real<lower=0> beta_sigma;
+  real gamma_top;
+  real<lower=0> gamma_sigma;
+}
+
+model {
+  for(i in 1:N) {
+    murder[i] ~ normal(
+                        alpha[state[i]] + 
+                        beta[state[i]] * law[i] +
+                        gamma[state[i]] * car[i],
+                        sigma[state[i]]
+                );
+  }
+  
+  alpha ~ normal(alpha_top, alpha_sigma);
+  beta ~ normal(beta_top, beta_sigma);
+  gamma ~ normal(gamma_top, gamma_sigma);
+  alpha_top ~ normal(0, 1);
+  beta_top ~ normal(0, 1);
+  gamma_top ~ normal(0, 1);
+  alpha_sigma ~ normal(0, 1);
+  beta_sigma ~ normal(0, 1);
+  gamma_sigma ~ normal(0, 1);
+  sigma ~ normal(0, 1);
+}
+
+generated quantities {
+  real alpha_average;
+  real beta_average;
+  real gamma_average;
+  real logLikelihood[N];
+  
+  alpha_average = normal_rng(alpha_top, alpha_sigma);
+  beta_average = normal_rng(beta_top, beta_sigma);
+  gamma_average = normal_rng(gamma_top, gamma_sigma);
+  
+  for(i in 1:N)
+      logLikelihood[i] = normal_lpdf(murder[i] | alpha[state[i]] + beta[state[i]] * law[i] +
+                  gamma[state[i]] * car[i], sigma[state[i]]);
+}
+```
+
+
+```{r}
+#| echo: false
+
+dataList18.1.3 = list(
+  N = nrow(df1),
+  K = max(unique(df1$state)),
+  murder = df1$murder,
+  car = df1$car,
+  law = df1$law,
+  state = df1$state
+)
+
+if (file.exists("../fits/18.1.3.rds")) {
+  fit18.1.3 <- readRDS("../fits/18.1.3.rds")
+} else {
+  fit18.1.3 <- rstan::sampling(
+    model18.1.3, data=dataList18.1.3,
+    iter=2000,
+    chains=4,
+    seed=1,
+    sample_file = "../fits/18.1.3.rds"
+  )
+  saveRDS(fit18.1.3, file = "../fits/18.1.3.rds")
+}
+```
+
+
+which when we run we obtain the following results,
+
+```{r}
+data.frame(summary(fit18.1.3)$summary) |> 
+  rename_with(
+    function(col_names) {str_replace_all(col_names, "^X(\\d+\\.?\\d*)\\.$", "\\1%")}
+  ) |> rownames_to_column(var = "term") |> filter(grepl("average", term)) |>
+  gt() |> fmt_number(decimals=2)
+```
+with a mean effect size of a `r abs(round(summary(fit18.1.3)$summary["beta_average","mean"]*100, 0))`% reduction in murder rates although with a much wider range of
+effects.
+:::
+
+### Problem extra. (Not in main text but wanted to include)
+
+Another model allows there to be time
+trends in the data,
+
+$$
+murder_{i , t} \sim N ( α_i + \delta_it + β_i penalty_{i , t} + γ_i car_{i , t} , σ_i ) ,
+$$
+where $δ_i ∼ \mathcal{N} (\bar{δ}, σ_δ)$. Again estimate this model and compare the effect size of the death penalty across the three models.
+
+
+```{stan output.var = "model18.1.3extra", cache = TRUE}
+#| eval: true
+#| echo: true
+data {
+  int N;
+  int K;
+  real murder[N];
+  real car[N];
+  int<lower=0, upper=1> law[N];
+  int state[N];
+  int year[N];
+}
+
+parameters {
+  real alpha[K];
+  real beta[K];
+  real gamma[K];
+  real delta[K];
+  real<lower=0> sigma[K];
+  
+  real alpha_top;
+  real<lower=0> alpha_sigma;
+  real beta_top;
+  real<lower=0> beta_sigma;
+  real gamma_top;
+  real<lower=0> gamma_sigma;
+  real delta_top;
+  real<lower=0> delta_sigma;
+}
+
+model {
+  for(i in 1:N) {
+    murder[i] ~ normal(
+                        alpha[state[i]] + 
+                        beta[state[i]] * law[i] +
+                        gamma[state[i]] * car[i] +
+                        delta[state[i]] * year[i],
+                        sigma[state[i]]
+                );
+  }
+  
+  alpha ~ normal(alpha_top, alpha_sigma);
+  beta ~ normal(beta_top, beta_sigma);
+  gamma ~ normal(gamma_top, gamma_sigma);
+  delta ~ normal(delta_top, delta_sigma);
+  alpha_top ~ normal(0, 1);
+  beta_top ~ normal(0, 1);
+  gamma_top ~ normal(0, 1);
+  delta_top ~ normal(0, 1);
+  alpha_sigma ~ normal(0, 1);
+  beta_sigma ~ normal(0, 1);
+  gamma_sigma ~ normal(0, 1);
+  delta_sigma ~ normal(0, 1);
+  sigma ~ normal(0, 1);
+}
+
+generated quantities {
+  real alpha_average;
+  real beta_average;
+  real gamma_average;
+  real delta_average;
+  real logLikelihood[N];
+  
+  alpha_average = normal_rng(alpha_top, alpha_sigma);
+  beta_average = normal_rng(beta_top, beta_sigma);
+  gamma_average = normal_rng(gamma_top, gamma_sigma);
+  delta_average = normal_rng(delta_top, delta_sigma);
+  
+  for(i in 1:N)
+      logLikelihood[i] = normal_lpdf(murder[i] | alpha[state[i]] + beta[state[i]] * law[i] +
+                  gamma[state[i]] * car[i] + delta[state[i]] * year[i], sigma[state[i]]);
+}
+```
+
+
+```{r}
+#| echo: false
+
+dataList18.1.3extra = list(
+  N = nrow(df1),
+  K = max(unique(df1$state)),
+  murder = df1$murder,
+  car = df1$car,
+  law = df1$law,
+  state = df1$state,
+  year = df1$year
+)
+
+if (file.exists("../fits/18.1.3extra.rds")) {
+  fit18.1.3extra <- readRDS("../fits/18.1.3extra.rds")
+} else {
+  fit18.1.3extra <- rstan::sampling(
+    model18.1.3extra, data=dataList18.1.3extra,
+    iter=2000,
+    chains=4,
+    seed=1,
+    control=list(adapt_delta=.95, stepsize=.001),
+    sample_file = "../fits/18.1.3extra.rds"
+  )
+  saveRDS(fit18.1.3extra, file = "../fits/18.1.3extra.rds")
+}
+```
+
+::: {style="color:blue"}
+This model is only a slight modification of the above one and yields an estimated effect of,
+
+```{r}
+data.frame(summary(fit18.1.3extra)$summary) |> 
+  rename_with(
+    function(col_names) {str_replace_all(col_names, "^X(\\d+\\.?\\d*)\\.$", "\\1%")}
+  ) |> rownames_to_column(var = "term") |> filter(grepl("average", term)) |>
+  gt() |> fmt_number(decimals=2)
+```
+
+:::
+
+
+### Problem 18.1.4
+
+Compare the predictive fit of the models using the estimated leave-one-out
+cross-validation from the `loo` package. Which of the three models do you prefer? Hence conclude whether the death penalty acts as a deterrent to murder.
+
+
+::: {style="color:blue"}
+This can be done by recording the log likelihood of each data point in the `generated quantities`
+block.
+
+If we do this for all three models we obtain an estimated expected log (pointwise) likelihood from
+each using the `loo` function,
+
+```{r}
+library(loo)
+
+homogeneous.elpd <- round((loo(extract(fit18.1.2, "logLikelihood")[[1]]))$estimates["elpd_loo", "Estimate"],1)
+
+state.level.no.time.elpd <- round((loo(extract(fit18.1.3, "logLikelihood")[[1]]))$estimates["elpd_loo", "Estimate"],1)
+
+state.level.time.elpd <- round((loo(extract(fit18.1.3extra, "logLikelihood")[[1]]))$estimates["elpd_loo", "Estimate"],1)
+```
+
+* Homogeneous: `r homogeneous.elpd`
+* State-level, no time trend: `r state.level.no.time.elpd`
+* State-level, with time trend: `r state.level.time.elpd`
+
+Which when using the "compare" function we see that the best-fitting model is the State-level
+models with a time trend. In this model the estimated effect of the death penalty is to decrease
+the murder rate by 18% on average, with a 50% credible interval of 4% ≤ effect ≤ 32%. So even
+though on average we see that there is quite a strong effect of the law, we are quite uncertain as to
+its size in a given state.
+
+:::
+
+### Problem 18.1.5
+
+Critically evaluate the best-performing model and hence any conclusions that
+can be drawn from this analysis.
+
+::: {style="color:blue"}
+A criticism is that we have failed to include other omitted factors that may affect the murder
+rate but are also correlated with the abolishment of the death penalty. It is quite possible that
+contained within $α_i$ there are factors that may affect both the murder rate and be correlated with
+the redaction of the law. A potential improvement would be to use first-differences regression (or
+fixed effects),
+
+
+$$
+\Delta murder_{i , t} \sim \mathcal{N} (\delta_i\Delta t + β_i \Delta penalty_{i , t} + γ_i \Delta car_{i , t} , σ_i ) ,
+$$
+
+where $∆$ signifies the first difference of the variable. At least in the above model we have removed
+any individual (time-invariant) heterogeneity from affecting our estimates of the deterrent size. In
+fact, if we do estimate a model similar to the one above we do not see such any significant impact
+of the legislation (results not shown).
+
+An alternative approach would be to include other factors in the model that explain $α_i$.
+:::
+
